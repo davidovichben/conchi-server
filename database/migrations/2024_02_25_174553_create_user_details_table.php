@@ -13,7 +13,6 @@ return new class extends Migration
     {
         Schema::create('user_details', function (Blueprint $table) {
             $table->unsignedBigInteger('user_id');
-            $table->unsignedTinyInteger('registration_step')->default(0);
             $table->enum('family_status', ['married', 'divorced', 'widowed', 'single'])->nullable();
             $table->string('parent1_name', 50)->nullable();
             $table->enum('parent1_role', ['father', 'mother'])->nullable();
@@ -22,6 +21,7 @@ return new class extends Migration
             $table->enum('child_gender', ['male', 'female'])->nullable();
             $table->date('child_birth_date')->nullable();
             $table->string('child_name', 50)->nullable();
+            $table->boolean('child_has_nickname')->default(false);
             $table->string('child_nickname', 50)->nullable();
             $table->enum('child_position', ['middle', 'single', 'youngest', 'eldest'])->nullable();
             $table->timestamps();

@@ -34,8 +34,7 @@ class GeneralController extends Controller
 
     public function hobbies()
     {
-        $hobbies = Hobby::select('id', 'name')->get();
-        return response($hobbies, 200);
+        return response(Hobby::all(), 200);
     }
 
     public function sentences()

@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
-class UserHobby extends BaseModel
+class Interaction extends BaseModel
 {
     use HasFactory;
 }

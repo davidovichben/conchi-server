@@ -2,7 +2,7 @@
 
 return [
     'enums' => [
-        'family' => [
+        'family_status' => [
             [
                 'name'  => 'family_status_married',
                 'id'    => 'married'

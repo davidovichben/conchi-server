@@ -24,7 +24,11 @@ class UserController extends Controller
 
         $token = $user->createToken('login')->plainTextToken;
 
-        $response = [...$user->jsonSerialize(), 'token' => $token];
+        $response = [
+            ...$user->jsonSerialize(),
+            'token'     => $token,
+            'is_paid'   => !!$user->payment_package_id
+        ];
 
         return response($response, 200);
     }
@@ -44,7 +48,12 @@ class UserController extends Controller
 
         $token = $user->createToken('login')->plainTextToken;
 
-        $response = [...$user->jsonSerialize(), 'token' => $token];
+        $response = [
+            ...$user->jsonSerialize(),
+            'token'     => $token,
+            'is_paid'   => !!$user->payment_package_id
+        ];
+
 
         return response($response, 200);
     }

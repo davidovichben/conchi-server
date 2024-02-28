@@ -2,9 +2,6 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
-
-class Hobby extends Model
+class Hobby extends BaseModel
 {
-
 }

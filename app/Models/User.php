@@ -38,6 +38,7 @@ class User extends Authenticatable
         'updated_at',
         'password',
         'remember_token',
+        'payment_package_id'
     ];
 
     /**
