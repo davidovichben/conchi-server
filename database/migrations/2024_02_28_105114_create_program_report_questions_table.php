@@ -11,14 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('program_days', function (Blueprint $table) {
+        Schema::create('program_report_questions', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('week_id');
-            $table->unsignedTinyInteger('number');
+            $table->unsignedBigInteger('program_week_id');
+            $table->string('content', 255);
             $table->timestamps();
 
-            $table->foreign('week_id')->references('id')->on('program_weeks');
-            $table->unique(['week_id', 'number']);
+            $table->foreign('program_week_id')->references('id')->on('program_weeks');
         });
     }
 
@@ -27,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('program_days');
+        Schema::dropIfExists('program_report_questions');
     }
 };

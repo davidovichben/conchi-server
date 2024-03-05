@@ -3,6 +3,7 @@
 use App\Http\Controllers\GeneralController;
 use App\Http\Controllers\InteractionController;
 use App\Http\Controllers\PaymentPackageController;
+use App\Http\Controllers\ProgramDayController;
 use App\Http\Controllers\ProgramWeekController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\UserDetailsController;
@@ -38,7 +39,10 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::middleware('paid')->group(function () {
         Route::get('/programWeek/{weekId}/days', [ProgramWeekController::class, 'days']);
-        Route::get('/{dayId}/interactions', [InteractionController::class, 'index']);
+        Route::get('/programWeek/{weekId}/report', [ProgramWeekController::class, 'report']);
+        Route::put('/programWeek/{weekId}/report', [ProgramWeekController::class, 'updateReport']);
+        Route::get('/programDay/{programDay}', [ProgramDayController::class, 'show']);
+        Route::put('/programDay/{programDay}/complete', [ProgramDayController::class, 'complete']);
         Route::put('/interactions/{interactionId}/like', [InteractionController::class, 'like']);
         Route::put('/interactions/{interactionId}/status', [InteractionController::class, 'setStatus']);
     });
