@@ -82,7 +82,7 @@ class ProgramWeekController extends Controller
         $validated = $request->validate([
             'options'   => 'array',
             'options.*' => 'nullable|integer',
-            'review'    => 'max:255',
+            'review'    => 'max:255'
         ]);
 
         $userProgramWeek = UserProgramWeek::where('user_id', Auth::id())->where('program_week_id', $weekId)->first();
@@ -97,22 +97,29 @@ class ProgramWeekController extends Controller
 
         UserProgramReport::whereIn('program_report_question_id', $questionIds)->where('user_id', Auth::id())->delete();
 
-        $insertValues = $questions->map(function($question) use ($validated) {
-            $userOptionId = $validated['options'][$question->id];
+        $options = collect($validated['options']);
+
+        $insertValues = [];
+
+        foreach ($questions as $question) {
+            $userOptionId = $options->get($question->id);
+
             if ($userOptionId) {
                 $option = $question->options->first(function($option) use ($userOptionId) {
                     return $option->id === $userOptionId;
                 });
 
-                return [
-                    'user_id'                       => Auth::id(),
-                    'program_report_question_id'    => $question->id,
-                    'program_report_option_id'      => $option->id
-                ];
+                if ($option) {
+                    $insertValues[] = [
+                        'user_id'                       => Auth::id(),
+                        'program_report_question_id'    => $question->id,
+                        'program_report_option_id'      => $option->id
+                    ];
+                }
             }
-        });
+        }
 
-        UserProgramReport::insert($insertValues->toArray());
+        UserProgramReport::insert($insertValues);
 
         $userProgramWeek->update(['review' => $validated['review']]);
 
