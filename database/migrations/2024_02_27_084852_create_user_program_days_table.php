@@ -14,13 +14,13 @@ return new class extends Migration
         Schema::create('user_program_days', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('user_id');
-            $table->unsignedBigInteger('day_id');
+            $table->unsignedBigInteger('program_day_id');
             $table->text('review')->nullable();
             $table->boolean('completed')->default(0);
             $table->timestamps();
 
             $table->foreign('user_id')->references('id')->on('users');
-            $table->foreign('day_id')->references('id')->on('program_days');
+            $table->foreign('program_day_id')->references('id')->on('program_days');
         });
     }
 

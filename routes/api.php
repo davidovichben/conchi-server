@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\GeneralController;
+use App\Http\Controllers\InteractionController;
 use App\Http\Controllers\PaymentPackageController;
 use App\Http\Controllers\ProgramWeekController;
 use App\Http\Controllers\UserController;
@@ -33,6 +34,12 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::put('/user/sentences', [UserDetailsController::class, 'updateSentences']);
 
     Route::get('/programWeek', [ProgramWeekController::class, 'index']);
-    Route::get('/programWeek/{weekId}/days', [ProgramWeekController::class, 'days']);
     Route::get('/paymentPackages', [PaymentPackageController::class, 'index']);
+
+    Route::middleware('paid')->group(function () {
+        Route::get('/programWeek/{weekId}/days', [ProgramWeekController::class, 'days']);
+        Route::get('/{dayId}/interactions', [InteractionController::class, 'index']);
+        Route::put('/interactions/{interactionId}/like', [InteractionController::class, 'like']);
+        Route::put('/interactions/{interactionId}/status', [InteractionController::class, 'setStatus']);
+    });
 });

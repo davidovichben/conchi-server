@@ -15,8 +15,9 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('category_id');
             $table->unsignedBigInteger('day_id');
-            $table->enum('period', ['morning', 'afternoon', 'evening', 'night'])->nullable();
+            $table->enum('period', ['morning', 'afternoon', 'evening', 'night']);
             $table->unsignedTinyInteger('duration')->comment('In minutes')->nullable();
+            $table->string('title')->nullable();
             $table->text('description')->nullable();
             $table->json('guidelines')->nullable();
 
