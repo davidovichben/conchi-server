@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Interaction;
 use App\Models\ProgramDay;
 use App\Models\UserProgramDay;
 use App\Models\UserProgramWeek;
@@ -31,36 +32,19 @@ class ProgramDayController extends Controller
 //            }
 //        }
 
-        $rows = DB::table('interactions', 'i')
-            ->where('day_id', $programDay->id)
-            ->join('interaction_categories as ic', 'ic.id', 'i.category_id')
-            ->leftJoin('user_interactions as ui', function($query) {
-                return $query->on('interaction_id', 'i.id')->where('user_id', Auth::id());
-            })
-            ->selectRaw('i.id, ui.liked, ui.status, ic.name as category, guidelines, period, duration, title, description')
-            ->get();
+        $query = Interaction::getQuery(Auth::id());
 
-        $interactions = $rows->map(function($interaction) {
-            $file = 'users/3/name.webm';
+        $rows = $query->where('day_id', $programDay->id)->get();
 
-            return [
-                ...(array)$interaction,
-                'guidelines'    => json_decode($interaction->guidelines),
-                'audio'         => [
-                    'file'      => 'data:audio/webm;codecs=opus;base64,' . base64_encode(Storage::get($file)),
-                    'duration'  => 5
-                ]
-            ];
-        });
+        $interactions = Interaction::getInteractions($rows);
 
         $nextDay = $weekDays->get($programDay->number + 1);
-        $response = [
+
+        return response([
             'weekId'        => $programDay->week_id,
             'nextDayId'     => $nextDay ? $nextDay->id : null,
             'interactions'  => $interactions
-        ];
-
-        return response($response, 200);
+        ], 200);
     }
 
     public function complete(ProgramDay $programDay)
