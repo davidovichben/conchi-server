@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Article;
+use App\Models\ContentPackage;
 use App\Models\Hobby;
 use App\Models\Translation;
 use const App\Constants\EnumList\Enums;
@@ -45,5 +47,17 @@ class GeneralController extends Controller
             ->get();
 
         return response($sentences, 200);
+    }
+
+    public function news()
+    {
+        $articles = Article::all()->mapToGroups(function ($article) {
+            return [$article->position => $article];
+        });
+
+        return response([
+            'contentPackages'   => ContentPackage::all(),
+            'articles'          => $articles
+        ], 200);
     }
 }

@@ -36,6 +36,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::get('/programWeek', [ProgramWeekController::class, 'index']);
     Route::get('/paymentPackages', [PaymentPackageController::class, 'index']);
+    Route::get('/news', [GeneralController::class, 'news']);
 
     Route::middleware('paid')->group(function () {
         Route::get('/programWeek/{weekId}/days', [ProgramWeekController::class, 'days']);
