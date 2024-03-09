@@ -15,12 +15,12 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('user_id');
             $table->unsignedBigInteger('program_report_question_id');
-            $table->unsignedBigInteger('program_report_answer_id');
+            $table->unsignedBigInteger('program_report_option_id');
             $table->timestamps();
 
             $table->foreign('user_id')->references('id')->on('users');
             $table->foreign('program_report_question_id')->references('id')->on('program_report_questions');
-            $table->foreign('program_report_answer_id')->references('id')->on('program_report_answers');
+            $table->foreign('program_report_option_id')->references('id')->on('program_report_options');
         });
     }
 
