@@ -58,7 +58,7 @@ class ProgramWeekController extends Controller
 
         $questions = ProgramReportQuestion::where('program_week_id', $weekid)
             ->with('options')
-            ->with('userOption', function($query) {
+            ->with('userReport', function($query) {
                 $query->where('user_id', Auth::id());
             })
             ->get()

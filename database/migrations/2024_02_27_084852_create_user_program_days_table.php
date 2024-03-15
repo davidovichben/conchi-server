@@ -15,7 +15,6 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('user_id');
             $table->unsignedBigInteger('program_day_id');
-            $table->text('review')->nullable();
             $table->boolean('completed')->default(0);
             $table->timestamps();
 

@@ -13,7 +13,6 @@ class ProgramDay extends BaseModel
         return $this->belongsTo(ProgramWeek::class);
     }
 
-
     public function userDays()
     {
         return $this->hasMany(UserProgramDay::class);
@@ -21,7 +20,7 @@ class ProgramDay extends BaseModel
 
     public function interactions()
     {
-        return $this->hasMany(Interaction::class);
+        return $this->belongsToMany(Interaction::class, 'interaction_days', 'day_id')->withPivot('period');
     }
 
     public function previousDay()

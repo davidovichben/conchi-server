@@ -33,9 +33,6 @@ class User extends Authenticatable
      * @var array<int, string>
      */
     protected $hidden = [
-        'id',
-        'created_at',
-        'updated_at',
         'password',
         'remember_token',
         'payment_package_id'
@@ -47,9 +44,35 @@ class User extends Authenticatable
      * @var array<string, string>
      */
     protected $casts = [
+        'created_at' => 'datetime:d/m/Y',
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
     ];
+
+    public function paymentPackage()
+    {
+        return $this->belongsTo(PaymentPackage::class);
+    }
+
+    public function details()
+    {
+        return $this->hasOne(UserDetail::class);
+    }
+
+    public function interactions()
+    {
+        return $this->belongsToMany(Interaction::class,'user_interactions');
+    }
+
+    public function hobbies()
+    {
+        return $this->belongsToMany(Hobby::class, 'user_hobbies');
+    }
+
+    public function sentences()
+    {
+        return $this->belongsToMany(Translation::class, 'user_sentences', 'user_id', 'sentence_id');
+    }
 
     public static function saveInstance($values): User
     {

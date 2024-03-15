@@ -6,8 +6,8 @@ use Illuminate\Support\Facades\Storage;
 
 class UploadedFile
 {
-    private $ext;
-    private $contents;
+    public string $ext;
+    public string $contents;
 
     public function __construct($string)
     {
@@ -22,6 +22,5 @@ class UploadedFile
     {
         $fileName = $path . '.' . ($ext ?? $this->ext);
         Storage::put($fileName, $this->contents);
-
     }
 }

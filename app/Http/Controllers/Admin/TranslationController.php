@@ -18,4 +18,11 @@ class TranslationController extends BaseController
 
         return $this->dataTableResponse($paginator);
     }
+
+    public function update(Translation $translation, Request $request)
+    {
+        $translation->update(['value' => $request->get('value')]);
+
+        return response(['message' => 'Translated updated'], 200);
+    }
 }

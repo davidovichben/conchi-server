@@ -17,6 +17,16 @@ class Interaction extends BaseModel
 
     protected $hidden = ['id', 'category_id', 'created_at', 'updated_at'];
 
+    public function category()
+    {
+        return $this->belongsTo(InteractionCategory::class, 'category_id');
+    }
+
+    public function userInteractions()
+    {
+        return $this->hasMany(UserInteraction::class);
+    }
+
     public static function getAudioFile($interaction)
     {
         $file = 'sample.mp3';

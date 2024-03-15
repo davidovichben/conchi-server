@@ -16,8 +16,9 @@ class ProgramReportQuestion extends Model
         return $this->hasMany(ProgramReportOption::class, 'program_report_question_id');
     }
 
-    public function userOption()
+    public function userReport()
     {
         return $this->hasOne(UserProgramReport::class, 'program_report_question_id');
     }
+
 }
