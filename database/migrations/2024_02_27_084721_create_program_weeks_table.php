@@ -15,8 +15,8 @@ return new class extends Migration
             $table->id();
             $table->unsignedTinyInteger('number')->unique();
             $table->text('description')->nullable();
+            $table->boolean('is_active')->default(false);
             $table->timestamps();
-
         });
     }
 

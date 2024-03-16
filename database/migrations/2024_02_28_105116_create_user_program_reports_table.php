@@ -18,9 +18,9 @@ return new class extends Migration
             $table->unsignedBigInteger('program_report_option_id');
             $table->timestamps();
 
-            $table->foreign('user_id')->references('id')->on('users');
-            $table->foreign('program_report_question_id')->references('id')->on('program_report_questions');
-            $table->foreign('program_report_option_id')->references('id')->on('program_report_options');
+            $table->foreign('user_id')->references('id')->on('users')->cascadeOnDelete();
+            $table->foreign('program_report_question_id')->references('id')->on('program_report_questions')->cascadeOnDelete();
+            $table->foreign('program_report_option_id')->references('id')->on('program_report_options')->cascadeOnDelete();
         });
     }
 
