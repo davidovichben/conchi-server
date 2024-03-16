@@ -33,7 +33,8 @@ class InteractionCategory extends BaseModel
     public function updateInstance($values)
     {
         if ($values['image']) {
-           $this->uploadImage($values['image']);
+            $this->deleteImage();
+            $this->uploadImage($values['image']);
         } else if ($values['deleteImage']) {
             $this->deleteImage();
         }

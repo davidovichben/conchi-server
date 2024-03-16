@@ -37,4 +37,10 @@ class InteractionCategoryController extends BaseController
 
         return response(['message' => 'Category deleted'], 200);
     }
+
+    public function select()
+    {
+        $categories = InteractionCategory::select('id', 'name')->get();
+        return response($categories, 200);
+    }
 }

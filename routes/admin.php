@@ -18,4 +18,5 @@ Route::post('/interactions/search', [InteractionController::class, 'index']);
 Route::resource('/interactions', InteractionController::class)->except('index');
 
 Route::post('/interactionCategories/search', [InteractionCategoryController::class, 'index']);
+Route::get('/interactionCategories/select', [InteractionCategoryController::class, 'select']);
 Route::resource('/interactionCategories', InteractionCategoryController::class)->except('index');

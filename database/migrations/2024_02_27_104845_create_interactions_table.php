@@ -18,6 +18,7 @@ return new class extends Migration
             $table->string('title')->nullable();
             $table->text('description')->nullable();
             $table->json('guidelines')->nullable();
+            $table->string('audio', 80);
 
             $table->timestamps();
 
