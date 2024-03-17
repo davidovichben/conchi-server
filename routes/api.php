@@ -23,11 +23,14 @@ use Illuminate\Support\Facades\Route;
 Route::get('/translations', [GeneralController::class, 'translations']);
 Route::post('/user', [UserController::class, 'store']);
 Route::post('/user/login', [UserController::class, 'login']);
+Route::post('/user/socialLogin', [UserController::class, 'socialLogin']);
 
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/options', [GeneralController::class, 'options']);
     Route::get('/hobbies', [GeneralController::class, 'hobbies']);
     Route::get('/sentences', [GeneralController::class, 'sentences']);
+
+    Route::put('/user', [UserController::class, 'update']);
 
     Route::get('/user/details', [UserDetailsController::class, 'show']);
     Route::post('/user/details', [UserDetailsController::class, 'update']);

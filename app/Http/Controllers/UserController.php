@@ -2,10 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\UserRequest;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
-use Nette\Schema\ValidationException;
 
 class UserController extends Controller
 {
@@ -33,14 +34,9 @@ class UserController extends Controller
         return response($response, 200);
     }
 
-    public function store(Request $request)
+    public function store(UserRequest $request)
     {
         $request->validate([
-            'first_name'    => 'required|max:30',
-            'last_name'     => 'required|max:30',
-            'email'         => 'required|max:150|regex:/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/',
-            'mobile'        => 'required|max:150|regex:/^05\\d([-]{0,1})\\d{7}$/',
-            'city'          => 'required',
             'password'      => 'required|max:30',
         ]);
 
@@ -63,8 +59,53 @@ class UserController extends Controller
 
     }
 
-    public function update(Request $request, string $id)
+    public function update(UserRequest $request)
     {
+        $user = User::where('email', Auth::user()->email)->first();
 
+        $password = $request->get('password') ?? $user->password;
+
+        $user->fill($request->all());
+        $user->password = $password;
+        $user->save();
+
+        $token = $user->createToken('login')->plainTextToken;
+
+        $response = [
+            ...$user->jsonSerialize(),
+            'token'     => $token,
+            'is_paid'   => !!$user->payment_package_id
+        ];
+
+        return response($response, 200);
+    }
+
+    public function socialLogin(Request $request)
+    {
+        $request->validate([
+            'first_name'    => 'required|max:30',
+            'last_name'     => 'required|max:30',
+            'email'         => 'required|max:150|regex:/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/',
+            'social_id'     => 'nullable|string',
+            'provider'      => 'nullable|in:GOOGLE,FACEBOOK',
+        ]);
+
+        $user = User::where('social_id', $request->input('social_id'))
+            ->where('provider', $request->input('provider'))
+            ->first();
+
+        if (!$user) {
+            $user = User::saveInstance($request->all());
+        }
+
+        $token = $user->createToken('login')->plainTextToken;
+
+        $response = [
+            ...$user->jsonSerialize(),
+            'token'     => $token,
+            'is_paid'   => !!$user->payment_package_id
+        ];
+
+        return response($response, 200);
     }
 }

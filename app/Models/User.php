@@ -24,7 +24,9 @@ class User extends Authenticatable
         'city',
         'mobile',
         'email',
-        'password'
+        'password',
+        'social_id',
+        'provider'
     ];
 
     /**
@@ -38,7 +40,9 @@ class User extends Authenticatable
         'updated_at',
         'password',
         'remember_token',
-        'payment_package_id'
+        'payment_package_id',
+        'social_id',
+        'provider'
     ];
 
     /**

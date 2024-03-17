@@ -55,7 +55,6 @@ class UserDetailsController extends Controller
             'child_has_nickname'    => 'boolean',
             'child_nickname'        => 'max:50',
             'child_position'        => [Rule::in($childPositions)],
-
         ]);
 
         foreach (['name', 'nickname'] as $value) {

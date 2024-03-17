@@ -16,10 +16,10 @@ return new class extends Migration
             $table->unsignedBigInteger('payment_package_id')->nullable();
             $table->string('first_name', 30);
             $table->string('last_name', 30);
-            $table->string('city', 150);
-            $table->char('mobile', 10)->unique();
+            $table->string('city', 150)->nullable();
+            $table->char('mobile', 10)->unique()->nullable();
             $table->string('email', 150)->unique();
-            $table->char('password', 64);
+            $table->char('password', 64)->nullable();
             $table->rememberToken();
             $table->timestamps();
 
