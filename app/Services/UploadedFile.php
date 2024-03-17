@@ -20,7 +20,11 @@ class UploadedFile
 
     public function store($path, $ext = null)
     {
-        $fileName = $path . '.' . ($ext ?? $this->ext);
+        $fileName = $path;
+        if ($ext !== false) {
+            $fileName .= '.' . ($ext ?? $this->ext);
+        }
+
         Storage::put($fileName, $this->contents);
     }
 }
