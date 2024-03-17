@@ -2,6 +2,9 @@
 
 use App\Http\Controllers\Admin\InteractionCategoryController;
 use App\Http\Controllers\Admin\ProgramDayController;
+use App\Http\Controllers\Admin\ProgramReportController;
+use App\Http\Controllers\Admin\ProgramReportOptionController;
+use App\Http\Controllers\Admin\ProgramReportQuestionController;
 use App\Http\Controllers\Admin\ProgramWeekController;
 use App\Http\Controllers\Admin\TranslationController;
 use App\Http\Controllers\Admin\UserController;
@@ -25,8 +28,12 @@ Route::get('/interactionCategories/select', [InteractionCategoryController::clas
 Route::resource('/interactionCategories', InteractionCategoryController::class)->except('index');
 
 Route::resource('/weeks', ProgramWeekController::class);
+Route::put('/weeks/{programWeek}/activate', [ProgramWeekController::class, 'activate']);
 
 Route::post('/days', [ProgramDayController::class, 'store']);
 Route::delete('/days/{programDay}', [ProgramDayController::class, 'destroy']);
 Route::post('/days/{dayId}/interaction', [ProgramDayController::class, 'storeInteraction']);
 Route::delete('/days/{dayId}/interaction', [ProgramDayController::class, 'deleteInteraction']);
+
+Route::resource('/reportQuestions', ProgramReportQuestionController::class);
+Route::resource('/reportOptions', ProgramReportOptionController::class);

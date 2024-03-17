@@ -18,8 +18,8 @@ return new class extends Migration
             $table->enum('period', ['morning', 'afternoon', 'evening', 'night']);
             $table->timestamps();
 
-            $table->foreign('interaction_id')->references('id')->on('interactions');
-            $table->foreign('day_id')->references('id')->on('program_days');
+            $table->foreign('interaction_id')->references('id')->on('interactions')->cascadeOnDelete();
+            $table->foreign('day_id')->references('id')->on('program_days')->cascadeOnDelete();
         });
     }
 

@@ -17,7 +17,7 @@ return new class extends Migration
             $table->unsignedTinyInteger('number');
             $table->timestamps();
 
-            $table->foreign('week_id')->references('id')->on('program_weeks');
+            $table->foreign('week_id')->references('id')->on('program_weeks')->cascadeOnDelete();
             $table->unique(['week_id', 'number']);
         });
     }

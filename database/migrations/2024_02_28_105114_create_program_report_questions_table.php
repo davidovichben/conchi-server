@@ -17,7 +17,7 @@ return new class extends Migration
             $table->string('content', 255);
             $table->timestamps();
 
-            $table->foreign('program_week_id')->references('id')->on('program_weeks');
+            $table->foreign('program_week_id')->references('id')->on('program_weeks')->cascadeOnDelete();
         });
     }
 

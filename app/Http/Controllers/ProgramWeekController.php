@@ -15,7 +15,7 @@ class ProgramWeekController extends Controller
 {
     public function index()
     {
-        $weeks = ProgramWeek::with(['userWeeks' => function ($query) {
+        $weeks = ProgramWeek::where('is_active', 1)->with(['userWeeks' => function ($query) {
             return $query->where('user_id', Auth::id());
         }])->get();
 

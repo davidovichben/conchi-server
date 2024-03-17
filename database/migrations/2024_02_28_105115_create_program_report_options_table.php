@@ -17,7 +17,7 @@ return new class extends Migration
             $table->string('content', 255);
             $table->timestamps();
 
-            $table->foreign('program_report_question_id')->references('id')->on('program_report_questions');
+            $table->foreign('program_report_question_id')->references('id')->on('program_report_questions')->cascadeOnDelete();
         });
     }
 
