@@ -14,7 +14,8 @@ class TranslationController extends BaseController
     {
         $query = Translation::query();
 
-        $paginator = DataTableManager::getInstance($query, $request->all(), ['id', 'name', 'value'])->getQuery();
+        $columns = ['id', 'name', 'value'];
+        $paginator = DataTableManager::getInstance($query, $request->all(), $columns)->getQuery();
 
         return $this->dataTableResponse($paginator);
     }
@@ -23,6 +24,6 @@ class TranslationController extends BaseController
     {
         $translation->update(['value' => $request->get('value')]);
 
-        return response(['message' => 'Translated updated'], 200);
+        return response(['message' => 'Translation updated'], 200);
     }
 }

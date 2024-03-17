@@ -9,7 +9,29 @@ class PaymentPackage extends BaseModel
 {
     use HasFactory;
 
+    protected $fillable = ['title', 'price', 'perks'];
+
     protected $casts = [
         'perks' => 'array'
     ];
+
+    public function users()
+    {
+        return $this->hasMany(User::class);
+    }
+
+    public static function createInstance($values)
+    {
+        $paymentPackage = new self();
+        $paymentPackage->fill($values);
+        $paymentPackage->save();
+
+        return $paymentPackage;
+    }
+
+    public function updateInstance($values)
+    {
+        $this->fill($values);
+        $this->update();
+    }
 }
