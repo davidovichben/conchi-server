@@ -20,8 +20,8 @@ return new class extends Migration
             $table->enum('status', ['locked', 'completed', 'active']);
             $table->timestamps();
 
-            $table->foreign('user_id')->references('id')->on('users');
-            $table->foreign('program_week_id')->references('id')->on('program_weeks');
+            $table->foreign('user_id')->references('id')->on('users')->cascadeOnDelete();
+            $table->foreign('program_week_id')->references('id')->on('program_weeks')->cascadeOnDelete();
         });
     }
 

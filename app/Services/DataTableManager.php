@@ -12,17 +12,17 @@ class DataTableManager {
     private $params;
     private $columns;
 
-    private function __construct($query, $params, $columns, $resultsLimit = 30)
+    private function __construct($query, $params, $columns, $resultsLimit = 15)
     {
         $this->query = $query;
         $this->params = collect($params);
         $this->columns = collect($columns);
-        $this->resultsLimit = 30;
+        $this->resultsLimit = 15;
     }
 
     public static function getInstance($query, $params, $columns, $resultsLimit = 15)
     {
-        return new self($query, $params, $columns, $resultsLimit);
+        return new self($query, $params, collect($columns), $resultsLimit);
     }
 
     public function getQuery()
@@ -166,8 +166,8 @@ class DataTableManager {
 
     private function orderBy()
     {
-        $column = $this->columns->get($this->params->get('sortBy'));
-        if ($column) {
+        $column = $this->params->get('sortBy');
+        if ($this->columns->contains($column)) {
             $direction = $this->params->get('sortDir') === 'asc' ? 'asc' : 'desc';
 
             $columnName = isset($column['column']) ? $column['column'] : $column;

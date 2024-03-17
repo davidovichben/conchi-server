@@ -13,7 +13,9 @@ return new class extends Migration
     {
         Schema::create('program_weeks', function (Blueprint $table) {
             $table->id();
+            $table->unsignedTinyInteger('number')->unique();
             $table->text('description')->nullable();
+            $table->boolean('is_active')->default(false);
             $table->timestamps();
         });
     }

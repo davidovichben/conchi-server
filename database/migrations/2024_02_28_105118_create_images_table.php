@@ -11,15 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('interaction_categories', function (Blueprint $table) {
+        Schema::create('images', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
-            $table->text('description')->nullable();
-            $table->string('image', 80)->nullable();
-
+            $table->string('key_name', 255)->unique();
+            $table->string('file_name', 255);
             $table->timestamps();
-
-            $table->unique('name');
         });
     }
 
@@ -28,6 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('interaction_category');
+        Schema::dropIfExists('images');
     }
 };

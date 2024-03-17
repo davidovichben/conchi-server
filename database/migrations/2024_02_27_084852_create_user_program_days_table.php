@@ -15,12 +15,11 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('user_id');
             $table->unsignedBigInteger('program_day_id');
-            $table->text('review')->nullable();
             $table->boolean('completed')->default(0);
             $table->timestamps();
 
-            $table->foreign('user_id')->references('id')->on('users');
-            $table->foreign('program_day_id')->references('id')->on('program_days');
+            $table->foreign('user_id')->references('id')->on('users')->cascadeOnDelete();
+            $table->foreign('program_day_id')->references('id')->on('program_days')->cascadeOnDelete();
         });
     }
 
