@@ -70,7 +70,7 @@ class User extends Authenticatable
 
     public function hobbies()
     {
-        return $this->belongsToMany(Hobby::class, 'user_hobbies');
+        return $this->belongsToMany(InteractionSubCategory::class, 'user_hobbies');
     }
 
     public function sentences()

@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Hobby;
+use App\Models\InteractionSubCategory;
 use App\Models\Translation;
 use App\Models\UserDetail;
 use App\Models\UserHobby;
@@ -71,7 +71,7 @@ class UserDetailsController extends Controller
 
     public function updateHobbies(Request $request)
     {
-        $hobbies = Hobby::whereIn('id', $request->collect('sentences'))
+        $hobbies = InteractionSubCategory::whereIn('id', $request->collect('sentences'))
             ->select('id')
             ->get();
 

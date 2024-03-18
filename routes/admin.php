@@ -2,9 +2,9 @@
 
 use App\Http\Controllers\Admin\ArticleController;
 use App\Http\Controllers\Admin\ContentPackageController;
-use App\Http\Controllers\Admin\HobbyController;
 use App\Http\Controllers\Admin\ImageController;
 use App\Http\Controllers\Admin\InteractionCategoryController;
+use App\Http\Controllers\Admin\InteractionSubCategoryController;
 use App\Http\Controllers\Admin\PaymentPackageController;
 use App\Http\Controllers\Admin\ProgramDayController;
 use App\Http\Controllers\Admin\ProgramReportOptionController;
@@ -34,6 +34,9 @@ Route::post('/interactionCategories/search', [InteractionCategoryController::cla
 Route::get('/interactionCategories/select', [InteractionCategoryController::class, 'select']);
 Route::resource('/interactionCategories', InteractionCategoryController::class)->except('index');
 
+Route::post('/interactionSubCategories/search', [InteractionSubCategoryController::class, 'index']);
+Route::resource('/interactionSubCategories', InteractionSubCategoryController::class)->except('index');
+
 Route::resource('/weeks', ProgramWeekController::class);
 Route::put('/weeks/{programWeek}/activate', [ProgramWeekController::class, 'activate']);
 
@@ -53,6 +56,3 @@ Route::resource('/paymentPackages', PaymentPackageController::class)->except('in
 
 Route::post('/contentPackages/search', [ContentPackageController::class, 'index']);
 Route::resource('/contentPackages', ContentPackageController::class)->except('index');
-
-Route::post('/hobbies/search', [HobbyController::class, 'index']);
-Route::resource('/hobbies', HobbyController::class)->except('index');

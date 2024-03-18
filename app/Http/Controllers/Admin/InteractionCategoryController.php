@@ -18,6 +18,11 @@ class InteractionCategoryController extends BaseController
         return $this->dataTableResponse($paginator);
     }
 
+    public function show(InteractionCategory $interactionCategory)
+    {
+        return response($interactionCategory, 200);
+    }
+
     public function store(Request $request)
     {
         InteractionCategory::createInstance($request->post());

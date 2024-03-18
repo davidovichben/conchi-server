@@ -14,7 +14,7 @@ class ImageController extends BaseController
     {
         $query = Image::query();
 
-        $columns = ['id', 'key_name', 'path'];
+        $columns = ['id', 'key_name', 'path', 'screen'];
         $paginator = DataTableManager::getInstance($query, $request->all(), $columns)->getQuery();
 
         return $this->dataTableResponse($paginator);

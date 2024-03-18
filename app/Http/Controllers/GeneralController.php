@@ -4,9 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Article;
 use App\Models\ContentPackage;
-use App\Models\Hobby;
+use App\Models\InteractionSubCategory;
 use App\Models\Translation;
-use const App\Constants\EnumList\Enums;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 
@@ -36,7 +35,7 @@ class GeneralController extends Controller
 
     public function hobbies()
     {
-        return response(Hobby::all(), 200);
+        return response(InteractionSubCategory::all(), 200);
     }
 
     public function sentences()

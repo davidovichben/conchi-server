@@ -11,10 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('hobbies', function (Blueprint $table) {
+        Schema::create('interaction_sub_categories', function (Blueprint $table) {
             $table->id();
-            $table->string('name', 100);
+            $table->unsignedBigInteger('interaction_category_id', 100);
+            $table->string('name', 255);
             $table->timestamps();
+
+            $table->foreign('interaction_category_id')->references('id')->on('interaction_categories')->cascadeOnDelete();
         });
     }
 
@@ -23,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('translations');
+        Schema::dropIfExists('interaction_sub_categories');
     }
 };
