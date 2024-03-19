@@ -35,6 +35,7 @@ Route::get('/interactionCategories/select', [InteractionCategoryController::clas
 Route::resource('/interactionCategories', InteractionCategoryController::class)->except('index');
 
 Route::post('/interactionSubCategories/search', [InteractionSubCategoryController::class, 'index']);
+Route::get('/interactionSubCategories/select', [InteractionSubCategoryController::class, 'select']);
 Route::resource('/interactionSubCategories', InteractionSubCategoryController::class)->except('index');
 
 Route::resource('/weeks', ProgramWeekController::class);

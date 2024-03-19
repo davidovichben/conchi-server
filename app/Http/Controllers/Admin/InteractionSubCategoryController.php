@@ -12,7 +12,7 @@ class InteractionSubCategoryController extends BaseController
     {
         $query = InteractionSubCategory::where('interaction_category_id', $request->post('interactionCategoryId'));
 
-        $columns = ['name'];
+        $columns = ['image', 'name'];
         $paginator = DataTableManager::getInstance($query, $request->all(), $columns)->getQuery();
 
         return $this->dataTableResponse($paginator);
@@ -34,8 +34,17 @@ class InteractionSubCategoryController extends BaseController
 
     public function destroy(InteractionSubCategory $interactionSubCategory)
     {
-        $interactionSubCategory->delete();
+        $interactionSubCategory->deleteInstance();
 
         return response(['message' => 'Sub category deleted'], 200);
+    }
+
+    public function select(Request $request)
+    {
+        $subCategories = InteractionSubCategory::select('id', 'name')
+            ->where('interaction_category_id', $request->get('categoryId'))
+            ->get();
+
+        return response($subCategories, 200);
     }
 }

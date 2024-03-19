@@ -13,15 +13,25 @@ class Interaction extends BaseModel
 {
     use HasFactory;
 
-    protected $fillable = ['title', 'description', 'category_id', 'guidelines'];
+    protected $fillable = ['title', 'description', 'category_id', 'sub_category_id', 'guidelines', 'show_order'];
 
     protected $casts = [
         'guidelines'    => 'json'
     ];
 
+    public function audioFiles()
+    {
+        return $this->hasMany(AudioFile::class);
+    }
+
     public function category()
     {
         return $this->belongsTo(InteractionCategory::class, 'category_id');
+    }
+
+    public function subCategory()
+    {
+        return $this->belongsTo(InteractionSubCategory::class, 'sub_category_id');
     }
 
     public function days()
@@ -46,44 +56,62 @@ class Interaction extends BaseModel
 
     public static function createInstance($values)
     {
+        DB::beginTransaction();
+
         $interaction = new self();
         $interaction->fill($values);
 
-        if ($values['audio']) {
-            $interaction->uploadFile($values['audio']);
-        }
-
         $interaction->save();
+
+        AudioFile::createInstances($interaction->id, $values['audio_files']);
+
+        DB::commit();
     }
 
     public function updateInstance($values)
     {
-        if ($values['audio']) {
-            $this->deleteAudio();
-            $this->uploadFile($values['audio']);
-        }
+        DB::beginTransaction();
+
+        $audioFiles = collect($values['audio_files']);
+
+        // Insert files
+
+        [$newAudioFiles, $audioFilesToUpdate] = $audioFiles->partition(function ($value) {
+            return !$value['id'];
+        });
+
+        AudioFile::createInstances($this->id, $newAudioFiles->toArray());
+
+        // Update files
+
+        AudioFile::updateInstances($audioFilesToUpdate, $this->id);
+
+        // Delete files
+
+        $audioFilesToDelete = $this->audioFiles()->whereNotIn('id', $audioFiles->pluck('id'));
+
+        $audioFilesToDelete->get()->each(function($audioFile) {
+            Storage::delete('public/' . $audioFile->file);
+        });
+
+        $audioFilesToDelete->delete();
 
         $this->fill($values);
         $this->update();
-    }
 
-    public function uploadFile($audio) {
-        $path = 'interactions/' . Str::random(32);
-
-        $file = new UploadedFile($audio);
-        $file->store('public/' . $path);
-
-        $this->audio = $path . '.' . $file->ext;
+        DB::commit();
     }
 
     public function deleteInstance()
     {
-        $this->deleteAudio();
-        $this->delete();
-    }
+        DB::beginTransaction();
 
-    public function deleteAudio() {
-        Storage::delete('public/' . $this->audio);
+        Storage::deleteDirectory('public/interactions/' . $this->id);
+
+        $this->audioFiles()->delete();
+        $this->delete();
+
+        DB::commit();
     }
 
     public static function getQuery()

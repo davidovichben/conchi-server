@@ -10,11 +10,12 @@ class InteractionController extends BaseController
 {
     public function index(Request $request)
     {
-        $query = Interaction::join('interaction_categories as ic', 'ic.id', 'interactions.category_id')
+        $query = Interaction::with('audioFiles')
+            ->leftJoin('interaction_categories as ic', 'ic.id', 'interactions.category_id')
             ->selectRaw('interactions.*, ic.name as category')
             ->withCount('days');
 
-        $columns = ['title', 'description', 'category'];
+        $columns = ['title', 'description', 'category', 'show_order'];
         $paginator = DataTableManager::getInstance($query, $request->all(), $columns)->getQuery();
 
         return $this->dataTableResponse($paginator);
@@ -24,14 +25,14 @@ class InteractionController extends BaseController
     {
         Interaction::createInstance($request->post());
 
-        return response(['message' => 'Category created'], 200);
+        return response(['message' => 'Interaction created'], 200);
     }
 
     public function update(Request $request, Interaction $interaction)
     {
         $interaction->updateInstance($request->post());
 
-        return response(['message' => 'Category updated'], 200);
+        return response(['message' => 'Interaction updated'], 200);
     }
 
     public function destroy(Interaction $interaction)
