@@ -36,7 +36,7 @@ class Interaction extends BaseModel
 
     public function days()
     {
-        return $this->belongsToMany(ProgramDay::class, 'interaction_days', 'interaction_id', 'day_id');
+        return $this->morphToMany(ProgramDay::class, 'program_day_activity');
     }
 
     public function userInteractions()

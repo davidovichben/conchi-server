@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\ProgramDay;
 use App\Models\ProgramWeek;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -12,7 +13,7 @@ class ProgramWeekController extends Controller
     public function index()
     {
         $weeks = ProgramWeek::with(['days' => function($query) {
-            $query->orderBy('number', 'asc')->with('interactions');
+            $query->orderBy('number', 'asc')->with('interactions')->with('categories');
         }])
         ->with('questions.options')
         ->get();
@@ -25,8 +26,13 @@ class ProgramWeekController extends Controller
                 'days'      => $week->days->map(function($day) {
                     return [
                         ...$day->getAttributes(),
-                        'interactions' => $day->interactions->mapWithKeys(function($interaction) {
-                            return [$interaction->pivot->period => $interaction];
+                        'activities' => $day->interactions->merge($day->categories)->mapWithKeys(function($activity) {
+                            $type = $activity->pivot->program_day_activity_type === 'App\Models\Interaction' ? 'interaction' : 'category';
+
+                            $arr = $activity->toArray();
+                            unset($arr['pivot']);
+
+                            return [$activity->pivot->period => [...$arr, 'type' => $type]];
                         })
                     ];
                 })

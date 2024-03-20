@@ -45,7 +45,7 @@ class InteractionCategoryController extends BaseController
 
     public function select()
     {
-        $categories = InteractionCategory::select('id', 'name')->get();
+        $categories = InteractionCategory::select('id', 'name', 'image')->get();
         return response($categories, 200);
     }
 }

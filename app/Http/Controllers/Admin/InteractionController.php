@@ -42,9 +42,13 @@ class InteractionController extends BaseController
         return response(['message' => 'Interaction deleted'], 200);
     }
 
-    public function select()
+    public function select(Request $request)
     {
-        $interactions = Interaction::all();
-        return response($interactions, 200);
+        $query = Interaction::query();
+        if ($request->get('title')) {
+            $query->where('title', 'like', '%' . $request->get('title') . '%');
+        }
+
+        return response($query->get(), 200);
     }
 }

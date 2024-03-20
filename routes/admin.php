@@ -43,8 +43,8 @@ Route::put('/weeks/{programWeek}/activate', [ProgramWeekController::class, 'acti
 
 Route::post('/days', [ProgramDayController::class, 'store']);
 Route::delete('/days/{programDay}', [ProgramDayController::class, 'destroy']);
-Route::post('/days/{dayId}/interaction', [ProgramDayController::class, 'storeInteraction']);
-Route::delete('/days/{dayId}/interaction', [ProgramDayController::class, 'deleteInteraction']);
+Route::post('/days/{dayId}/activity', [ProgramDayController::class, 'storeActivity']);
+Route::delete('/days/{dayId}/activity', [ProgramDayController::class, 'deleteActivity']);
 
 Route::resource('/reportQuestions', ProgramReportQuestionController::class);
 Route::resource('/reportOptions', ProgramReportOptionController::class);
