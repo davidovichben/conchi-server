@@ -38,6 +38,10 @@ class InteractionCategoryController extends BaseController
     }
     public function destroy(InteractionCategory $interactionCategory)
     {
+        if ($interactionCategory->role_id == 1) {
+            return response(['message' => 'You can not delete this category'], 400);
+        }
+
         $interactionCategory->deleteInstance();
 
         return response(['message' => 'Category deleted'], 200);

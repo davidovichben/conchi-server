@@ -23,6 +23,10 @@ class UserController extends Controller
             return response(['messages' => 'Wrong credentials'], 401);
         }
 
+        if (!$user->is_active) {
+            return response(['message' => 'User is inactive'], 403);
+        }
+
         $token = $user->createToken('login')->plainTextToken;
 
         $response = [
@@ -49,7 +53,6 @@ class UserController extends Controller
             'token'     => $token,
             'is_paid'   => !!$user->payment_package_id
         ];
-
 
         return response($response, 200);
     }

@@ -11,16 +11,16 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('user_hobbies', function (Blueprint $table) {
+        Schema::create('user_sub_categories', function (Blueprint $table) {
             $table->unsignedBigInteger('user_id');
-            $table->unsignedBigInteger('hobby_id');
+            $table->unsignedBigInteger('sub_category_id');
 
             $table->timestamps();
 
-            $table->primary(['user_id', 'hobby_id']);
+            $table->primary(['user_id', 'sub_category_id']);
 
             $table->foreign('user_id')->references('id')->on('users');
-            $table->foreign('hobby_id')->references('id')->on('hobbies');
+            $table->foreign('sub_category_id')->references('id')->on('interaction_sub_categories');
         });
     }
 
@@ -29,6 +29,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('user_hobbies');
+        Schema::dropIfExists('user_sub_categories');
     }
 };

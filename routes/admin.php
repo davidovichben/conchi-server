@@ -19,6 +19,7 @@ Route::post('/users/search', [UserController::class, 'index']);
 Route::get('/users/{user}', [UserController::class, 'show']);
 Route::get('/users/{userId}/programWeeks', [UserController::class, 'programWeeks']);
 Route::get('/users/{userId}/programDays', [UserController::class, 'programDays']);
+Route::put('/users/{user}/activate', [UserController::class, 'activate']);
 
 Route::post('/translations/search', [TranslationController::class, 'index']);
 Route::put('/translations/{translation}', [TranslationController::class, 'update']);

@@ -60,4 +60,12 @@ class UserController extends BaseController
 
         return response($rows, 200);
     }
+
+    public function activate(User $user)
+    {
+        $isActive = $user->is_active ? 0 : 1;
+        $user->update(['is_active' => $isActive]);
+
+        return response(['message' => 'User status updated'], 200);
+    }
 }

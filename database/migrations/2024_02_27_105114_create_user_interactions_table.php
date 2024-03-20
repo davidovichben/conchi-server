@@ -19,6 +19,7 @@ return new class extends Migration
             $table->enum('status', ['initial', 'started', 'completed'])->default('initial');
             $table->timestamps();
 
+            $table->unique(['user_id', 'interaction_id']);
             $table->foreign('user_id')->references('id')->on('users')->cascadeOnDelete();
             $table->foreign('interaction_id')->references('id')->on('interactions')->cascadeOnDelete();
         });

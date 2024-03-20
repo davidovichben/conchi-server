@@ -44,7 +44,7 @@ class ProgramWeekController extends Controller
 
     public function store(Request $request)
     {
-        $week = ProgramWeek::createInstance($request->post());
+        $week = ProgramWeek::createInstance(collect($request->post()));
         $week->days;
 
         return response($week, 201);
@@ -52,10 +52,9 @@ class ProgramWeekController extends Controller
 
     public function update(ProgramWeek $week, Request $request)
     {
-        $week->description = $request->post('description');
-        $week->update();
+        $week->updateInstance(collect($request->post()));
 
-        return response(['message' => 'Week updated'], 200);
+        return response($week, 200);
     }
 
     public function destroy(ProgramWeek $week)

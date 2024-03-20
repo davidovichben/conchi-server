@@ -15,30 +15,47 @@ class ProgramDayController extends Controller
 {
     public function show(ProgramDay $programDay)
     {
-        $weekDays = DB::table('program_days', 'pd')
-            ->leftJoin('user_program_days as upd', function($query) {
-                return $query->on('upd.program_day_id', 'pd.id')->where('user_id', Auth::id());
-            })
-            ->where('pd.week_id', $programDay->week_id)
-            ->selectRaw('pd.id, pd.number, upd.completed')
-            ->get()->mapWithKeys(function($day) {
-                return [$day->number => $day];
-            });
+        $programDay->load('interactions');
+        $programDay->interactions->load('audioFiles')
+            ->load('category')
+            ->load(['userInteractions' => function($query) {
+                $query->where('user_id', Auth::id());
+            }]);
 
-//        if ($programDay->number > 1) {
-//            $prevDay = $weekDays[$programDay->number - 1];
-//            if (!$prevDay->completed) {
-//                return response(['message' => 'Bad request'], 400);
-//            }
-//        }
+        $user = Auth::user()->load('details');
 
-        $query = Interaction::getQuery(Auth::id());
+        $interactions = $programDay->interactions->mapWithKeys(function ($interaction) {
+            return [$interaction->pivot->period => $interaction];
+        });
 
-        $rows = $query->where('day_id', $programDay->id)->get();
+        $interactions = $interactions->map(function($interaction) use ($user) {
+            $values = [
+                ...$interaction->getAttributes(),
+                'guidelines'    => $interaction->guidelines,
+                'liked'         => $interaction->userInteractions->count() > 0,
+                'status'        => $interaction->userInteractions->count() > 0 ? $interaction->userInteractions->first()->status : null,
+                'category'      => $interaction->category ? [
+                    'id'    => $interaction->category->id,
+                    'name'  => $interaction->category->name,
+                    'image' => url(Storage::url($interaction->category->image))
+                ] : null,
+            ];
 
-        $interactions = Interaction::getInteractions($rows);
+            if ($interaction->userInteractions->count() > 0) {
+                $values['status'] = $interaction->userInteractions->first()->status;
+                $values['liked'] = $interaction->userInteractions->first()->liked;
+            }
 
-        $nextDay = $weekDays->get($programDay->number + 1);
+            $audioFile = $interaction->selectAudioFile($user->details);
+            if ($audioFile) {
+                $values['audio'] = url(Storage::url($audioFile->file));
+                $values['duration'] = $audioFile->duration;
+            }
+
+            return $values;
+        });
+
+        $nextDay = $programDay->nextDay();
 
         return response([
             'weekId'        => $programDay->week_id,
@@ -49,19 +66,26 @@ class ProgramDayController extends Controller
 
     public function complete(ProgramDay $programDay)
     {
-        $query = UserProgramDay::where('program_day_id', $programDay->id)->where('user_id', Auth::id());
+        $userProgramDay = UserProgramDay::where('interaction_id', $programDay->id)
+            ->where('user_id', Auth::id())
+            ->first();
 
-        $userProgramDay = $query->first();
-        if (!$userProgramDay || $userProgramDay->completed) {
+        if ($userProgramDay && $userProgramDay->completed) {
             return response(['message' => 'Bad request'], 400);
         }
 
-        $userProgramDay->update(['completed' => 1]);
+        $values = [
+            'completed'         => 1,
+            'user_id'           => Auth::id(),
+            'program_day_id'    => $programDay->id
+        ];
 
-        $weekDays = ProgramDay::where('program_week_id', $programDay->week_id)->get();
-        $completedDays = UserProgramDay::where('completed', 1)->where('user_id', Auth::id())->get();
+        UserProgramDay::createInstance($values);
 
-        if ($weekDays->count() === $completedDays->count()) {
+        $weekDaysCount = ProgramDay::where('program_week_id', $programDay->week_id)->count();
+        $completedDaysCount = UserProgramDay::where('completed', 1)->where('user_id', Auth::id())->count();
+
+        if ($weekDaysCount === $completedDaysCount) {
              UserProgramWeek::where('user_id', Auth::id())
                 ->where('program_week_id', $programDay->week_id)
                 ->update(['status' => 'completed']);

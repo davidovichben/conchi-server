@@ -16,7 +16,7 @@ return new class extends Migration
             $table->string('name');
             $table->text('description')->nullable();
             $table->string('image', 80)->nullable();
-
+            $table->enum('role', ['hobbies', 'sentences'])->nullable();
             $table->timestamps();
 
             $table->unique('name');

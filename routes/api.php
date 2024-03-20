@@ -21,6 +21,7 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/translations', [GeneralController::class, 'translations']);
+Route::get('/images', [GeneralController::class, 'images']);
 Route::post('/user', [UserController::class, 'store']);
 Route::post('/user/login', [UserController::class, 'login']);
 Route::post('/user/socialLogin', [UserController::class, 'socialLogin']);
@@ -34,7 +35,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::get('/user/details', [UserDetailsController::class, 'show']);
     Route::post('/user/details', [UserDetailsController::class, 'update']);
-    Route::put('/user/hobbies', [UserDetailsController::class, 'updateHobbies']);
+    Route::put('/user/subCategories', [UserDetailsController::class, 'updateSubCategories']);
     Route::put('/user/sentences', [UserDetailsController::class, 'updateSentences']);
 
     Route::get('/programWeek', [ProgramWeekController::class, 'index']);

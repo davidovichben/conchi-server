@@ -32,11 +32,13 @@ class InteractionController extends Controller
 
     public function like($interactionId, Request $request)
     {
-        $liked = $request->get('liked') ? 1 : 0;
+        $values = [
+            'liked'             => $request->get('liked') ? 1 : 0,
+            'user_id'           => Auth::id(),
+            'interaction_id'    => $interactionId
+        ];
 
-        UserInteraction::where('interaction_id', $interactionId)
-            ->where('user_id', Auth::id())
-            ->update(['liked' => $liked]);
+        UserInteraction::upsertInstance($values);
 
         return response(['message' => 'Interaction liked'], 200);
     }
@@ -47,12 +49,17 @@ class InteractionController extends Controller
             ->where('user_id', Auth::id())
             ->first();
 
-        if ($userInteraction->status === 'completed') {
+        if ($userInteraction && $userInteraction->status === 'completed') {
             return response(['message' => 'Status already set'], 400);
         }
 
-        $status = $userInteraction->status === 'initial' ? 'started' : 'completed';
-        $userInteraction->update(['status' => $status]);
+        $values = [
+            'status'            => !$userInteraction || $userInteraction->status === 'initial' ? 'started' : 'completed',
+            'user_id'           => Auth::id(),
+            'interaction_id'    => $interactionId
+        ];
+
+        UserInteraction::upsertInstance($values);
 
         return response(['message' => 'Interaction status updated'], 200);
     }

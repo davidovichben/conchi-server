@@ -11,4 +11,12 @@ class UserProgramDay extends BaseModel
     protected $casts = [
         'completed' => 'boolean'
     ];
+
+    public static function createInstance($values)
+    {
+        $userProgramDay = new self();
+        $userProgramDay->fill($values);
+        $userProgramDay->save();
+    }
+
 }

@@ -26,7 +26,8 @@ class User extends Authenticatable
         'email',
         'password',
         'social_id',
-        'provider'
+        'provider',
+        'is_active'
     ];
 
     /**
@@ -68,9 +69,9 @@ class User extends Authenticatable
         return $this->belongsToMany(Interaction::class,'user_interactions');
     }
 
-    public function hobbies()
+    public function subCategories()
     {
-        return $this->belongsToMany(InteractionSubCategory::class, 'user_hobbies');
+        return $this->belongsToMany(InteractionSubCategory::class);
     }
 
     public function sentences()

@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Services\UploadedFile;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
@@ -16,6 +17,11 @@ class InteractionCategory extends BaseModel
     public function interactions()
     {
         return $this->hasMany(Interaction::class, 'category_id');
+    }
+
+    public function subCategories()
+    {
+        return $this->hasMany(InteractionSubCategory::class);
     }
 
     public static function createInstance($values)
@@ -45,8 +51,14 @@ class InteractionCategory extends BaseModel
 
     public function deleteInstance()
     {
+        DB::beginTransaction();
+
+        ProgramDayActivity::where('activity_id', $this->id)->where('activity_type', 'App\Models\InteractionCategory')->delete();
+
         $this->deleteImage();
         $this->delete();
+
+        DB::commit();
     }
 
     public function uploadImage($image) {

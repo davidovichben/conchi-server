@@ -4,10 +4,13 @@ namespace App\Http\Controllers;
 
 use App\Models\Article;
 use App\Models\ContentPackage;
+use App\Models\Image;
+use App\Models\InteractionCategory;
 use App\Models\InteractionSubCategory;
 use App\Models\Translation;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Storage;
 
 class GeneralController extends Controller
 {
@@ -23,19 +26,32 @@ class GeneralController extends Controller
         return response($translations, 200);
     }
 
+    public function images(): Response
+    {
+        $images = Image::select('key_name', 'path')
+            ->get()
+            ->mapWithKeys(function($row) {
+                return [$row->key_name => url(Storage::url($row->path))];
+            });
+
+        return response($images, 200);
+    }
+
+
     public function options(Request $request): Response
     {
-        $enum = config('constants.enums.' . $request->name);
-        if (!$enum) {
+        $options = config('constants.' . $request->name);
+        if (!$options) {
             return response(['message' => 'No options found'], 422);
         }
 
-        return response($enum, 200);
+        return response($options, 200);
     }
 
     public function hobbies()
     {
-        return response(InteractionSubCategory::all(), 200);
+        $category = InteractionCategory::where('role', 'hobbies')->with('subCategories')->first();
+        return response($category->subCategories, 200);
     }
 
     public function sentences()

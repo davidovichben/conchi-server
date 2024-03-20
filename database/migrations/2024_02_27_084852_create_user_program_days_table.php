@@ -18,6 +18,7 @@ return new class extends Migration
             $table->boolean('completed')->default(0);
             $table->timestamps();
 
+            $table->unique(['user_id', 'program_day_id']);
             $table->foreign('user_id')->references('id')->on('users')->cascadeOnDelete();
             $table->foreign('program_day_id')->references('id')->on('program_days')->cascadeOnDelete();
         });
