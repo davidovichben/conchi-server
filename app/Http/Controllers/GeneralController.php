@@ -67,7 +67,10 @@ class GeneralController extends Controller
     public function news()
     {
         $articles = Article::all()->mapToGroups(function ($article) {
-            return [$article->position => $article];
+            return [$article->position => [
+                ...$article->toArray(),
+                'image' => $article->image ? url(Storage::url($article->image)) : null
+            ]];
         });
 
         return response([

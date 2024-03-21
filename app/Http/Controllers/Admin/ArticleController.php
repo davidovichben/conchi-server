@@ -34,7 +34,7 @@ class ArticleController extends BaseController
 
     public function destroy(Article $article)
     {
-        $article->delete();
+        $article->deleteInstance();
 
         return response(['message' => 'Article deleted'], 200);
     }
