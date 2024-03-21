@@ -57,11 +57,12 @@ class Interaction extends BaseModel
         // Test for parent status
 
         $audioFile = $genderFilteredFiles->first(function($audioFile) use ($userDetails) {
-            if ($userDetails->family_status === 'married' && $audioFile->parents_status === 'couple') {
+            $isCouple = $userDetails->family_status === 'married' || $userDetails->family_status === 'divorced';
+            if ($isCouple && $audioFile->parents_status === 'couple') {
                 return true;
             }
 
-            if ($userDetails->family_status !== 'married') {
+            if (!$isCouple) {
                 $isFather = $userDetails->parent1_role === 'father' || $userDetails->parent2_role === 'father';
                 if ($isFather && $audioFile->parents_status === 'single_male') {
                     return true;
@@ -137,11 +138,46 @@ class Interaction extends BaseModel
 
         Storage::deleteDirectory('public/interactions/' . $this->id);
 
-        ProgramDayActivity::where('activity_id', $this->id)->where('activity_type', 'App\Models\Interaction')->delete();
+        ProgramDayActivity::where('program_day_activity_id', $this->id)->where('program_day_activity_type', 'App\Models\Interaction')->delete();
 
         $this->audioFiles()->delete();
         $this->delete();
 
         DB::commit();
+    }
+
+    public static function mapInteractions($interactions, $user, $displayCategories = true)
+    {
+        return $interactions->map(function($interaction) use ($user, $displayCategories) {
+            $values = [
+                ...$interaction->getAttributes(),
+                'guidelines'    => $interaction->guidelines,
+                'liked'         => $interaction->userInteractions->count() > 0,
+                'status'        => $interaction->userInteractions->count() > 0 ? $interaction->userInteractions->first()->status : null,
+                'category'      => $displayCategories && $interaction->category ? [
+                    'id'    => $interaction->category->id,
+                    'name'  => $interaction->category->name,
+                    'image' => url(Storage::url($interaction->category->image))
+                ] : null,
+                'subCategory'   => !$displayCategories && $interaction->subCategory ? [
+                    'id'    => $interaction->subCategory->id,
+                    'name'  => $interaction->subCategory->name,
+                    'image' => url(Storage::url($interaction->subCategory->image))
+                ] : null,
+            ];
+
+            if ($interaction->userInteractions->count() > 0) {
+                $values['status'] = $interaction->userInteractions->first()->status;
+                $values['liked'] = $interaction->userInteractions->first()->liked;
+            }
+
+            $audioFile = $interaction->selectAudioFile($user->details);
+            if ($audioFile) {
+                $values['audio'] = url(Storage::url($audioFile->file));
+                $values['duration'] = $audioFile->duration;
+            }
+
+            return $values;
+        });
     }
 }

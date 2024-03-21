@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Models\Interaction;
+use App\Models\InteractionCategory;
 use App\Services\DataTableManager;
 use Illuminate\Http\Request;
 
@@ -47,6 +48,12 @@ class InteractionController extends BaseController
         $query = Interaction::query();
         if ($request->get('title')) {
             $query->where('title', 'like', '%' . $request->get('title') . '%');
+        }
+
+        if ($request->get('category_role') === 'option_sentences') {
+            $category = InteractionCategory::where('role', 'option_sentences')->select('id')->first();
+
+            $query->where('category_id', $category->id);
         }
 
         return response($query->get(), 200);

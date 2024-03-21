@@ -26,7 +26,7 @@ return new class extends Migration
             $table->enum('child_position', ['middle', 'single', 'youngest', 'eldest'])->nullable();
             $table->timestamps();
 
-            $table->foreign('user_id')->references('id')->on('users');
+            $table->foreign('user_id')->references('id')->on('users')->cascadeOnDelete();
         });
     }
 

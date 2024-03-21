@@ -19,8 +19,8 @@ return new class extends Migration
 
             $table->primary(['user_id', 'sub_category_id']);
 
-            $table->foreign('user_id')->references('id')->on('users');
-            $table->foreign('sub_category_id')->references('id')->on('interaction_sub_categories');
+            $table->foreign('user_id')->references('id')->on('users')->cascadeOnDelete();
+            $table->foreign('sub_category_id')->references('id')->on('interaction_sub_categories')->cascadeOnDelete();
         });
     }
 

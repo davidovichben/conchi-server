@@ -22,8 +22,8 @@ return new class extends Migration
 
             $table->timestamps();
 
-            $table->foreign('category_id')->references('id')->on('interaction_categories');
-            $table->foreign('sub_category_id')->references('id')->on('interaction_sub_categories');
+            $table->foreign('category_id')->references('id')->on('interaction_categories')->nullOnDelete();
+            $table->foreign('sub_category_id')->references('id')->on('interaction_sub_categories')->nullOnDelete();
         });
     }
 

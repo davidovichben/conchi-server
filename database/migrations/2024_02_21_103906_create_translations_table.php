@@ -14,7 +14,6 @@ return new class extends Migration
         Schema::create('translations', function (Blueprint $table) {
             $table->id();
             $table->enum('language', ['he', 'en'])->default('he');
-            $table->enum('related_to', ['general', 'sentences'])->default('general');
             $table->string('name', 120);
             $table->text('value');
             $table->timestamps();

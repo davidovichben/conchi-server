@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\InteractionCategory;
 use App\Models\InteractionSubCategory;
 use App\Models\Translation;
 use App\Models\UserDetail;
@@ -92,15 +93,14 @@ class UserDetailsController extends Controller
     {
         DB::beginTransaction();
 
-        $translations = Translation::where('related_to', 'sentences')
-            ->whereIn('id', $request->collect('sentences'))
-            ->select('id')
-            ->get();
-
         UserSentence::where('user_id', Auth::id())->delete();
 
-        $insertValues = $translations->map(function($translation) {
-            return ['user_id' => Auth::id(), 'sentence_id' => $translation->id];
+        $category = InteractionCategory::where('role', 'power_sentences')->with(['interactions' => function ($query) use ($request) {
+            $query->select('id', 'category_id')->whereIn('id', $request->collect('sentences'));
+        }])->first();
+
+        $insertValues = $category->interactions->map(function($interaction) {
+            return ['user_id' => Auth::id(), 'sentence_id' => $interaction->id];
         });
 
         UserSentence::insert($insertValues->toArray());

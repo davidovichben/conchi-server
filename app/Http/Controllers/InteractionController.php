@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Interaction;
 
 use App\Models\InteractionCategory;
+use App\Models\InteractionSubCategory;
 use App\Models\UserInteraction;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -19,16 +20,39 @@ class InteractionController extends Controller
         return response($categories, 200);
     }
 
-    public function byCategory(InteractionCategory $category)
+    public function byCategory($categoryId)
     {
-        $query = Interaction::getQuery(Auth::id());
+        $interactions = Interaction::where('category_id', $categoryId)
+            ->with('audioFiles')
+            ->with('category')
+            ->with(['userInteractions' => function($query) {
+                $query->where('user_id', Auth::id());
+            }])
+            ->orderBy('show_order', 'asc')
+            ->get();
 
-        $rows = $query->where('category_id', $category->id)->get();
 
-        $category->interactions = Interaction::getInteractions($rows);
+        $interactions = Interaction::mapInteractions($interactions, Auth::user());
 
-        return response($category, 200);
+        return response($interactions, 200);
     }
+
+    public function bySubCategory($subCategoryId)
+    {
+        $interactions = Interaction::where('sub_category_id', $subCategoryId)
+            ->with('audioFiles')
+            ->with('subCategory')
+            ->with(['userInteractions' => function($query) {
+                $query->where('user_id', Auth::id());
+            }])
+            ->orderBy('show_order', 'asc')
+            ->get();
+
+
+        $interactions = Interaction::mapInteractions($interactions, Auth::user(), false);
+        return response($interactions, 200);
+    }
+
 
     public function like($interactionId, Request $request)
     {

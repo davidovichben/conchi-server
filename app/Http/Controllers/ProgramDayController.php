@@ -4,7 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Models\Interaction;
 use App\Models\ProgramDay;
+use App\Models\ProgramReportOption;
+use App\Models\ProgramReportQuestion;
 use App\Models\UserProgramDay;
+use App\Models\UserProgramReport;
 use App\Models\UserProgramWeek;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -15,52 +18,76 @@ class ProgramDayController extends Controller
 {
     public function show(ProgramDay $programDay)
     {
-        $programDay->load('interactions');
+//        DB::enableQueryLog();
+
+        $user = Auth::user()->load('details')->load('subCategories')->load('sentences');
+
+        $programDay->load('interactions')
+            ->load(['categories' => function ($query) use ($user) {
+                $query->with(['subCategories' => function ($query) use ($user) {
+                    $query->whereIn('id', $user->subCategories->pluck('id')->toArray());
+                }])->with(['interactions' => function ($query) use ($user) {
+                    $query->orderBy('show_order', 'asc')->whereIn('id', $user->sentences->pluck('id')->toArray());
+                }]);
+        }]);
+
         $programDay->interactions->load('audioFiles')
             ->load('category')
             ->load(['userInteractions' => function($query) {
                 $query->where('user_id', Auth::id());
             }]);
 
-        $user = Auth::user()->load('details');
+        $categories = $programDay->categories->mapWithKeys(function ($category) {
+            $values = [
+                'name'  => $category->name,
+                'image' => url(Storage::url($category->image))
+            ];
+
+            if ($category->should_display === 'interactions') {
+                $values['interactions'] = Interaction::mapInteractions($category->interactions, Auth::user());
+            } else {
+                $values['subCategories'] = $category->subCategories;
+            }
+
+            return [$category->pivot->period => $values];
+        });
 
         $interactions = $programDay->interactions->mapWithKeys(function ($interaction) {
             return [$interaction->pivot->period => $interaction];
         });
 
-        $interactions = $interactions->map(function($interaction) use ($user) {
-            $values = [
-                ...$interaction->getAttributes(),
-                'guidelines'    => $interaction->guidelines,
-                'liked'         => $interaction->userInteractions->count() > 0,
-                'status'        => $interaction->userInteractions->count() > 0 ? $interaction->userInteractions->first()->status : null,
-                'category'      => $interaction->category ? [
-                    'id'    => $interaction->category->id,
-                    'name'  => $interaction->category->name,
-                    'image' => url(Storage::url($interaction->category->image))
-                ] : null,
+        if ($programDay->number === 2 && $programDay->week->number > 1) {
+            $userOptions = UserProgramReport::where('user_id', Auth::id())->select('program_report_option_id')
+                ->get()
+                ->pluck('program_report_option_id')->toArray();
+
+            $previousWeek = $programDay->week->previousWeek();
+
+            $questionIds = ProgramReportQuestion::where('program_week_id', $previousWeek->id)->select('id')->get()->pluck('id');
+
+            $options = ProgramReportOption::whereIn('program_report_question_id', $questionIds)
+                ->whereIn('id', $userOptions)
+                ->with('interaction')
+                ->get();
+
+            $interactions = $options->pluck('interaction');
+
+            $categories['afternoon'] = [
+                'interactions' => Interaction::mapInteractions($interactions, $user)
             ];
+        }
 
-            if ($interaction->userInteractions->count() > 0) {
-                $values['status'] = $interaction->userInteractions->first()->status;
-                $values['liked'] = $interaction->userInteractions->first()->liked;
-            }
-
-            $audioFile = $interaction->selectAudioFile($user->details);
-            if ($audioFile) {
-                $values['audio'] = url(Storage::url($audioFile->file));
-                $values['duration'] = $audioFile->duration;
-            }
-
-            return $values;
-        });
+        $interactions = Interaction::mapInteractions($interactions, $user);
 
         $nextDay = $programDay->nextDay();
+
+//        var_dump(count(DB::getQueryLog()));
 
         return response([
             'weekId'        => $programDay->week_id,
             'nextDayId'     => $nextDay ? $nextDay->id : null,
-            'interactions'  => $interactions
+            'interactions'  => $interactions,
+            'categories'    => $categories
         ], 200);
     }
 

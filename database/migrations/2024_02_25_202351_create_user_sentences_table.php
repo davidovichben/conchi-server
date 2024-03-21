@@ -19,8 +19,8 @@ return new class extends Migration
 
             $table->primary(['user_id', 'sentence_id']);
 
-            $table->foreign('user_id')->references('id')->on('users');
-            $table->foreign('sentence_id')->references('id')->on('translations');
+            $table->foreign('user_id')->references('id')->on('users')->cascadeOnDelete();
+            $table->foreign('sentence_id')->references('id')->on('interactions')->cascadeOnDelete();
         });
     }
 

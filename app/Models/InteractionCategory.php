@@ -10,7 +10,7 @@ use Illuminate\Support\Str;
 
 class InteractionCategory extends BaseModel
 {
-    protected $fillable = ['name', 'description'];
+    protected $fillable = ['name', 'description', 'should_display'];
 
     use HasFactory;
 
@@ -53,7 +53,7 @@ class InteractionCategory extends BaseModel
     {
         DB::beginTransaction();
 
-        ProgramDayActivity::where('activity_id', $this->id)->where('activity_type', 'App\Models\InteractionCategory')->delete();
+        ProgramDayActivity::where('program_day_activity_id', $this->id)->where('program_day_activity_type', 'App\Models\InteractionCategory')->delete();
 
         $this->deleteImage();
         $this->delete();

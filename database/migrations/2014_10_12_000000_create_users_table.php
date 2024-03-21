@@ -24,7 +24,7 @@ return new class extends Migration
             $table->rememberToken();
             $table->timestamps();
 
-            $table->foreign('payment_package_id')->references('id')->on('payment_packages');
+            $table->foreign('payment_package_id')->references('id')->on('payment_packages')->nullOnDelete();
         });
     }
 
