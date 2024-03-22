@@ -2,7 +2,7 @@
 
 use App\Http\Controllers\GeneralController;
 use App\Http\Controllers\InteractionController;
-use App\Http\Controllers\PaymentPackageController;
+use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\ProgramDayController;
 use App\Http\Controllers\ProgramWeekController;
 use App\Http\Controllers\UserController;
@@ -28,6 +28,8 @@ Route::post('/user/socialLogin', [UserController::class, 'socialLogin']);
 Route::get('/article/{article}', [GeneralController::class, 'article']);
 Route::get('/page', [GeneralController::class, 'page']);
 
+Route::post('/payment/webhook', [PaymentController::class, 'webhook']);
+
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/options', [GeneralController::class, 'options']);
     Route::get('/hobbies', [GeneralController::class, 'hobbies']);
@@ -41,7 +43,9 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::put('/user/sentences', [UserDetailsController::class, 'updateSentences']);
 
     Route::get('/programWeek', [ProgramWeekController::class, 'index']);
-    Route::get('/paymentPackages', [PaymentPackageController::class, 'index']);
+    Route::get('/payment', [PaymentController::class, 'index']);
+    Route::get('/payment/{paymentPackage}/url', [PaymentController::class, 'url']);
+
     Route::get('/news', [GeneralController::class, 'news']);
 
     Route::middleware('paid')->group(function () {

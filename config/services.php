@@ -31,4 +31,11 @@ return [
         'region' => env('AWS_DEFAULT_REGION', 'us-east-1'),
     ],
 
+    'cardcom' => [
+        'url'       => 'https://secure.cardcom.solutions/api/v11',
+        'terminal'  => env('CARDCOM_TERMINAL'),
+        'username'  => env('CARDCOM_USERNAME'),
+        'password'  => env('CARDCOM_PASSWORD'),
+    ],
+
 ];
