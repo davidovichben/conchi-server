@@ -5,6 +5,7 @@ use App\Http\Controllers\Admin\ContentPackageController;
 use App\Http\Controllers\Admin\ImageController;
 use App\Http\Controllers\Admin\InteractionCategoryController;
 use App\Http\Controllers\Admin\InteractionSubCategoryController;
+use App\Http\Controllers\Admin\PageController;
 use App\Http\Controllers\Admin\PaymentPackageController;
 use App\Http\Controllers\Admin\ProgramDayController;
 use App\Http\Controllers\Admin\ProgramReportOptionController;
@@ -58,3 +59,6 @@ Route::resource('/paymentPackages', PaymentPackageController::class)->except('in
 
 Route::post('/contentPackages/search', [ContentPackageController::class, 'index']);
 Route::resource('/contentPackages', ContentPackageController::class)->except('index');
+
+Route::post('/pages/search', [PageController::class, 'index']);
+Route::put('/pages/{page}', [PageController::class, 'update']);

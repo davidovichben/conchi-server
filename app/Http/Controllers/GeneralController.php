@@ -8,6 +8,7 @@ use App\Models\Image;
 use App\Models\Interaction;
 use App\Models\InteractionCategory;
 use App\Models\InteractionSubCategory;
+use App\Models\Page;
 use App\Models\Translation;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -77,5 +78,16 @@ class GeneralController extends Controller
             'contentPackages'   => ContentPackage::all(),
             'articles'          => $articles
         ], 200);
+    }
+
+    public function article(Article $article)
+    {
+        return response($article, 200);
+    }
+
+    public function page(Request $request)
+    {
+        $page = Page::where('type', $request->get('type'))->select('title', 'content')->first();
+        return response($page, 200);
     }
 }

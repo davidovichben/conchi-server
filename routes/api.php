@@ -25,6 +25,8 @@ Route::get('/images', [GeneralController::class, 'images']);
 Route::post('/user', [UserController::class, 'store']);
 Route::post('/user/login', [UserController::class, 'login']);
 Route::post('/user/socialLogin', [UserController::class, 'socialLogin']);
+Route::get('/article/{article}', [GeneralController::class, 'article']);
+Route::get('/page', [GeneralController::class, 'page']);
 
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/options', [GeneralController::class, 'options']);
