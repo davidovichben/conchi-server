@@ -65,13 +65,13 @@ class InteractionCategory extends BaseModel
         $path = 'categories/' . Str::random(32);
 
         $file = new UploadedFile($image);
-        $file->store('public/' . $path);
+        $file->store( $path);
 
         $this->image = $path . '.' . $file->ext;
     }
 
     public function deleteImage() {
-        Storage::delete('public/' . $this->image);
+        Storage::delete($this->image);
         $this->image = null;
     }
 }

@@ -12,10 +12,10 @@ class Image extends BaseModel
 
     public function updateInstance($inputFile)
     {
-        Storage::delete('public/' . $this->path);
+        Storage::delete($this->path);
 
         $file = new UploadedFile($inputFile);
-        $file->store('public/images/' . $this->key_name);
+        $file->store('images/' . $this->key_name);
 
         $this->path = 'images/' . $this->key_name . '.' . $file->ext;
         $this->update();

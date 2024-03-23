@@ -93,7 +93,7 @@ class ProgramDayController extends Controller
 
     public function complete(ProgramDay $programDay)
     {
-        $userProgramDay = UserProgramDay::where('interaction_id', $programDay->id)
+        $userProgramDay = UserProgramDay::where('program_day_id', $programDay->id)
             ->where('user_id', Auth::id())
             ->first();
 
@@ -109,8 +109,10 @@ class ProgramDayController extends Controller
 
         UserProgramDay::createInstance($values);
 
-        $weekDaysCount = ProgramDay::where('program_week_id', $programDay->week_id)->count();
+        $weekDaysCount = ProgramDay::where('week_id', $programDay->week_id)->count();
         $completedDaysCount = UserProgramDay::where('completed', 1)->where('user_id', Auth::id())->count();
+
+        var_dump($weekDaysCount, $completedDaysCount);
 
         if ($weekDaysCount === $completedDaysCount) {
              UserProgramWeek::where('user_id', Auth::id())

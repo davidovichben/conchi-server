@@ -8,6 +8,8 @@ class UserProgramDay extends BaseModel
 {
     use HasFactory;
 
+    protected $fillable = ['program_day_id', 'user_id', 'completed'];
+
     protected $casts = [
         'completed' => 'boolean'
     ];

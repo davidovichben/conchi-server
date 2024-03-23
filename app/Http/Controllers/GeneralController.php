@@ -40,7 +40,14 @@ class GeneralController extends Controller
     public function hobbies()
     {
         $category = InteractionCategory::where('role', 'hobbies')->with('subCategories')->first();
-        return response($category->subCategories, 200);
+        $subCategories = $category->subCategories->map(function ($subCategory) {
+            return [
+                ...$subCategory->toArray(),
+                'image' => $subCategory->image ? url(Storage::url($subCategory->image)) : null
+            ];
+        });
+
+        return response($subCategories, 200);
     }
 
     public function sentences()

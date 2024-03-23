@@ -35,7 +35,7 @@ class AudioFile extends Model
         })->pluck('id');
 
         AudioFile::whereIn('id', $valuesWithFilesIds)->select('file')->get()->each(function($audioFile) {
-            Storage::delete('public/' . $audioFile->file);
+            Storage::delete($audioFile->file);
         });
 
         $values->each(function ($value) use ($interactionId) {
@@ -54,7 +54,7 @@ class AudioFile extends Model
         $path = 'interactions/' . $interactionId . '/' . Str::random(32);
 
         $file = new UploadedFile($audio);
-        $file->store('public/' . $path);
+        $file->store($path);
 
         return $path . '.' . $file->ext;
     }

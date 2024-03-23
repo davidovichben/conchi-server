@@ -10,19 +10,25 @@ use App\Models\UserInteraction;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 
 class InteractionController extends Controller
 {
     public function categories()
     {
-        $categories = InteractionCategory::all();
+        $categories = InteractionCategory::all()->map(function ($category) {
+            return [
+                ...$category->toArray(),
+                'image' => url(Storage::url($category->image))
+            ];
+        });
 
         return response($categories, 200);
     }
 
-    public function byCategory($categoryId)
+    public function byCategory(InteractionCategory $interactionCategory)
     {
-        $interactions = Interaction::where('category_id', $categoryId)
+        $interactions = Interaction::where('category_id', $interactionCategory->id)
             ->with('audioFiles')
             ->with('category')
             ->with(['userInteractions' => function($query) {
@@ -34,7 +40,7 @@ class InteractionController extends Controller
 
         $interactions = Interaction::mapInteractions($interactions, Auth::user());
 
-        return response($interactions, 200);
+        return response([...$interactionCategory->toArray(), 'interactions' => $interactions], 200);
     }
 
     public function bySubCategory($subCategoryId)

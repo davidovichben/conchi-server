@@ -20,7 +20,7 @@ class UserDetailsController extends Controller
     public function show()
     {
         $details = UserDetail::where('user_id', Auth::id())->first();
-        $hobbies = UserSubCategory::where('user_id', Auth::id())->get()->pluck('hobby_id');
+        $hobbies = UserSubCategory::where('user_id', Auth::id())->get()->pluck('interaction_sub_category_id');
         $sentences = UserSentence::where('user_id', Auth::id())->get()->pluck('sentence_id');
 
         $values = [

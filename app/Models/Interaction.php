@@ -121,7 +121,7 @@ class Interaction extends BaseModel
         $audioFilesToDelete = $this->audioFiles()->whereNotIn('id', $audioFiles->pluck('id'));
 
         $audioFilesToDelete->get()->each(function($audioFile) {
-            Storage::delete('public/' . $audioFile->file);
+            Storage::delete($audioFile->file);
         });
 
         $audioFilesToDelete->delete();
@@ -136,7 +136,7 @@ class Interaction extends BaseModel
     {
         DB::beginTransaction();
 
-        Storage::deleteDirectory('public/interactions/' . $this->id);
+        Storage::deleteDirectory('interactions/' . $this->id);
 
         ProgramDayActivity::where('program_day_activity_id', $this->id)->where('program_day_activity_type', 'App\Models\Interaction')->delete();
 
