@@ -93,4 +93,10 @@ class InteractionController extends Controller
 
         return response(['message' => 'Interaction status updated'], 200);
     }
+
+    public function byGeneralSentences()
+    {
+        $category = InteractionCategory::where('role', 'general_sentences')->with('interactions')->first();
+        return response([...$category->toArray(), 'interactions' => $category->interactions], 200);
+    }
 }

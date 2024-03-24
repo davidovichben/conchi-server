@@ -38,7 +38,7 @@ class InteractionCategoryController extends BaseController
     }
     public function destroy(InteractionCategory $interactionCategory)
     {
-        if ($interactionCategory->role_id == 1) {
+        if ($interactionCategory->role) {
             return response(['message' => 'You can not delete this category'], 400);
         }
 

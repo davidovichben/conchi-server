@@ -157,12 +157,12 @@ class Interaction extends BaseModel
                 'category'      => $displayCategories && $interaction->category ? [
                     'id'    => $interaction->category->id,
                     'name'  => $interaction->category->name,
-                    'image' => url(Storage::url($interaction->category->image))
+                    'image' => $interaction->category->image ? url(Storage::url($interaction->category->image)) : null
                 ] : null,
                 'subCategory'   => !$displayCategories && $interaction->subCategory ? [
                     'id'    => $interaction->subCategory->id,
                     'name'  => $interaction->subCategory->name,
-                    'image' => url(Storage::url($interaction->subCategory->image))
+                    'image' => $interaction->subCategory->image ? url(Storage::url($interaction->subCategory->image)) : null
                 ] : null,
             ];
 

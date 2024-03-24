@@ -12,8 +12,8 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('user_details', function (Blueprint $table) {
-            $table->unsignedBigInteger('user_id');
-            $table->enum('family_status', ['married', 'divorced', 'widowed', 'single'])->nullable();
+            $table->unsignedBigInteger('user_id')->primary();
+            $table->enum('family_status', ['married', 'divorced', 'widowed', 'sin   gle'])->nullable();
             $table->string('parent1_name', 50)->nullable();
             $table->enum('parent1_role', ['father', 'mother'])->nullable();
             $table->string('parent2_name', 50)->nullable();

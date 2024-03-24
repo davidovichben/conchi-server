@@ -29,6 +29,7 @@ Route::get('/article/{article}', [GeneralController::class, 'article']);
 Route::get('/page', [GeneralController::class, 'page']);
 
 Route::post('/payment/webhook', [PaymentController::class, 'webhook']);
+Route::get('/payment/url', [PaymentController::class, 'url']);
 
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/options', [GeneralController::class, 'options']);
@@ -59,5 +60,6 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/interactions/{subCategoryId}/bySubCategory', [InteractionController::class, 'bySubCategory']);
         Route::put('/interactions/{interactionId}/like', [InteractionController::class, 'like']);
         Route::put('/interactions/{interactionId}/status', [InteractionController::class, 'setStatus']);
+        Route::get('/interactions/byGeneralSentences', [InteractionController::class, 'byGeneralSentences']);
     });
 });

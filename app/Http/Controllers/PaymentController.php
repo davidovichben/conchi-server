@@ -45,7 +45,7 @@ class PaymentController extends Controller
 
         $body = $response->getBody()->getContents();
 
-//        var_dump($body);
+        var_dump($body);
 
         return response(['url' => 'http://localhost:4200'], 200);
     }
