@@ -64,6 +64,6 @@ class PaymentController extends Controller
         }
 
         $returnValue = json_decode($request->input('ReturnValue'));
-        User::where('id', $returnValue['userId'])->update(['payment_package_id' => $returnValue['paymentPackageId']]);
+        User::where('id', $returnValue->userId)->update(['payment_package_id' => $returnValue->paymentPackageId]);
     }
 }
