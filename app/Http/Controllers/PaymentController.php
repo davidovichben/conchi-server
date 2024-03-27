@@ -63,7 +63,13 @@ class PaymentController extends Controller
             return;
         }
 
+
+
         $returnValue = json_decode($request->input('ReturnValue'));
+
+        $logger = app(Logger::class);
+        $logger->info('Webhook', $returnValue);
+
         User::where('id', $returnValue->userId)->update(['payment_package_id' => $returnValue->paymentPackageId]);
     }
 }
