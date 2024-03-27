@@ -58,6 +58,6 @@ class PaymentController extends Controller
     public function webhook(Request $request)
     {
         $logger = app(Logger::class);
-        $logger->info('Webhook', $request->json());
+        $logger->info('Webhook', json_decode($request->all()));
     }
 }
