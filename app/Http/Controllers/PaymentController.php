@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\PaymentPackage;
+use App\Models\User;
 use GuzzleHttp\Client;
 use Illuminate\Http\Request;
 use Illuminate\Log\Logger;
@@ -23,8 +24,8 @@ class PaymentController extends Controller
                 'TerminalNumber'        => config('services.cardcom.terminal'),
                 'ApiName'               => config('services.cardcom.username'),
                 'ReturnValue'           => json_encode([
-                    'paymentPackage'    => $paymentPackage->id,
-                    'user'              => Auth::id()
+                    'paymentPackageId'    => $paymentPackage->id,
+                    'userId'              => Auth::id()
                 ]),
                 'Amount'                => $paymentPackage->price,
                 'SuccessRedirectUrl'    => config('app.client_url') . '/payment/success',
@@ -62,7 +63,7 @@ class PaymentController extends Controller
             return;
         }
 
-        $logger = app(Logger::class);
-        $logger->info('Webhook', [$request->input('ResponseCode'), $request->input('ReturnValue')]);
+        $returnValue = json_decode($request->input('ReturnValue'));
+        User::where('id', $returnValue['userId'])->update(['payment_package_id' => $returnValue['paymentPackageId']]);
     }
 }
