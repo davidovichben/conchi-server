@@ -63,6 +63,6 @@ class PaymentController extends Controller
         }
 
         $logger = app(Logger::class);
-        $logger->info('Webhook', $request->input('ReturnValue'));
+        $logger->info('Webhook', [$request->input('ResponseCode'), $request->input('ReturnValue')]);
     }
 }
