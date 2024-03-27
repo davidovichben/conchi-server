@@ -22,7 +22,10 @@ class PaymentController extends Controller
             'json' => [
                 'TerminalNumber'        => config('services.cardcom.terminal'),
                 'ApiName'               => config('services.cardcom.username'),
-                'ReturnValue'           => Auth::id(),
+                'ReturnValue'           => [
+                    'paymentPackage'    => $paymentPackage->id,
+                    'user'              => Auth::id()
+                ],
                 'Amount'                => $paymentPackage->price,
                 'SuccessRedirectUrl'    => config('app.client_url') . '/payment/success',
                 'FailedRedirectUrl'     => config('app.client_url') . '/payment/error',
@@ -55,6 +58,6 @@ class PaymentController extends Controller
     public function webhook(Request $request)
     {
         $logger = app(Logger::class);
-        $logger->info('Webhook', $request->all());
+        $logger->info('Webhook', $request->json());
     }
 }
