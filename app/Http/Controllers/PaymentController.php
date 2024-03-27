@@ -22,10 +22,10 @@ class PaymentController extends Controller
             'json' => [
                 'TerminalNumber'        => config('services.cardcom.terminal'),
                 'ApiName'               => config('services.cardcom.username'),
-                'ReturnValue'           => [
+                'ReturnValue'           => json_encode([
                     'paymentPackage'    => $paymentPackage->id,
                     'user'              => Auth::id()
-                ],
+                ]),
                 'Amount'                => $paymentPackage->price,
                 'SuccessRedirectUrl'    => config('app.client_url') . '/payment/success',
                 'FailedRedirectUrl'     => config('app.client_url') . '/payment/error',
