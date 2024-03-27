@@ -57,7 +57,12 @@ class PaymentController extends Controller
 
     public function webhook(Request $request)
     {
+        $responseCode = $request->input('ResponseCode');
+        if ($responseCode !== 0) {
+            return;
+        }
+
         $logger = app(Logger::class);
-        $logger->info('Webhook', json_decode($request->all()));
+        $logger->info('Webhook', $request->input('ReturnValue'));
     }
 }
