@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\PaymentPackage;
 use GuzzleHttp\Client;
 use Illuminate\Http\Request;
+use Illuminate\Log\Logger;
 use Illuminate\Support\Facades\Auth;
 
 class PaymentController extends Controller
@@ -27,10 +28,13 @@ class PaymentController extends Controller
                 'FailedRedirectUrl'     => config('app.client_url') . '/payment/error',
                 'WebHookUrl'            => url('/api/payment/webhook'),
                 'Document'              => [
-                    'To'        => Auth::user()->first_name . ' ' . Auth::user()->last_name,
-                    'Email'     => Auth::user()->email,
-                    'Products' => [
-                        $paymentPackage->title
+                    'Name'          => Auth::user()->first_name . ' ' . Auth::user()->last_name,
+                    'Email'         => Auth::user()->email,
+                    'Products'      => [
+                        [
+                            'Description'   => $paymentPackage->title,
+                            'UnitCost'      => $paymentPackage->price
+                        ]
                     ],
                 ]
             ],
@@ -45,13 +49,12 @@ class PaymentController extends Controller
 
         $body = $response->getBody()->getContents();
 
-        var_dump($body);
-
-        return response(['url' => 'http://localhost:4200'], 200);
+        return response(['url' => json_decode($body)->Url], 200);
     }
 
     public function webhook(Request $request)
     {
-
+        $logger = app(Logger::class);
+        $logger->info('Webhook', $request->all());
     }
 }
