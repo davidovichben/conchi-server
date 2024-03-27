@@ -31,8 +31,9 @@ class UserController extends Controller
 
         $response = [
             ...$user->jsonSerialize(),
-            'token'     => $token,
-            'is_paid'   => !!$user->payment_package_id
+            'token'                 => $token,
+            'is_paid'               => !!$user->payment_package_id,
+            'is_done_registration'  => $user->sentences && $user->sentences->count() > 0
         ];
 
         return response($response, 200);
