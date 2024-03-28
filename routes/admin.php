@@ -11,6 +11,7 @@ use App\Http\Controllers\Admin\ProgramDayController;
 use App\Http\Controllers\Admin\ProgramReportOptionController;
 use App\Http\Controllers\Admin\ProgramReportQuestionController;
 use App\Http\Controllers\Admin\ProgramWeekController;
+use App\Http\Controllers\Admin\ReportController;
 use App\Http\Controllers\Admin\TranslationController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\InteractionController;
@@ -62,3 +63,5 @@ Route::resource('/contentPackages', ContentPackageController::class)->except('in
 
 Route::post('/pages/search', [PageController::class, 'index']);
 Route::put('/pages/{page}', [PageController::class, 'update']);
+
+Route::get('/reports', [ReportController::class, 'index']);

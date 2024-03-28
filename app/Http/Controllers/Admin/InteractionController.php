@@ -6,6 +6,7 @@ use App\Models\Interaction;
 use App\Models\InteractionCategory;
 use App\Services\DataTableManager;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class InteractionController extends BaseController
 {
@@ -13,10 +14,24 @@ class InteractionController extends BaseController
     {
         $query = Interaction::with('audioFiles')
             ->leftJoin('interaction_categories as ic', 'ic.id', 'interactions.category_id')
-            ->selectRaw('interactions.*, ic.name as category')
+            ->leftJoin('user_interactions as ui', 'ui.interaction_id', 'interactions.id')
+            ->selectRaw(
+                'interactions.*,
+                ic.name as category,
+                SUM(liked = 1) AS total_liked,
+                ROUND(SUM(liked = 1) / COUNT(*) * 100) AS liked_percentage,
+                ROUND(SUM(CASE WHEN status = "initial" THEN 1 ELSE 0 END) / COUNT(*) * 100) AS initial_percentage,
+                ROUND(SUM(CASE WHEN status = "started" THEN 1 ELSE 0 END) / COUNT(*) * 100) AS started_percentage,
+                ROUND(SUM(CASE WHEN status = "completed" THEN 1 ELSE 0 END) / COUNT(*) * 100) AS completed_percentage'
+            )
+            ->groupBy('interactions.id')
             ->withCount('days');
 
-        $columns = ['title', 'description', 'category', 'show_order'];
+        $columns = [
+            'title', 'description', 'show_order', 'category', 'total_liked',
+            'liked_percentage', 'initial_percentage', 'started_percentage', 'completed_percentage'
+        ];
+
         $paginator = DataTableManager::getInstance($query, $request->all(), $columns)->getQuery();
 
         return $this->dataTableResponse($paginator);
