@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\PaymentPackage;
+use App\Models\ProgramWeek;
 use App\Models\User;
+use App\Models\UserProgramWeek;
 use GuzzleHttp\Client;
 use Illuminate\Http\Request;
 use Illuminate\Log\Logger;
@@ -66,5 +68,15 @@ class PaymentController extends Controller
         $returnValue = json_decode($request->input('ReturnValue'));
 
         User::where('id', $returnValue->userId)->update(['payment_package_id' => $returnValue->paymentPackageId]);
+
+        $programWeek = ProgramWeek::orderBy('number')->first();
+
+        $values = [
+            'status'            => 'active',
+            'program_week_id'   => $programWeek->id,
+            'user_id'           => $returnValue->userId
+        ];
+
+        UserProgramWeek::saveInstance($values);
     }
 }
