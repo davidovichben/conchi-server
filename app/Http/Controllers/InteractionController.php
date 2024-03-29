@@ -38,7 +38,9 @@ class InteractionController extends Controller
             ->get();
 
 
-        $interactions = Interaction::mapInteractions($interactions, Auth::user());
+        $prefixFiles = Auth::user()->getPrefixFiles();
+
+        $interactions = Interaction::mapInteractions($interactions, Auth::user(), $prefixFiles);
 
         return response([...$interactionCategory->toArray(), 'interactions' => $interactions], 200);
     }
@@ -55,7 +57,9 @@ class InteractionController extends Controller
             ->get();
 
 
-        $interactions = Interaction::mapInteractions($interactions, Auth::user(), false);
+        $prefixFiles = Auth::user()->getPrefixFiles();
+
+        $interactions = Interaction::mapInteractions($interactions, Auth::user(), $prefixFiles, false);
         return response($interactions, 200);
     }
 

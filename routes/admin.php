@@ -18,6 +18,8 @@ use App\Http\Controllers\Admin\InteractionController;
 use Illuminate\Support\Facades\Route;
 
 Route::post('/users/search', [UserController::class, 'index']);
+Route::put('/users/{userId}/upload', [UserController::class, 'upload']);
+Route::delete('/users/{userId}/deleteFile', [UserController::class, 'deleteFile']);
 Route::get('/users/{user}', [UserController::class, 'show']);
 Route::get('/users/{userId}/programWeeks', [UserController::class, 'programWeeks']);
 Route::get('/users/{userId}/programDays', [UserController::class, 'programDays']);

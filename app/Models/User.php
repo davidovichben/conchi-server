@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 use Laravel\Sanctum\HasApiTokens;
 
 class User extends Authenticatable
@@ -94,5 +95,30 @@ class User extends Authenticatable
 
             return $user;
         }
+    }
+
+    public function getFile($fileType, $ext)
+    {
+        $path = 'users/' . $this->id . '/' . $fileType . '.' . $ext;
+        if (!Storage::exists($path)) {
+            return null;
+        }
+
+        $file = Storage::get($path);
+        return 'data:audio/webm;codecs=opus;base64,' . base64_encode($file);
+    }
+
+    public function getPrefixFiles()
+    {
+        $files = collect();
+
+        for ($i = 1; $i <= 3; $i++) {
+            $file = $this->getFile('prefix_name_' . $i, 'mp3');
+            if ($file) {
+                $files->push($file);
+            }
+        }
+
+        return $files;
     }
 }

@@ -6,8 +6,10 @@ use App\Models\ProgramDay;
 use App\Models\ProgramWeek;
 use App\Models\User;
 use App\Services\DataTableManager;
+use App\Services\UploadedFile;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 
 class UserController extends BaseController
 {
@@ -28,7 +30,29 @@ class UserController extends BaseController
         $user->sentences;
         $user->hobbies;
 
-        return response($user, 200);
+        return response([
+            ...$user->toArray(),
+            'recorded_name'     => $user->getFile('name', 'webm'),
+            'recorded_nickname' => $user->getFile('nickname', 'webm'),
+            'prefix_name_1'     => $user->getFile('prefix_name_1', 'mp3'),
+            'prefix_name_2'     => $user->getFile('prefix_name_2', 'mp3'),
+            'prefix_name_3'     => $user->getFile('prefix_name_3', 'mp3'),
+        ], 200);
+    }
+
+    public function upload($userId, Request $request)
+    {
+        $number = $request->post('number');
+        $file = $request->post('file');
+
+        (new UploadedFile($file))->store('users/' . $userId . '/prefix_name_' . $number, 'mp3');
+    }
+
+    public function deleteFile($userId, Request $request)
+    {
+        $number = $request->get('number');
+        
+        Storage::delete('users/' . $userId . '/prefix_name_' . $number . '.mp3');
     }
 
     public function programWeeks($userId)

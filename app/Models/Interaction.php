@@ -146,9 +146,10 @@ class Interaction extends BaseModel
         DB::commit();
     }
 
-    public static function mapInteractions($interactions, $user, $displayCategories = true)
+    public static function mapInteractions($interactions, $user, $prefixFiles, $displayCategories = true)
     {
-        return $interactions->map(function($interaction) use ($user, $displayCategories) {
+
+        return $interactions->map(function($interaction) use ($user, $prefixFiles, $displayCategories) {
             $values = [
                 ...$interaction->getAttributes(),
                 'guidelines'    => $interaction->guidelines,
@@ -173,6 +174,7 @@ class Interaction extends BaseModel
 
             $audioFile = $interaction->selectAudioFile($user->details);
             if ($audioFile) {
+                $values['name_prefix'] = $prefixFiles->random();
                 $values['audio'] = url(Storage::url($audioFile->file));
                 $values['duration'] = $audioFile->duration;
             }

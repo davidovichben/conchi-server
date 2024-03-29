@@ -22,6 +22,8 @@ class ProgramDayController extends Controller
 
         $user = Auth::user()->load('details')->load('subCategories')->load('sentences');
 
+        $prefixFiles = $user->getPrefixFiles();
+
         $programDay->load('interactions')
             ->load(['categories' => function ($query) use ($user) {
                 $query->with(['subCategories' => function ($query) use ($user) {
@@ -37,14 +39,14 @@ class ProgramDayController extends Controller
                 $query->where('user_id', Auth::id());
             }]);
 
-        $categories = $programDay->categories->mapWithKeys(function ($category) {
+        $categories = $programDay->categories->mapWithKeys(function ($category) use ($prefixFiles) {
             $values = [
                 'name'  => $category->name,
                 'image' => url(Storage::url($category->image))
             ];
 
             if ($category->should_display === 'interactions') {
-                $values['interactions'] = Interaction::mapInteractions($category->interactions, Auth::user());
+                $values['interactions'] = Interaction::mapInteractions($category->interactions, Auth::user(), $prefixFiles);
             } else {
                 $values['subCategories'] = $category->subCategories;
             }
@@ -73,11 +75,11 @@ class ProgramDayController extends Controller
             $interactions = $options->pluck('interaction');
 
             $categories['afternoon'] = [
-                'interactions' => Interaction::mapInteractions($interactions, $user)
+                'interactions' => Interaction::mapInteractions($interactions, $user, $prefixFiles)
             ];
         }
 
-        $interactions = Interaction::mapInteractions($interactions, $user);
+        $interactions = Interaction::mapInteractions($interactions, $user, $prefixFiles);
 
         $nextDay = $programDay->nextDay();
 
@@ -111,8 +113,6 @@ class ProgramDayController extends Controller
 
         $weekDaysCount = ProgramDay::where('week_id', $programDay->week_id)->count();
         $completedDaysCount = UserProgramDay::where('completed', 1)->where('user_id', Auth::id())->count();
-
-        var_dump($weekDaysCount, $completedDaysCount);
 
         if ($weekDaysCount === $completedDaysCount) {
              UserProgramWeek::where('user_id', Auth::id())
