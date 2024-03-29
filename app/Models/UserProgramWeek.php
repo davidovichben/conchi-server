@@ -8,7 +8,7 @@ class UserProgramWeek extends BaseModel
 {
     use HasFactory;
 
-    protected $fillable = ['status', 'week', 'program_id', 'user_id'];
+    protected $fillable = ['status', 'program_week_id', 'user_id'];
 
     public static function saveInstance($values)
     {
