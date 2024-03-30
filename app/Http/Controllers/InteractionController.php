@@ -5,38 +5,74 @@ namespace App\Http\Controllers;
 use App\Models\Interaction;
 
 use App\Models\InteractionCategory;
+use App\Models\InteractionSubCategory;
 use App\Models\UserInteraction;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 
 class InteractionController extends Controller
 {
     public function categories()
     {
-        $categories = InteractionCategory::all();
+        $categories = InteractionCategory::all()->map(function ($category) {
+            return [
+                ...$category->toArray(),
+                'image' => url(Storage::url($category->image))
+            ];
+        });
 
         return response($categories, 200);
     }
 
-    public function byCategory(InteractionCategory $category)
+    public function byCategory(InteractionCategory $interactionCategory)
     {
-        $query = Interaction::getQuery(Auth::id());
+        $interactions = Interaction::where('category_id', $interactionCategory->id)
+            ->with('audioFiles')
+            ->with('category')
+            ->with(['userInteractions' => function($query) {
+                $query->where('user_id', Auth::id());
+            }])
+            ->orderBy('show_order', 'asc')
+            ->get();
 
-        $rows = $query->where('category_id', $category->id)->get();
 
-        $category->interactions = Interaction::getInteractions($rows);
+        $prefixFiles = Auth::user()->getPrefixFiles();
 
-        return response($category, 200);
+        $interactions = Interaction::mapInteractions($interactions, Auth::user(), $prefixFiles);
+
+        return response([...$interactionCategory->toArray(), 'interactions' => $interactions], 200);
     }
+
+    public function bySubCategory($subCategoryId)
+    {
+        $interactions = Interaction::where('sub_category_id', $subCategoryId)
+            ->with('audioFiles')
+            ->with('subCategory')
+            ->with(['userInteractions' => function($query) {
+                $query->where('user_id', Auth::id());
+            }])
+            ->orderBy('show_order', 'asc')
+            ->get();
+
+
+        $prefixFiles = Auth::user()->getPrefixFiles();
+
+        $interactions = Interaction::mapInteractions($interactions, Auth::user(), $prefixFiles, false);
+        return response($interactions, 200);
+    }
+
 
     public function like($interactionId, Request $request)
     {
-        $liked = $request->get('liked') ? 1 : 0;
+        $values = [
+            'liked'             => $request->get('liked') ? 1 : 0,
+            'user_id'           => Auth::id(),
+            'interaction_id'    => $interactionId
+        ];
 
-        UserInteraction::where('interaction_id', $interactionId)
-            ->where('user_id', Auth::id())
-            ->update(['liked' => $liked]);
+        UserInteraction::upsertInstance($values);
 
         return response(['message' => 'Interaction liked'], 200);
     }
@@ -47,13 +83,24 @@ class InteractionController extends Controller
             ->where('user_id', Auth::id())
             ->first();
 
-        if ($userInteraction->status === 'completed') {
+        if ($userInteraction && $userInteraction->status === 'completed') {
             return response(['message' => 'Status already set'], 400);
         }
 
-        $status = $userInteraction->status === 'initial' ? 'started' : 'completed';
-        $userInteraction->update(['status' => $status]);
+        $values = [
+            'status'            => !$userInteraction || $userInteraction->status === 'initial' ? 'started' : 'completed',
+            'user_id'           => Auth::id(),
+            'interaction_id'    => $interactionId
+        ];
+
+        UserInteraction::upsertInstance($values);
 
         return response(['message' => 'Interaction status updated'], 200);
+    }
+
+    public function byGeneralSentences()
+    {
+        $category = InteractionCategory::where('role', 'general_sentences')->with('interactions')->first();
+        return response([...$category->toArray(), 'interactions' => $category->interactions], 200);
     }
 }

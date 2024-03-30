@@ -14,15 +14,16 @@ return new class extends Migration
         Schema::create('interactions', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('category_id')->nullable();
-            $table->unsignedTinyInteger('duration')->comment('In minutes')->nullable();
+            $table->unsignedBigInteger('sub_category_id')->nullable();
+            $table->unsignedTinyInteger('show_order')->nullable();
             $table->string('title')->nullable();
             $table->text('description')->nullable();
             $table->json('guidelines')->nullable();
-            $table->string('audio', 80);
 
             $table->timestamps();
 
-            $table->foreign('category_id')->references('id')->on('interaction_categories');
+            $table->foreign('category_id')->references('id')->on('interaction_categories')->nullOnDelete();
+            $table->foreign('sub_category_id')->references('id')->on('interaction_sub_categories')->nullOnDelete();
         });
     }
 

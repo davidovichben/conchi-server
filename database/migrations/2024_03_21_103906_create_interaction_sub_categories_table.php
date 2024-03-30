@@ -11,12 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('images', function (Blueprint $table) {
+        Schema::create('interaction_sub_categories', function (Blueprint $table) {
             $table->id();
-            $table->string('key_name', 255)->unique();
-            $table->string('path', 255);
-            $table->string('screen', 150);
+            $table->unsignedBigInteger('interaction_category_id', 100);
+            $table->string('name', 255);
             $table->timestamps();
+
+            $table->foreign('interaction_category_id')->references('id')->on('interaction_categories')->cascadeOnDelete();
         });
     }
 
@@ -25,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('images');
+        Schema::dropIfExists('interaction_sub_categories');
     }
 };

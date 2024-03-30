@@ -16,7 +16,8 @@ return new class extends Migration
             $table->string('name');
             $table->text('description')->nullable();
             $table->string('image', 80)->nullable();
-
+            $table->enum('role', ['hobbies', 'power_sentences', 'option_sentences', 'general_sentences'])->nullable();
+            $table->enum('should_display', ['interactions', 'sub_categories'])->default('interactions');
             $table->timestamps();
 
             $table->unique('name');

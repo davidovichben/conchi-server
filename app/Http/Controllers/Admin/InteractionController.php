@@ -3,18 +3,35 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Models\Interaction;
+use App\Models\InteractionCategory;
 use App\Services\DataTableManager;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class InteractionController extends BaseController
 {
     public function index(Request $request)
     {
-        $query = Interaction::join('interaction_categories as ic', 'ic.id', 'interactions.category_id')
-            ->selectRaw('interactions.*, ic.name as category')
+        $query = Interaction::with('audioFiles')
+            ->leftJoin('interaction_categories as ic', 'ic.id', 'interactions.category_id')
+            ->leftJoin('user_interactions as ui', 'ui.interaction_id', 'interactions.id')
+            ->selectRaw(
+                'interactions.*,
+                ic.name as category,
+                SUM(liked = 1) AS total_liked,
+                ROUND(SUM(liked = 1) / COUNT(*) * 100) AS liked_percentage,
+                ROUND(SUM(CASE WHEN status = "initial" THEN 1 ELSE 0 END) / COUNT(*) * 100) AS initial_percentage,
+                ROUND(SUM(CASE WHEN status = "started" THEN 1 ELSE 0 END) / COUNT(*) * 100) AS started_percentage,
+                ROUND(SUM(CASE WHEN status = "completed" THEN 1 ELSE 0 END) / COUNT(*) * 100) AS completed_percentage'
+            )
+            ->groupBy('interactions.id')
             ->withCount('days');
 
-        $columns = ['title', 'description', 'category'];
+        $columns = [
+            'title', 'description', 'show_order', 'category', 'total_liked',
+            'liked_percentage', 'initial_percentage', 'started_percentage', 'completed_percentage'
+        ];
+
         $paginator = DataTableManager::getInstance($query, $request->all(), $columns)->getQuery();
 
         return $this->dataTableResponse($paginator);
@@ -24,14 +41,14 @@ class InteractionController extends BaseController
     {
         Interaction::createInstance($request->post());
 
-        return response(['message' => 'Category created'], 200);
+        return response(['message' => 'Interaction created'], 200);
     }
 
     public function update(Request $request, Interaction $interaction)
     {
         $interaction->updateInstance($request->post());
 
-        return response(['message' => 'Category updated'], 200);
+        return response(['message' => 'Interaction updated'], 200);
     }
 
     public function destroy(Interaction $interaction)
@@ -41,9 +58,19 @@ class InteractionController extends BaseController
         return response(['message' => 'Interaction deleted'], 200);
     }
 
-    public function select()
+    public function select(Request $request)
     {
-        $interactions = Interaction::all();
-        return response($interactions, 200);
+        $query = Interaction::query();
+        if ($request->get('title')) {
+            $query->where('title', 'like', '%' . $request->get('title') . '%');
+        }
+
+        if ($request->get('category_role') === 'option_sentences') {
+            $category = InteractionCategory::where('role', 'option_sentences')->select('id')->first();
+
+            $query->where('category_id', $category->id);
+        }
+
+        return response($query->get(), 200);
     }
 }

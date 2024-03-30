@@ -20,6 +20,7 @@ return new class extends Migration
             $table->enum('status', ['locked', 'completed', 'active']);
             $table->timestamps();
 
+            $table->unique(['user_id', 'program_week_id']);
             $table->foreign('user_id')->references('id')->on('users')->cascadeOnDelete();
             $table->foreign('program_week_id')->references('id')->on('program_weeks')->cascadeOnDelete();
         });

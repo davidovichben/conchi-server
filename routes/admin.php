@@ -2,23 +2,28 @@
 
 use App\Http\Controllers\Admin\ArticleController;
 use App\Http\Controllers\Admin\ContentPackageController;
-use App\Http\Controllers\Admin\HobbyController;
 use App\Http\Controllers\Admin\ImageController;
 use App\Http\Controllers\Admin\InteractionCategoryController;
+use App\Http\Controllers\Admin\InteractionSubCategoryController;
+use App\Http\Controllers\Admin\PageController;
 use App\Http\Controllers\Admin\PaymentPackageController;
 use App\Http\Controllers\Admin\ProgramDayController;
 use App\Http\Controllers\Admin\ProgramReportOptionController;
 use App\Http\Controllers\Admin\ProgramReportQuestionController;
 use App\Http\Controllers\Admin\ProgramWeekController;
+use App\Http\Controllers\Admin\ReportController;
 use App\Http\Controllers\Admin\TranslationController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\InteractionController;
 use Illuminate\Support\Facades\Route;
 
 Route::post('/users/search', [UserController::class, 'index']);
+Route::put('/users/{userId}/upload', [UserController::class, 'upload']);
+Route::delete('/users/{userId}/deleteFile', [UserController::class, 'deleteFile']);
 Route::get('/users/{user}', [UserController::class, 'show']);
 Route::get('/users/{userId}/programWeeks', [UserController::class, 'programWeeks']);
 Route::get('/users/{userId}/programDays', [UserController::class, 'programDays']);
+Route::put('/users/{user}/activate', [UserController::class, 'activate']);
 
 Route::post('/translations/search', [TranslationController::class, 'index']);
 Route::put('/translations/{translation}', [TranslationController::class, 'update']);
@@ -34,13 +39,17 @@ Route::post('/interactionCategories/search', [InteractionCategoryController::cla
 Route::get('/interactionCategories/select', [InteractionCategoryController::class, 'select']);
 Route::resource('/interactionCategories', InteractionCategoryController::class)->except('index');
 
+Route::post('/interactionSubCategories/search', [InteractionSubCategoryController::class, 'index']);
+Route::get('/interactionSubCategories/select', [InteractionSubCategoryController::class, 'select']);
+Route::resource('/interactionSubCategories', InteractionSubCategoryController::class)->except('index');
+
 Route::resource('/weeks', ProgramWeekController::class);
 Route::put('/weeks/{programWeek}/activate', [ProgramWeekController::class, 'activate']);
 
 Route::post('/days', [ProgramDayController::class, 'store']);
 Route::delete('/days/{programDay}', [ProgramDayController::class, 'destroy']);
-Route::post('/days/{dayId}/interaction', [ProgramDayController::class, 'storeInteraction']);
-Route::delete('/days/{dayId}/interaction', [ProgramDayController::class, 'deleteInteraction']);
+Route::post('/days/{dayId}/activity', [ProgramDayController::class, 'storeActivity']);
+Route::delete('/days/{dayId}/activity', [ProgramDayController::class, 'deleteActivity']);
 
 Route::resource('/reportQuestions', ProgramReportQuestionController::class);
 Route::resource('/reportOptions', ProgramReportOptionController::class);
@@ -54,5 +63,7 @@ Route::resource('/paymentPackages', PaymentPackageController::class)->except('in
 Route::post('/contentPackages/search', [ContentPackageController::class, 'index']);
 Route::resource('/contentPackages', ContentPackageController::class)->except('index');
 
-Route::post('/hobbies/search', [HobbyController::class, 'index']);
-Route::resource('/hobbies', HobbyController::class)->except('index');
+Route::post('/pages/search', [PageController::class, 'index']);
+Route::put('/pages/{page}', [PageController::class, 'update']);
+
+Route::get('/reports', [ReportController::class, 'index']);

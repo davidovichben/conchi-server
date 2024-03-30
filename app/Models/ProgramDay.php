@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\MorphToMany;
 
 class ProgramDay extends BaseModel
 {
@@ -18,9 +19,14 @@ class ProgramDay extends BaseModel
         return $this->hasMany(UserProgramDay::class);
     }
 
-    public function interactions()
+    public function interactions(): MorphToMany
     {
-        return $this->belongsToMany(Interaction::class, 'interaction_days', 'day_id')->withPivot('period');
+        return $this->morphedByMany(Interaction::class, 'program_day_activity')->withPivot('period');
+    }
+
+    public function categories(): MorphToMany
+    {
+        return $this->morphedByMany(InteractionCategory::class, 'program_day_activity')->withPivot('period');
     }
 
     public static function createInstance($weekId)

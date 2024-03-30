@@ -4,11 +4,14 @@ namespace App\Http\Controllers;
 
 use App\Models\Article;
 use App\Models\ContentPackage;
-use App\Models\Hobby;
+use App\Models\Image;
+use App\Models\InteractionCategory;
+use App\Models\Page;
+use App\Models\ProgramWeek;
 use App\Models\Translation;
-use const App\Constants\EnumList\Enums;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Storage;
 
 class GeneralController extends Controller
 {
@@ -24,40 +27,73 @@ class GeneralController extends Controller
         return response($translations, 200);
     }
 
-    public function options(Request $request): Response
+    public function images(): Response
     {
-        $enum = config('constants.enums.' . $request->name);
-        if (!$enum) {
-            return response(['message' => 'No options found'], 422);
-        }
+        $images = Image::select('key_name', 'path')
+            ->get()
+            ->mapWithKeys(function($row) {
+                return [$row->key_name => url(Storage::url($row->path))];
+            });
 
-        return response($enum, 200);
+        return response($images, 200);
     }
 
     public function hobbies()
     {
-        return response(Hobby::all(), 200);
+        $category = InteractionCategory::where('role', 'hobbies')->with('subCategories')->first();
+        $subCategories = $category->subCategories->map(function ($subCategory) {
+            return [
+                ...$subCategory->toArray(),
+                'image' => $subCategory->image ? url(Storage::url($subCategory->image)) : null
+            ];
+        });
+
+        return response($subCategories, 200);
     }
 
     public function sentences()
     {
-        $sentences = Translation::select('id', 'name')
-            ->where('language', 'he')
-            ->where('related_to', 'sentences')
-            ->get();
+        $category = InteractionCategory::where('role', 'power_sentences')->with(['interactions' => function ($query) {
+            $query->select('id', 'title', 'category_id')->orderBy('show_order', 'asc');
+        }])
+        ->first();
 
-        return response($sentences, 200);
+        return response($category->interactions, 200);
+    }
+
+    public function options(Request $request): Response
+    {
+        $options = config('constants.' . $request->name);
+        if (!$options) {
+            return response(['message' => 'No options found'], 422);
+        }
+
+        return response($options, 200);
     }
 
     public function news()
     {
         $articles = Article::all()->mapToGroups(function ($article) {
-            return [$article->position => $article];
+            return [$article->position => [
+                ...$article->toArray(),
+                'image' => $article->image ? url(Storage::url($article->image)) : null
+            ]];
         });
 
         return response([
             'contentPackages'   => ContentPackage::all(),
             'articles'          => $articles
         ], 200);
+    }
+
+    public function article(Article $article)
+    {
+        return response($article, 200);
+    }
+
+    public function page(Request $request)
+    {
+        $page = Page::where('type', $request->get('type'))->select('title', 'content')->first();
+        return response($page, 200);
     }
 }

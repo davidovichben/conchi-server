@@ -2,10 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Hobby;
+use App\Models\InteractionCategory;
+use App\Models\InteractionSubCategory;
 use App\Models\Translation;
 use App\Models\UserDetail;
-use App\Models\UserHobby;
+use App\Models\UserSubCategory;
 use App\Models\UserSentence;
 use App\Services\UploadedFile;
 use Illuminate\Http\Request;
@@ -19,7 +20,7 @@ class UserDetailsController extends Controller
     public function show()
     {
         $details = UserDetail::where('user_id', Auth::id())->first();
-        $hobbies = UserHobby::where('user_id', Auth::id())->get()->pluck('hobby_id');
+        $hobbies = UserSubCategory::where('user_id', Auth::id())->get()->pluck('interaction_sub_category_id');
         $sentences = UserSentence::where('user_id', Auth::id())->get()->pluck('sentence_id');
 
         $values = [
@@ -40,8 +41,8 @@ class UserDetailsController extends Controller
 
     public function update(Request $request)
     {
-        $familyStatuses = collect(config('constants.enums.family_status'))->pluck('id');
-        $childPositions = collect(config('constants.enums.child_position'))->pluck('id');
+        $familyStatuses = collect(config('constants.family_status'))->pluck('id');
+        $childPositions = collect(config('constants.child_position'))->pluck('id');
 
         $validated = $request->validate([
             'family_status'         => [Rule::in($familyStatuses)],
@@ -69,38 +70,37 @@ class UserDetailsController extends Controller
         return response(['message' => 'Details updated'], 200);
     }
 
-    public function updateHobbies(Request $request)
+    public function updateSubCategories(Request $request)
     {
-        $hobbies = Hobby::whereIn('id', $request->collect('sentences'))
+        $subCategories = InteractionSubCategory::whereIn('id', $request->collect('subCategories'))
             ->select('id')
             ->get();
 
-        UserHobby::where('user_id', Auth::id())->delete();
+        UserSubCategory::where('user_id', Auth::id())->delete();
 
-        $insertValues = $hobbies->map(function($hobby) {
-            return ['user_id' => Auth::id(), 'hobby_id' => $hobby->id];
+        $insertValues = $subCategories->map(function($subCategory) {
+            return ['user_id' => Auth::id(), 'interaction_sub_category_id' => $subCategory->id];
         });
 
-        UserHobby::insert($insertValues->toArray());
+        UserSubCategory::insert($insertValues->toArray());
 
         DB::commit();
 
-        return response(['message' => 'Hobbies updated'], 200);
+        return response(['message' => 'Sub categories updated'], 200);
     }
 
     public function updateSentences(Request $request)
     {
         DB::beginTransaction();
 
-        $translations = Translation::where('related_to', 'sentences')
-            ->whereIn('id', $request->collect('sentences'))
-            ->select('id')
-            ->get();
-
         UserSentence::where('user_id', Auth::id())->delete();
 
-        $insertValues = $translations->map(function($translation) {
-            return ['user_id' => Auth::id(), 'sentence_id' => $translation->id];
+        $category = InteractionCategory::where('role', 'power_sentences')->with(['interactions' => function ($query) use ($request) {
+            $query->select('id', 'category_id')->whereIn('id', $request->collect('sentences'));
+        }])->first();
+
+        $insertValues = $category->interactions->map(function($interaction) {
+            return ['user_id' => Auth::id(), 'sentence_id' => $interaction->id];
         });
 
         UserSentence::insert($insertValues->toArray());

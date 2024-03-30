@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\InteractionDay;
+use App\Models\ProgramDayActivity;
 use App\Models\ProgramDay;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -32,20 +32,19 @@ class ProgramDayController extends Controller
         return response(['message' => 'Day deleted'], 200);
     }
 
-    public function storeInteraction($dayId, Request $request)
+    public function storeActivity($dayId, Request $request)
     {
-        InteractionDay::createInstance($dayId, $request->post());
+        ProgramDayActivity::upsertInstance($dayId, $request->post());
 
-        return response(['message' => 'interaction added to day'], 200);
+        return response(['message' => 'Activity added to day'], 200);
     }
 
-    public function deleteInteraction($dayId, Request $request)
+    public function deleteActivity($dayId, Request $request)
     {
-        InteractionDay::where('day_id', $dayId)
-            ->where('interaction_id', $request->get('interactionId'))
+        ProgramDayActivity::where('program_day_id', $dayId)
             ->where('period', $request->get('period'))
             ->delete();
 
-        return response(['message' => 'interaction removed from day'], 200);
+        return response(['message' => 'Activity removed from day'], 200);
     }
 }

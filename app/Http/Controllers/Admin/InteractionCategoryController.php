@@ -12,10 +12,15 @@ class InteractionCategoryController extends BaseController
     {
         $query = InteractionCategory::withCount('interactions');
 
-        $columns = ['name', 'description', 'interactions_count'];
+        $columns = ['name', 'description', 'interactions_count', 'should_display'];
         $paginator = DataTableManager::getInstance($query, $request->all(), $columns)->getQuery();
 
         return $this->dataTableResponse($paginator);
+    }
+
+    public function show(InteractionCategory $interactionCategory)
+    {
+        return response($interactionCategory, 200);
     }
 
     public function store(Request $request)
@@ -33,6 +38,10 @@ class InteractionCategoryController extends BaseController
     }
     public function destroy(InteractionCategory $interactionCategory)
     {
+        if ($interactionCategory->role) {
+            return response(['message' => 'You can not delete this category'], 400);
+        }
+
         $interactionCategory->deleteInstance();
 
         return response(['message' => 'Category deleted'], 200);
@@ -40,7 +49,7 @@ class InteractionCategoryController extends BaseController
 
     public function select()
     {
-        $categories = InteractionCategory::select('id', 'name')->get();
+        $categories = InteractionCategory::select('id', 'name', 'image')->get();
         return response($categories, 200);
     }
 }

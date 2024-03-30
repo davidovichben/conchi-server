@@ -11,15 +11,16 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('interaction_days', function (Blueprint $table) {
+        Schema::create('audio_files', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('interaction_id');
-            $table->unsignedBigInteger('day_id');
-            $table->enum('period', ['morning', 'afternoon', 'evening', 'night']);
+            $table->unsignedBigInteger('interaction_id', 100);
+            $table->string('file', 255);
+            $table->enum('gender', ['male', 'female'])->nullable();
+            $table->enum('parents_status', ['couple', 'single_male', 'single_female'])->nullable();
+            $table->unsignedSmallInteger('duration')->nullable();
             $table->timestamps();
 
             $table->foreign('interaction_id')->references('id')->on('interactions')->cascadeOnDelete();
-            $table->foreign('day_id')->references('id')->on('program_days')->cascadeOnDelete();
         });
     }
 
@@ -28,6 +29,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('interaction_days');
+        Schema::dropIfExists('audio_files');
     }
 };

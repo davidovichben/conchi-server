@@ -3,37 +3,30 @@
 namespace App\Models;
 
 use App\Services\UploadedFile;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
-class InteractionCategory extends BaseModel
+class InteractionSubCategory extends BaseModel
 {
-    protected $fillable = ['name', 'description', 'should_display'];
+    protected $fillable = ['interaction_category_id', 'name'];
 
-    use HasFactory;
-
-    public function interactions()
+    public function interactionCategory()
     {
-        return $this->hasMany(Interaction::class, 'category_id');
-    }
-
-    public function subCategories()
-    {
-        return $this->hasMany(InteractionSubCategory::class);
+        return $this->belongsTo(InteractionCategory::class);
     }
 
     public static function createInstance($values)
     {
-        $category = new self();
-        $category->fill($values);
+        $subCategory = new self();
+        $subCategory->fill($values);
 
         if ($values['image']) {
-           $category->uploadImage($values['image']);
+            $subCategory->uploadImage($values['image']);
         }
 
-        $category->save();
+        $subCategory->save();
+
+        return $subCategory;
     }
 
     public function updateInstance($values)
@@ -51,21 +44,15 @@ class InteractionCategory extends BaseModel
 
     public function deleteInstance()
     {
-        DB::beginTransaction();
-
-        ProgramDayActivity::where('program_day_activity_id', $this->id)->where('program_day_activity_type', 'App\Models\InteractionCategory')->delete();
-
         $this->deleteImage();
         $this->delete();
-
-        DB::commit();
     }
 
     public function uploadImage($image) {
-        $path = 'categories/' . Str::random(32);
+        $path = 'sub-categories/' . Str::random(32);
 
         $file = new UploadedFile($image);
-        $file->store( $path);
+        $file->store($path);
 
         $this->image = $path . '.' . $file->ext;
     }

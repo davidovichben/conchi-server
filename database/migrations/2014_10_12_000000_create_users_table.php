@@ -20,10 +20,11 @@ return new class extends Migration
             $table->char('mobile', 10)->unique()->nullable();
             $table->string('email', 150)->unique();
             $table->char('password', 64)->nullable();
+            $table->boolean('is_active')->default(true);
             $table->rememberToken();
             $table->timestamps();
 
-            $table->foreign('payment_package_id')->references('id')->on('payment_packages');
+            $table->foreign('payment_package_id')->references('id')->on('payment_packages')->nullOnDelete();
         });
     }
 

@@ -11,17 +11,16 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('user_interactions', function (Blueprint $table) {
-            $table->id();
+        Schema::create('user_sub_categories', function (Blueprint $table) {
             $table->unsignedBigInteger('user_id');
-            $table->unsignedBigInteger('interaction_id');
-            $table->boolean('liked')->default(0);
-            $table->enum('status', ['initial', 'started', 'completed'])->default('initial');
+            $table->unsignedBigInteger('sub_category_id');
+
             $table->timestamps();
 
-            $table->unique(['user_id', 'interaction_id']);
+            $table->primary(['user_id', 'sub_category_id']);
+
             $table->foreign('user_id')->references('id')->on('users')->cascadeOnDelete();
-            $table->foreign('interaction_id')->references('id')->on('interactions')->cascadeOnDelete();
+            $table->foreign('sub_category_id')->references('id')->on('interaction_sub_categories')->cascadeOnDelete();
         });
     }
 
@@ -30,6 +29,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('user_interaction');
+        Schema::dropIfExists('user_sub_categories');
     }
 };

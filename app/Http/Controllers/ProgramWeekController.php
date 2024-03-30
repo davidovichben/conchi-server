@@ -10,6 +10,7 @@ use App\Models\UserProgramWeek;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 
 class ProgramWeekController extends Controller
 {
@@ -24,7 +25,9 @@ class ProgramWeekController extends Controller
                 $week->id => [
                     'id'            => $week['id'],
                     'description'   => $week['description'],
-                    'status'        => $week['userWeeks'][0]['status']
+                    'number'        => $week['number'],
+                    'status'        => count($week['userWeeks']) > 0 ? $week['userWeeks'][0]['status'] : 'locked',
+                    'image'         => url(Storage::url($week->image))
                 ]
             ];
         });
@@ -41,7 +44,7 @@ class ProgramWeekController extends Controller
             return [
                 $day->id => [
                     'id'        => $day['id'],
-                    'completed' => $day['userDays'][0]['completed']
+                    'completed' => count($day['userDays']) > 0 ? $day['userDays'][0]['completed'] : false
                 ]
             ];
         });

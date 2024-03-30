@@ -15,12 +15,18 @@ class UploadedFile
         $base64Start = strpos($string, 'base64,');
 
         $this->ext = substr($string, $extStart + 1, $base64Start - $extStart - 2);
+        $this->ext = $this->ext === 'svg+xml' ? 'svg' : $this->ext;
+
         $this->contents = base64_decode(substr($string, $base64Start + 7));
     }
 
     public function store($path, $ext = null)
     {
-        $fileName = $path . '.' . ($ext ?? $this->ext);
+        $fileName = $path;
+        if ($ext !== false) {
+            $fileName .= '.' . ($ext ?? $this->ext);
+        }
+
         Storage::put($fileName, $this->contents);
     }
 }

@@ -2,31 +2,38 @@
 
 namespace App\Models;
 
-use App\Services\UploadedFile;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Str;
 
 class Interaction extends BaseModel
 {
     use HasFactory;
 
-    protected $fillable = ['title', 'description', 'category_id', 'guidelines'];
+    protected $fillable = ['title', 'description', 'category_id', 'sub_category_id', 'guidelines', 'show_order'];
 
     protected $casts = [
         'guidelines'    => 'json'
     ];
+
+    public function audioFiles()
+    {
+        return $this->hasMany(AudioFile::class);
+    }
 
     public function category()
     {
         return $this->belongsTo(InteractionCategory::class, 'category_id');
     }
 
+    public function subCategory()
+    {
+        return $this->belongsTo(InteractionSubCategory::class, 'sub_category_id');
+    }
+
     public function days()
     {
-        return $this->belongsToMany(ProgramDay::class, 'interaction_days', 'interaction_id', 'day_id');
+        return $this->morphToMany(ProgramDay::class, 'program_day_activity');
     }
 
     public function userInteractions()
@@ -34,81 +41,145 @@ class Interaction extends BaseModel
         return $this->hasMany(UserInteraction::class);
     }
 
-    public static function getAudioFile($interaction)
+    public function selectAudioFile($userDetails)
     {
-        $file = 'sample.mp3';
+        if ($this->audioFiles->count() === 0) {
+            return null;
+        }
 
-        return [
-            'file'      => 'data:audio/webm;codecs=opus;base64,' . base64_encode(Storage::get($file)),
-            'duration'  => 19
-        ];
+        // Test for child gender first
+
+        $genderFilteredFiles = $this->audioFiles->where(function($audioFile) use ($userDetails) {
+            return $userDetails->child_gender === $audioFile->gender;
+        });
+
+
+        // Test for parent status
+
+        $audioFile = $genderFilteredFiles->first(function($audioFile) use ($userDetails) {
+            $isCouple = $userDetails->family_status === 'married' || $userDetails->family_status === 'divorced';
+            if ($isCouple && $audioFile->parents_status === 'couple') {
+                return true;
+            }
+
+            if (!$isCouple) {
+                $isFather = $userDetails->parent1_role === 'father' || $userDetails->parent2_role === 'father';
+                if ($isFather && $audioFile->parents_status === 'single_male') {
+                    return true;
+                }
+
+                $isMother = $userDetails->parent1_role === 'mother' || $userDetails->parent2_role === 'mother';
+                if ($isMother && $audioFile->parents_status === 'single_female') {
+                    return true;
+                }
+            }
+
+            return false;
+        });
+
+        if ($audioFile) {
+            return $audioFile;
+        }
+
+        return $genderFilteredFiles[0] ?? $this->audioFiles[0];
     }
 
     public static function createInstance($values)
     {
+        DB::beginTransaction();
+
         $interaction = new self();
         $interaction->fill($values);
 
-        if ($values['audio']) {
-            $interaction->uploadFile($values['audio']);
-        }
-
         $interaction->save();
+
+        AudioFile::createInstances($interaction->id, $values['audio_files']);
+
+        DB::commit();
     }
 
     public function updateInstance($values)
     {
-        if ($values['audio']) {
-            $this->deleteAudio();
-            $this->uploadFile($values['audio']);
-        }
+        DB::beginTransaction();
+
+        $audioFiles = collect($values['audio_files']);
+
+        // Insert files
+
+        [$newAudioFiles, $audioFilesToUpdate] = $audioFiles->partition(function ($value) {
+            return !$value['id'];
+        });
+
+        AudioFile::createInstances($this->id, $newAudioFiles->toArray());
+
+        // Update files
+
+        AudioFile::updateInstances($audioFilesToUpdate, $this->id);
+
+        // Delete files
+
+        $audioFilesToDelete = $this->audioFiles()->whereNotIn('id', $audioFiles->pluck('id'));
+
+        $audioFilesToDelete->get()->each(function($audioFile) {
+            Storage::delete($audioFile->file);
+        });
+
+        $audioFilesToDelete->delete();
 
         $this->fill($values);
         $this->update();
-    }
 
-    public function uploadFile($audio) {
-        $path = 'interactions/' . Str::random(32);
-
-        $file = new UploadedFile($audio);
-        $file->store('public/' . $path);
-
-        $this->audio = $path . '.' . $file->ext;
+        DB::commit();
     }
 
     public function deleteInstance()
     {
-        $this->deleteAudio();
+        DB::beginTransaction();
+
+        Storage::deleteDirectory('interactions/' . $this->id);
+
+        ProgramDayActivity::where('program_day_activity_id', $this->id)->where('program_day_activity_type', 'App\Models\Interaction')->delete();
+
+        $this->audioFiles()->delete();
         $this->delete();
+
+        DB::commit();
     }
 
-    public function deleteAudio() {
-        Storage::delete('public/' . $this->audio);
-    }
-
-    public static function getQuery()
+    public static function mapInteractions($interactions, $user, $prefixFiles, $displayCategories = true)
     {
-        return DB::table('interactions', 'i')
-            ->join('interaction_categories as ic', 'ic.id', 'i.category_id')
-            ->leftJoin('user_interactions as ui', function($query) {
-                return $query->on('interaction_id', 'i.id')->where('user_id', Auth::id());
-            })
-            ->selectRaw('i.id, ui.liked, ui.status, ic.name as category, i.guidelines, i.period, i.duration, i.title, i.description');
-    }
 
-    public static function getInteractions($rows)
-    {
-        return $rows->map(function($interaction) {
-            $file = 'sample.mp3';
-
-            return [
-                ...(array)$interaction,
-                'guidelines'    => json_decode($interaction->guidelines),
-                'audio'         => [
-                    'file'      => 'data:audio/webm;codecs=opus;base64,' . base64_encode(Storage::get($file)),
-                    'duration'  => 19
-                ]
+        return $interactions->map(function($interaction) use ($user, $prefixFiles, $displayCategories) {
+            $values = [
+                ...$interaction->getAttributes(),
+                'guidelines'    => $interaction->guidelines,
+                'liked'         => $interaction->userInteractions->count() > 0,
+                'status'        => $interaction->userInteractions->count() > 0 ? $interaction->userInteractions->first()->status : null,
+                'category'      => $displayCategories && $interaction->category ? [
+                    'id'    => $interaction->category->id,
+                    'name'  => $interaction->category->name,
+                    'image' => $interaction->category->image ? url(Storage::url($interaction->category->image)) : null
+                ] : null,
+                'subCategory'   => !$displayCategories && $interaction->subCategory ? [
+                    'id'    => $interaction->subCategory->id,
+                    'name'  => $interaction->subCategory->name,
+                    'image' => $interaction->subCategory->image ? url(Storage::url($interaction->subCategory->image)) : null
+                ] : null,
             ];
+
+            if ($interaction->userInteractions->count() > 0) {
+                $values['status'] = $interaction->userInteractions->first()->status;
+                $values['liked'] = $interaction->userInteractions->first()->liked;
+            }
+
+            $audioFile = $interaction->selectAudioFile($user->details);
+            if ($audioFile) {
+                $values['name_prefix'] = $prefixFiles->random();
+                $values['audio'] = url(Storage::url($audioFile->file));
+                $values['duration'] = $audioFile->duration;
+            }
+
+            return $values;
         });
     }
 }

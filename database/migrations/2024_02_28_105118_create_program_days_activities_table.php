@@ -11,15 +11,15 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('user_program_days', function (Blueprint $table) {
+        Schema::create('program_days_activities', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('user_id');
+            $table->unsignedBigInteger('program_day_activity_id')->index();
             $table->unsignedBigInteger('program_day_id');
-            $table->boolean('completed')->default(0);
+            $table->enum('program_day_activity_type', ['App\Models\Interaction', 'App\Models\InteractionCategory']);
+            $table->enum('period', ['morning', 'afternoon', 'evening', 'night']);
             $table->timestamps();
 
-            $table->unique(['user_id', 'program_day_id']);
-            $table->foreign('user_id')->references('id')->on('users')->cascadeOnDelete();
+            $table->unique(['program_day_id', 'period']);
             $table->foreign('program_day_id')->references('id')->on('program_days')->cascadeOnDelete();
         });
     }
@@ -29,6 +29,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('user_program_days');
+        Schema::dropIfExists('program_days_activities');
     }
 };

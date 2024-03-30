@@ -17,7 +17,7 @@ class ProgramReportOptionController extends Controller
 
     public function update(Request $request, ProgramReportOption $reportOption)
     {
-        $reportOption->update(['content' => $request->post('content')]);
+        $reportOption->updateInstance($request->post());
 
         return response(['message' => 'Option updated'], 200);
     }
