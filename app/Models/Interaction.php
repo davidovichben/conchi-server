@@ -12,10 +12,6 @@ class Interaction extends BaseModel
 
     protected $fillable = ['title', 'description', 'category_id', 'sub_category_id', 'guidelines', 'show_order'];
 
-    protected $casts = [
-        'guidelines'    => 'json'
-    ];
-
     public function audioFiles()
     {
         return $this->hasMany(AudioFile::class);
@@ -152,7 +148,8 @@ class Interaction extends BaseModel
         return $interactions->map(function($interaction) use ($user, $prefixFiles, $displayCategories) {
             $values = [
                 ...$interaction->getAttributes(),
-                'guidelines'    => $interaction->guidelines,
+                'description'   => str_replace('{child_name}', $user->details->child_name, $interaction->description),
+                'guidelines'    => str_replace('{child_name}', $user->details->child_name, $interaction->guidelines),
                 'liked'         => $interaction->userInteractions->count() > 0,
                 'status'        => $interaction->userInteractions->count() > 0 ? $interaction->userInteractions->first()->status : null,
                 'category'      => $displayCategories && $interaction->category ? [
@@ -174,7 +171,7 @@ class Interaction extends BaseModel
 
             $audioFile = $interaction->selectAudioFile($user->details);
             if ($audioFile) {
-                $values['name_prefix'] = $prefixFiles->random();
+                $values['name_prefix'] = $prefixFiles->count() > 0 ? $prefixFiles->random() : null;
                 $values['audio'] = url(Storage::url($audioFile->file));
                 $values['duration'] = $audioFile->duration;
             }

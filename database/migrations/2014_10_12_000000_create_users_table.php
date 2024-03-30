@@ -13,10 +13,10 @@ return new class extends Migration
     {
         Schema::create('users', function (Blueprint $table) {
             $table->id();
+            $table->unsignedBigInteger('city_id')->nullable();
             $table->unsignedBigInteger('payment_package_id')->nullable();
             $table->string('first_name', 30);
             $table->string('last_name', 30);
-            $table->string('city', 150)->nullable();
             $table->char('mobile', 10)->unique()->nullable();
             $table->string('email', 150)->unique();
             $table->char('password', 64)->nullable();
@@ -24,6 +24,7 @@ return new class extends Migration
             $table->rememberToken();
             $table->timestamps();
 
+            $table->foreign('city_id')->references('id')->on('cities')->nullOnDelete();
             $table->foreign('payment_package_id')->references('id')->on('payment_packages')->nullOnDelete();
         });
     }

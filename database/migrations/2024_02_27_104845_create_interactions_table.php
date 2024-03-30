@@ -18,7 +18,7 @@ return new class extends Migration
             $table->unsignedTinyInteger('show_order')->nullable();
             $table->string('title')->nullable();
             $table->text('description')->nullable();
-            $table->json('guidelines')->nullable();
+            $table->text('guidelines')->nullable();
 
             $table->timestamps();
 

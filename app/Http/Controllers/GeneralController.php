@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Article;
+use App\Models\City;
 use App\Models\ContentPackage;
 use App\Models\Image;
 use App\Models\InteractionCategory;
@@ -95,5 +96,11 @@ class GeneralController extends Controller
     {
         $page = Page::where('type', $request->get('type'))->select('title', 'content')->first();
         return response($page, 200);
+    }
+
+    public function cities()
+    {
+        $cities = City::orderBy('name')->get();
+        return response($cities, 200);
     }
 }

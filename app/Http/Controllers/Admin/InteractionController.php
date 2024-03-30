@@ -28,7 +28,7 @@ class InteractionController extends BaseController
             ->withCount('days');
 
         $columns = [
-            'title', 'description', 'show_order', 'category', 'total_liked',
+            'title', 'show_order', 'category', 'total_liked',
             'liked_percentage', 'initial_percentage', 'started_percentage', 'completed_percentage'
         ];
 
