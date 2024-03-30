@@ -15,9 +15,10 @@ class UserController extends BaseController
 {
     public function index(Request $request)
     {
-        $query = User::query();
+        $query = User::leftJoin('payment_packages as pp', 'users.payment_package_id', 'pp.id')
+            ->selectRaw('users.*, pp.title as payment_package');
 
-        $columns = ['first_name', 'last_name', 'email', 'mobile', 'payment_package_id', 'created_at'];
+        $columns = ['first_name', 'last_name', 'email', 'mobile', 'payment_package', 'created_at'];
         $paginator = DataTableManager::getInstance($query, $request->all(), $columns)->getQuery();
 
         return $this->dataTableResponse($paginator);
@@ -25,10 +26,11 @@ class UserController extends BaseController
 
     public function show(User $user)
     {
-        $user->paymentPackage;
-        $user->details;
-        $user->sentences;
-        $user->hobbies;
+        $user->load('paymentPackage');
+        $user->load('details');
+        $user->load('sentences');
+        $user->load('subCategories');
+        $user->load('city');
 
         return response([
             ...$user->toArray(),
@@ -51,7 +53,7 @@ class UserController extends BaseController
     public function deleteFile($userId, Request $request)
     {
         $number = $request->get('number');
-        
+
         Storage::delete('users/' . $userId . '/prefix_name_' . $number . '.mp3');
     }
 

@@ -17,8 +17,9 @@ class ReportController extends Controller
             ->first()
             ->toArray();
 
-        $cities = User::selectRaw('city, COUNT("city") as total')
-            ->groupBy('city')
+        $cities = User::selectRaw('cities.name, COUNT("city_id") as total')
+            ->join('cities', 'users.city_id', 'cities.id')
+            ->groupBy('cities.id')
             ->get();
 
         $categories = InteractionCategory::leftJoin('interactions as i', 'interaction_categories.id', 'i.category_id')
