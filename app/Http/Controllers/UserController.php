@@ -38,6 +38,7 @@ class UserController extends Controller
     {
         $request->validate([
             'password'      => 'required|max:30',
+            'email'         => 'required|max:150|regex:/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/',
         ]);
 
         $user = User::saveInstance($request->all());
@@ -64,9 +65,12 @@ class UserController extends Controller
         $user = User::where('email', Auth::user()->email)->first();
 
         $password = $request->get('password') ?? $user->password;
+        $email = $user->email;
 
         $user->fill($request->all());
+
         $user->password = $password;
+        $user->email = $email;
         $user->save();
 
         $token = $user->createToken('login')->plainTextToken;
@@ -92,6 +96,7 @@ class UserController extends Controller
 
         $user = User::where('social_id', $request->input('social_id'))
             ->where('provider', $request->input('provider'))
+            ->orWhere('email', $request->get('email'))
             ->first();
 
         if (!$user) {
