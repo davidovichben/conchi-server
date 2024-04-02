@@ -123,7 +123,6 @@ class Interaction extends BaseModel
         $audioFilesToDelete->delete();
 
         $this->fill($values);
-        $this->sub_category_id = $values['sub_category_id'];
 
         $this->update();
 

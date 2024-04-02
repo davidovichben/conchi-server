@@ -14,10 +14,12 @@ class InteractionController extends BaseController
     {
         $query = Interaction::with('audioFiles')
             ->leftJoin('interaction_categories as ic', 'ic.id', 'interactions.category_id')
+            ->leftJoin('interaction_sub_categories as isc', 'isc.id', 'interactions.sub_category_id')
             ->leftJoin('user_interactions as ui', 'ui.interaction_id', 'interactions.id')
             ->selectRaw(
                 'interactions.*,
                 ic.name as category,
+                isc.name as sub_category,
                 SUM(liked = 1) AS total_liked,
                 ROUND(SUM(liked = 1) / COUNT(*) * 100) AS liked_percentage,
                 ROUND(SUM(CASE WHEN status = "initial" THEN 1 ELSE 0 END) / COUNT(*) * 100) AS initial_percentage,
@@ -28,7 +30,7 @@ class InteractionController extends BaseController
             ->withCount('days');
 
         $columns = [
-            'title', 'show_order', 'category', 'total_liked',
+            'title', 'show_order', 'category', 'sub_category', 'total_liked',
             'liked_percentage', 'initial_percentage', 'started_percentage', 'completed_percentage'
         ];
 
