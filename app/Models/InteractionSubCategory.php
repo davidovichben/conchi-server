@@ -58,6 +58,10 @@ class InteractionSubCategory extends BaseModel
     }
 
     public function deleteImage() {
+        if (!$this->image) {
+            return;
+        }
+
         if (Storage::exists($this->image)) {
             Storage::delete($this->image);
         }
