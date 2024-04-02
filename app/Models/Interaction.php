@@ -77,7 +77,7 @@ class Interaction extends BaseModel
         }
 
         if ($genderFilteredFiles->count() > 0) {
-            return $genderFilteredFiles[0]->first(function($audioFile) {
+            return $genderFilteredFiles->first(function($audioFile) {
                 return !$audioFile->parents_status;
             });
         }
