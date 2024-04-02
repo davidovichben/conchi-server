@@ -49,7 +49,6 @@ class Interaction extends BaseModel
             return $userDetails->child_gender === $audioFile->gender;
         });
 
-
         // Test for parent status
 
         $audioFile = $genderFilteredFiles->first(function($audioFile) use ($userDetails) {
@@ -77,7 +76,17 @@ class Interaction extends BaseModel
             return $audioFile;
         }
 
-        return $genderFilteredFiles[0] ?? $this->audioFiles[0];
+        if ($genderFilteredFiles->count() > 0) {
+            return $genderFilteredFiles[0]->first(function($audioFile) {
+                return !$audioFile->parents_status;
+            });
+        }
+
+        $selectedFile = $this->audioFiles->first(function($audioFile) {
+            return !$audioFile->parents_status && !$audioFile->child_gender;
+        });
+
+        return $selectedFile ?? $this->audioFiles[0];
     }
 
     public static function createInstance($values)
