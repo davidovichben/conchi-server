@@ -42,7 +42,7 @@ class ProgramDayController extends Controller
         $categories = $programDay->categories->mapWithKeys(function ($category) use ($prefixFiles) {
             $values = [
                 'name'  => $category->name,
-                'image' => url(Storage::url($category->image))
+                'image' => $category->image ? url(Storage::url($category->image)) : null
             ];
 
             if ($category->should_display === 'interactions') {
