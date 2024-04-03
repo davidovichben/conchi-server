@@ -42,6 +42,7 @@ class ProgramDayController extends Controller
 
         $categories = $programDay->categories->mapWithKeys(function ($category) use ($prefixFiles) {
             $values = [
+                'id'    => $category->id,
                 'name'  => $category->name,
                 'image' => $category->image ? url(Storage::url($category->image)) : null
             ];
@@ -51,6 +52,7 @@ class ProgramDayController extends Controller
             } else {
                 $values['subCategories'] = $category->subCategories->map(function ($subCategory) {
                     return [
+                        'id'    => $subCategory->id,
                         'name'  => $subCategory->name,
                         'image' => $subCategory->image ? url(Storage::url($subCategory->image)) : null
                     ];
