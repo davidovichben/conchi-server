@@ -6,6 +6,7 @@ use App\Models\Interaction;
 use App\Models\ProgramDay;
 use App\Models\ProgramReportOption;
 use App\Models\ProgramReportQuestion;
+use App\Models\ProgramWeek;
 use App\Models\UserProgramDay;
 use App\Models\UserProgramReport;
 use App\Models\UserProgramWeek;
@@ -122,11 +123,12 @@ class ProgramDayController extends Controller
         if ($weekDaysCount === $completedDaysCount) {
             DB::beginTransaction();
 
-            $week = UserProgramWeek::where('user_id', Auth::id())
-                ->where('program_week_id', $programDay->week_id)
-                ->first();
+            $week = ProgramWeek::where('id', $programDay->week_id)->first();
 
-            $week->update(['status' => 'completed']);
+            UserProgramWeek::where('user_id', Auth::id())
+                ->where('program_week_id', $programDay->week_id)
+                ->update(['status' => 'completed']);
+
 
             UserProgramWeek::where('user_id', Auth::id())
                 ->where('program_week_id', $week->nextWeek()->id)
