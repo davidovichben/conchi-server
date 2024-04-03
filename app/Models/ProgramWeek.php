@@ -97,8 +97,8 @@ class ProgramWeek extends BaseModel
         return ProgramWeek::orderBy('number', 'desc')->limit(1)->first();
     }
 
-    public function previousWeek()
+    public function nextWeek()
     {
-        return ProgramWeek::where('number', $this->number - 1)->limit(1)->first();
+        return ProgramWeek::where('number', $this->number + 1)->limit(1)->first();
     }
 }

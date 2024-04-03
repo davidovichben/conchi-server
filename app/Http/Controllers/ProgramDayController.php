@@ -120,9 +120,19 @@ class ProgramDayController extends Controller
         $completedDaysCount = UserProgramDay::where('completed', 1)->where('user_id', Auth::id())->count();
 
         if ($weekDaysCount === $completedDaysCount) {
-             UserProgramWeek::where('user_id', Auth::id())
+            DB::beginTransaction();
+
+            $week = UserProgramWeek::where('user_id', Auth::id())
                 ->where('program_week_id', $programDay->week_id)
-                ->update(['status' => 'completed']);
+                ->first();
+
+            $week->update(['status' => 'completed']);
+
+            UserProgramWeek::where('user_id', Auth::id())
+                ->where('program_week_id', $week->nextWeek()->id)
+                ->update(['status' => 'active']);
+
+            DB::commit();
         }
 
         return response(['message' => 'Day completed'], 200);
