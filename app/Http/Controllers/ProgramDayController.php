@@ -130,9 +130,15 @@ class ProgramDayController extends Controller
                 ->update(['status' => 'completed']);
 
 
-            UserProgramWeek::where('user_id', Auth::id())
-                ->where('program_week_id', $week->nextWeek()->id)
-                ->update(['status' => 'active']);
+            $values = [
+                'user_id'           => Auth::id(),
+                'program_week_id'   => $week->nextWeek()->id,
+                'status'            => 'active'
+            ];
+
+            UserProgramWeek::upsert($values,
+                uniqueBy: ['user_id', 'program_week_id'],
+                update: ['status']);
         }
 
         DB::commit();
