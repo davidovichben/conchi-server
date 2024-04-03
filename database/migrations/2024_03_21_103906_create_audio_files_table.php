@@ -17,6 +17,8 @@ return new class extends Migration
             $table->string('file', 255);
             $table->enum('gender', ['male', 'female'])->nullable();
             $table->enum('parents_status', ['couple', 'single_male', 'single_female'])->nullable();
+            $table->text('description')->nullable();
+            $table->text('guidelines')->nullable();
             $table->unsignedSmallInteger('duration')->nullable();
             $table->timestamps();
 

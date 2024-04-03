@@ -17,8 +17,6 @@ return new class extends Migration
             $table->unsignedBigInteger('sub_category_id')->nullable();
             $table->unsignedTinyInteger('show_order')->nullable();
             $table->string('title')->nullable();
-            $table->text('description')->nullable();
-            $table->text('guidelines')->nullable();
 
             $table->timestamps();
 

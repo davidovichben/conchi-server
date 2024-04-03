@@ -10,7 +10,7 @@ class Interaction extends BaseModel
 {
     use HasFactory;
 
-    protected $fillable = ['title', 'description', 'category_id', 'sub_category_id', 'guidelines', 'show_order'];
+    protected $fillable = ['title', 'category_id', 'sub_category_id', 'show_order'];
 
     public function audioFiles()
     {
@@ -158,8 +158,6 @@ class Interaction extends BaseModel
         return $interactions->map(function($interaction) use ($user, $prefixFiles, $displayCategories) {
             $values = [
                 ...$interaction->getAttributes(),
-                'description'   => str_replace('{child_name}', $user->details->child_name, $interaction->description),
-                'guidelines'    => str_replace('{child_name}', $user->details->child_name, $interaction->guidelines),
                 'liked'         => $interaction->userInteractions->count() > 0,
                 'status'        => $interaction->userInteractions->count() > 0 ? $interaction->userInteractions->first()->status : null,
                 'category'      => $displayCategories && $interaction->category ? [
@@ -184,6 +182,8 @@ class Interaction extends BaseModel
                 $values['name_prefix'] = $prefixFiles->count() > 0 ? $prefixFiles->random() : null;
                 $values['audio'] = url(Storage::url($audioFile->file));
                 $values['duration'] = $audioFile->duration;
+                $values['description'] = str_replace('{child_name}', $user->details->child_name, $audioFile->description);
+                $values['guidelines'] = str_replace('{child_name}', $user->details->child_name, $audioFile->guidelines);
             }
 
             return $values;
