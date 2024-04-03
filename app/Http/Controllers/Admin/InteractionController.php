@@ -30,8 +30,10 @@ class InteractionController extends BaseController
             ->withCount('days');
 
         $columns = [
-            'title', 'show_order', 'category', 'sub_category', 'total_liked',
-            'liked_percentage', 'initial_percentage', 'started_percentage', 'completed_percentage'
+            'title',
+            'show_order',
+            'category'              => 'ic.name',
+            'sub_category'          => 'isc.name'
         ];
 
         $paginator = DataTableManager::getInstance($query, $request->all(), $columns)->getQuery();
