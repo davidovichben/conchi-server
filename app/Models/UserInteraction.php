@@ -8,6 +8,10 @@ class UserInteraction extends BaseModel
 {
     use HasFactory;
 
+    protected $casts = [
+        'liked' => 'boolean',
+    ];
+
     public function interaction()
     {
         return $this->belongsTo(Interaction::class);

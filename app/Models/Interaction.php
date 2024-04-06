@@ -12,6 +12,10 @@ class Interaction extends BaseModel
 
     protected $fillable = ['title', 'category_id', 'sub_category_id', 'show_order'];
 
+    protected $casts = [
+        'play_prefix_file' => 'boolean'
+    ];
+
     public function audioFiles()
     {
         return $this->hasMany(AudioFile::class);
@@ -95,6 +99,7 @@ class Interaction extends BaseModel
 
         $interaction = new self();
         $interaction->fill($values);
+        $interaction->play_prefix_file = $values['play_prefix_file'] ? 1 : 0;
 
         $interaction->save();
 
@@ -132,6 +137,7 @@ class Interaction extends BaseModel
         $audioFilesToDelete->delete();
 
         $this->fill($values);
+        $this->play_prefix_file = $values['play_prefix_file'] ? 1 : 0;
 
         $this->update();
 
@@ -158,14 +164,15 @@ class Interaction extends BaseModel
         return $interactions->map(function($interaction) use ($user, $prefixFiles, $displayCategories) {
             $values = [
                 ...$interaction->getAttributes(),
-                'liked'         => $interaction->userInteractions->count() > 0,
-                'status'        => $interaction->userInteractions->count() > 0 ? $interaction->userInteractions->first()->status : null,
-                'category'      => $displayCategories && $interaction->category ? [
+                'play_prefix_file'  => (bool)$interaction->play_prefix_file,
+                'liked'             => $interaction->userInteractions->count() > 0,
+                'status'            => $interaction->userInteractions->count() > 0 ? $interaction->userInteractions->first()->status : null,
+                'category'          => $displayCategories && $interaction->category ? [
                     'id'    => $interaction->category->id,
                     'name'  => $interaction->category->name,
                     'image' => $interaction->category->image ? url(Storage::url($interaction->category->image)) : null
                 ] : null,
-                'subCategory'   => !$displayCategories && $interaction->subCategory ? [
+                'subCategory'       => !$displayCategories && $interaction->subCategory ? [
                     'id'    => $interaction->subCategory->id,
                     'name'  => $interaction->subCategory->name,
                     'image' => $interaction->subCategory->image ? url(Storage::url($interaction->subCategory->image)) : null

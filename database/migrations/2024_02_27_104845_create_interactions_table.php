@@ -17,7 +17,8 @@ return new class extends Migration
             $table->unsignedBigInteger('sub_category_id')->nullable();
             $table->unsignedTinyInteger('show_order')->nullable();
             $table->string('title')->nullable();
-
+            $table->boolean('play_prefix_file')->default(true);
+            $table->uuid()->unique();
             $table->timestamps();
 
             $table->foreign('category_id')->references('id')->on('interaction_categories')->nullOnDelete();

@@ -30,9 +30,9 @@ class UserDetailsController extends Controller
         ];
 
         foreach (['name', 'nickname'] as $value) {
-            $file = 'users/' . Auth::id() . '/' . $value . '.webm';
-            if (Storage::exists($file)) {
-                $values['recorded_' . $value] = 'data:audio/webm;codecs=opus;base64,' . base64_encode(Storage::get($file));
+            $file = Auth::user()->getFile($value, 'webm');
+            if ($file) {
+                $values['recorded_' . $value] = $file;
             }
         }
 
@@ -61,7 +61,7 @@ class UserDetailsController extends Controller
         foreach (['name', 'nickname'] as $value) {
             $file = $request->post('recorded_' . $value);
             if ($file) {
-                (new UploadedFile($file))->store('users/' . Auth::id() . '/' . $value, 'webm');
+                (new UploadedFile($file))->store(Auth::user()->getPath() . '/' . $value, 'webm');
             }
         }
 

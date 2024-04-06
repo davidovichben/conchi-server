@@ -102,15 +102,19 @@ class User extends Authenticatable
         }
     }
 
+    public function getPath()
+    {
+        return 'users/' . $this->uuid;
+    }
+
     public function getFile($fileType, $ext)
     {
-        $path = 'users/' . $this->id . '/' . $fileType . '.' . $ext;
+        $path = $this->getPath() . '/' . $fileType . '.' . $ext;
         if (!Storage::exists($path)) {
             return null;
         }
 
-        $file = Storage::get($path);
-        return 'data:audio/webm;codecs=opus;base64,' . base64_encode($file);
+        return url(Storage::url($path));
     }
 
     public function getPrefixFiles()
@@ -118,7 +122,7 @@ class User extends Authenticatable
         $files = collect();
 
         for ($i = 1; $i <= 3; $i++) {
-            $file = $this->getFile('prefix_name_' . $i, 'mp3');
+            $file = $this->getFile('prefix_name_' . $i , 'mp3');
             if ($file) {
                 $files->push($file);
             }
