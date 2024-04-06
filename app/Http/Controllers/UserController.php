@@ -46,7 +46,6 @@ class UserController extends Controller
             'email'         => 'required|max:150|regex:/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/',
         ]);
 
-
         $emailOrMobileExists = User::where('email', $request->email)
             ->orWhere('mobile', $request->mobile)->exists();
 
@@ -62,7 +61,7 @@ class UserController extends Controller
             ...$user->jsonSerialize(),
             'token'                 => $token,
             'is_paid'               => !!$user->payment_package_id,
-            'is_done_registration'  => false
+            'is_done_registration'  => false,
         ];
 
         return response($response, 200);

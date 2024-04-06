@@ -33,6 +33,9 @@ Route::put('/images/{image}', [ImageController::class, 'update']);
 
 Route::post('/interactions/search', [InteractionController::class, 'index']);
 Route::get('/interactions/select', [InteractionController::class, 'select']);
+Route::post('/interactions/{interactionId}/audioFiles', [InteractionController::class, 'audioFiles']);
+Route::delete('/audioFiles/{audioFile}', [InteractionController::class, 'destroyAudioFile']);
+
 Route::resource('/interactions', InteractionController::class)->except('index');
 
 Route::post('/interactionCategories/search', [InteractionCategoryController::class, 'index']);

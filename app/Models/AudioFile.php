@@ -60,4 +60,9 @@ class AudioFile extends Model
 
         return $path . '.' . $file->ext;
     }
+
+    public function deleteInstance()
+    {
+
+    }
 }

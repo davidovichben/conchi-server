@@ -8,6 +8,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 use Laravel\Sanctum\HasApiTokens;
 
 class User extends Authenticatable
@@ -91,6 +92,7 @@ class User extends Authenticatable
 
         $user = new self();
         $user->fill($values);
+        $user->uuid = Str::uuid();
         if ($user->save()) {
             $details = new UserDetail();
             $details->user_id = $user->id;

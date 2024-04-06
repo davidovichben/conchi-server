@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Models\AudioFile;
 use App\Models\Interaction;
 use App\Models\InteractionCategory;
 use App\Services\DataTableManager;
@@ -32,13 +33,18 @@ class InteractionController extends BaseController
         $columns = [
             'title',
             'show_order',
-            'category'              => 'ic.name',
-            'sub_category'          => 'isc.name'
+            'category'      => 'ic.name',
+            'sub_category'  => 'isc.name'
         ];
 
         $paginator = DataTableManager::getInstance($query, $request->all(), $columns)->getQuery();
 
         return $this->dataTableResponse($paginator);
+    }
+
+    public function show(Interaction $interaction, Request $request)
+    {
+        return response($interaction, 200);
     }
 
     public function store(Request $request)
@@ -76,5 +82,23 @@ class InteractionController extends BaseController
         }
 
         return response($query->get(), 200);
+    }
+
+    public function audioFiles($interactionId, Request $request)
+    {
+        $query = AudioFile::where('interaction_id', $interactionId);
+
+        $columns = ['description', 'guidelines', 'parents_status', 'gender', 'file'];
+
+        $paginator = DataTableManager::getInstance($query, $request->all(), $columns)->getQuery();
+
+        return $this->dataTableResponse($paginator);
+    }
+
+    public function destroyAudioFile(AudioFile $audioFile)
+    {
+        $audioFile->deleteInstance();
+
+        return response(['message' => 'Audio file deleted'], 200);
     }
 }
