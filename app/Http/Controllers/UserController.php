@@ -3,10 +3,14 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\UserRequest;
+use App\Mail\ResetPassword;
+use App\Models\PasswordResetToken;
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
 
 class UserController extends Controller
 {
@@ -124,5 +128,32 @@ class UserController extends Controller
         ];
 
         return response($response, 200);
+    }
+
+    public function forgotPassword(Request $request)
+    {
+        $user = User::where('email', $request->email)->firstOrFail();
+
+        $token = PasswordResetToken::saveInstance($user->email);
+
+        Mail::to($user->email)->send(new ResetPassword($token));
+
+        return response(['message' => 'Mail was sent'], 200);
+    }
+
+    public function resetPassword(Request $request)
+    {
+        $token = PasswordResetToken::where('token', $request->post('token'))->firstOrFail();
+
+        $duration = $token->created_at->diffInMinutes(Carbon::now());
+        if ($duration > 5) {
+            return response(['message' => 'Reset expired'], 400);
+        }
+
+        $password = Hash::make($request->post('password'));
+        User::where('email', $token->email)->update(['password' => $password]);
+
+        return response(['message' => 'Password was reset'], 200);
+
     }
 }

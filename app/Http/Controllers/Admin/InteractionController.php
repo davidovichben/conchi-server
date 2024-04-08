@@ -7,7 +7,6 @@ use App\Models\Interaction;
 use App\Models\InteractionCategory;
 use App\Services\DataTableManager;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 
 class InteractionController extends BaseController
 {
@@ -42,7 +41,7 @@ class InteractionController extends BaseController
         return $this->dataTableResponse($paginator);
     }
 
-    public function show(Interaction $interaction, Request $request)
+    public function show(Interaction $interaction)
     {
         return response($interaction, 200);
     }
@@ -71,9 +70,6 @@ class InteractionController extends BaseController
     public function select(Request $request)
     {
         $query = Interaction::query();
-        if ($request->get('title')) {
-            $query->where('title', 'like', '%' . $request->get('title') . '%');
-        }
 
         if ($request->get('category_role') === 'option_sentences') {
             $category = InteractionCategory::where('role', 'option_sentences')->select('id')->first();
@@ -88,7 +84,7 @@ class InteractionController extends BaseController
     {
         $query = AudioFile::where('interaction_id', $interactionId);
 
-        $columns = ['description', 'guidelines', 'parents_status', 'gender', 'file'];
+        $columns = ['title', 'description', 'guidelines', 'parents_status', 'gender', 'file'];
 
         $paginator = DataTableManager::getInstance($query, $request->all(), $columns)->getQuery();
 

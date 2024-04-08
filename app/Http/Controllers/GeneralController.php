@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Article;
 use App\Models\City;
 use App\Models\ContentPackage;
+use App\Models\GeneralSetting;
 use App\Models\Image;
 use App\Models\InteractionCategory;
 use App\Models\Page;
@@ -101,5 +102,14 @@ class GeneralController extends Controller
     {
         $cities = City::orderBy('name')->get();
         return response($cities, 200);
+    }
+
+    public function generalSettings()
+    {
+        $settings = GeneralSetting::all()->mapWithKeys(function ($setting) {
+            return [$setting->name => $setting->value];
+        });
+
+        return response($settings, 200);
     }
 }

@@ -57,9 +57,7 @@ class DataTableManager {
             }
         }
 
-        if ($this->params->get('sortBy')) {
-            $this->orderBy();
-        }
+        $this->orderBy();
     }
 
     private function excludeFromQuery()
@@ -167,6 +165,10 @@ class DataTableManager {
     private function orderBy()
     {
         $column = $this->params->get('sortBy');
+        if (!$column) {
+            $this->query->orderBy('id', 'desc');
+        }
+
         if ($this->columns->contains($column)) {
             $direction = $this->params->get('sortDir') === 'asc' ? 'asc' : 'desc';
 

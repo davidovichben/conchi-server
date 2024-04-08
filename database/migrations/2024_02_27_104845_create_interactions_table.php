@@ -16,7 +16,7 @@ return new class extends Migration
             $table->unsignedBigInteger('category_id')->nullable();
             $table->unsignedBigInteger('sub_category_id')->nullable();
             $table->unsignedTinyInteger('show_order')->nullable();
-            $table->string('title')->nullable();
+            $table->string('title');
             $table->boolean('play_prefix_file')->default(true);
             $table->uuid()->unique();
             $table->timestamps();

@@ -25,6 +25,9 @@ Route::get('/images', [GeneralController::class, 'images']);
 Route::post('/user', [UserController::class, 'store']);
 Route::post('/user/login', [UserController::class, 'login']);
 Route::post('/user/socialLogin', [UserController::class, 'socialLogin']);
+Route::post('/user/forgotPassword', [UserController::class, 'forgotPassword']);
+Route::post('/user/resetPassword', [UserController::class, 'resetPassword']);
+
 Route::get('/article/{article}', [GeneralController::class, 'article']);
 Route::get('/page', [GeneralController::class, 'page']);
 Route::get('/cities', [GeneralController::class, 'cities']);
@@ -36,6 +39,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/options', [GeneralController::class, 'options']);
     Route::get('/hobbies', [GeneralController::class, 'hobbies']);
     Route::get('/sentences', [GeneralController::class, 'sentences']);
+    Route::get('/generalSettings', [GeneralController::class, 'generalSettings']);
 
     Route::put('/user', [UserController::class, 'update']);
 

@@ -19,6 +19,7 @@ class AudioFile extends Model
             $audioFiles[] = [
                 'interaction_id'    => $interactionId,
                 'file'              => self::uploadFile($value['file'], $interactionId),
+                'title'             => $value['title'],
                 'gender'            => $value['gender'],
                 'duration'          => $value['duration'],
                 'parents_status'    => $value['parents_status'],

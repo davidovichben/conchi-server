@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\GeneralSetting;
 use App\Models\InteractionCategory;
 use App\Models\InteractionSubCategory;
 use App\Models\Translation;
@@ -72,6 +73,12 @@ class UserDetailsController extends Controller
 
     public function updateSubCategories(Request $request)
     {
+        $settings = GeneralSetting::where('name', 'max_user_hobbies')->firstOrFail();
+
+        if ($settings->value < count($request->collect('subCategories'))) {
+            return response(['message' => 'You can select maximum ' . $settings->value . ' hobbies'], 400);
+        }
+
         $subCategories = InteractionSubCategory::whereIn('id', $request->collect('subCategories'))
             ->select('id')
             ->get();
@@ -91,6 +98,12 @@ class UserDetailsController extends Controller
 
     public function updateSentences(Request $request)
     {
+        $settings = GeneralSetting::where('name', 'max_user_power_sentences')->firstOrFail();
+
+        if ($settings->value < count($request->collect('sentences'))) {
+            return response(['message' => 'You can select maximum ' . $settings->value . ' power sentences'], 400);
+        }
+
         DB::beginTransaction();
 
         UserSentence::where('user_id', Auth::id())->delete();

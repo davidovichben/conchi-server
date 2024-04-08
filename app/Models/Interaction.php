@@ -162,8 +162,11 @@ class Interaction extends BaseModel
     {
 
         return $interactions->map(function($interaction) use ($user, $prefixFiles, $displayCategories) {
+            $audioFile = $interaction->selectAudioFile($user->details);
+
             $values = [
                 ...$interaction->getAttributes(),
+                'title'             => $audioFile ? $audioFile->title : $interaction->title,
                 'play_prefix_file'  => (bool)$interaction->play_prefix_file,
                 'liked'             => $interaction->userInteractions->count() > 0,
                 'status'            => $interaction->userInteractions->count() > 0 ? $interaction->userInteractions->first()->status : null,
@@ -184,7 +187,6 @@ class Interaction extends BaseModel
                 $values['liked'] = $interaction->userInteractions->first()->liked;
             }
 
-            $audioFile = $interaction->selectAudioFile($user->details);
             if ($audioFile) {
                 $values['name_prefix'] = $prefixFiles->count() > 0 ? $prefixFiles->random() : null;
                 $values['audio'] = url(Storage::url($audioFile->file));

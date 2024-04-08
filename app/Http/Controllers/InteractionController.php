@@ -63,7 +63,6 @@ class InteractionController extends Controller
         return response($interactions, 200);
     }
 
-
     public function like($interactionId, Request $request)
     {
         $values = [

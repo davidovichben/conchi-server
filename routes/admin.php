@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Admin\ArticleController;
 use App\Http\Controllers\Admin\ContentPackageController;
+use App\Http\Controllers\admin\GeneralSettingsController;
 use App\Http\Controllers\Admin\ImageController;
 use App\Http\Controllers\Admin\InteractionCategoryController;
 use App\Http\Controllers\Admin\InteractionSubCategoryController;
@@ -16,6 +17,9 @@ use App\Http\Controllers\Admin\TranslationController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\InteractionController;
 use Illuminate\Support\Facades\Route;
+
+Route::get('/generalSettings', [GeneralSettingsController::class, 'index']);
+Route::put('/generalSettings', [GeneralSettingsController::class, 'update']);
 
 Route::post('/users/search', [UserController::class, 'index']);
 Route::put('/users/{userId}/upload', [UserController::class, 'upload']);
