@@ -101,4 +101,9 @@ class ProgramWeek extends BaseModel
     {
         return ProgramWeek::where('number', $this->number + 1)->limit(1)->first();
     }
+
+    public function previousWeek()
+    {
+        return ProgramWeek::where('number', $this->number - 1)->limit(1)->first();
+    }
 }
