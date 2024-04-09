@@ -61,8 +61,9 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/programDay/{programDay}', [ProgramDayController::class, 'show']);
         Route::put('/programDay/{programDay}/complete', [ProgramDayController::class, 'complete']);
         Route::get('/interactions/categories', [InteractionController::class, 'categories']);
+        Route::get('/interactions/{interactionCategory}/subCategories', [InteractionController::class, 'subCategories']);
         Route::get('/interactions/{interactionCategory}/byCategory', [InteractionController::class, 'byCategory']);
-        Route::get('/interactions/{subCategoryId}/bySubCategory', [InteractionController::class, 'bySubCategory']);
+        Route::get('/interactions/{interactionSubCategory}/bySubCategory', [InteractionController::class, 'bySubCategory']);
         Route::put('/interactions/{interactionId}/like', [InteractionController::class, 'like']);
         Route::put('/interactions/{interactionId}/status', [InteractionController::class, 'setStatus']);
         Route::get('/interactions/byGeneralSentences', [InteractionController::class, 'byGeneralSentences']);

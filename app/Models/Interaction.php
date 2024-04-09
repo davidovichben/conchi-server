@@ -160,7 +160,6 @@ class Interaction extends BaseModel
 
     public static function mapInteractions($interactions, $user, $prefixFiles, $displayCategories = true)
     {
-
         return $interactions->map(function($interaction) use ($user, $prefixFiles, $displayCategories) {
             $audioFile = $interaction->selectAudioFile($user->details);
 
@@ -190,7 +189,7 @@ class Interaction extends BaseModel
             if ($audioFile) {
                 $values['name_prefix'] = $prefixFiles->count() > 0 ? $prefixFiles->random() : null;
                 $values['audio'] = url(Storage::url($audioFile->file));
-                $values['duration'] = $audioFile->duration;
+                $values['duration'] = $audioFile->duration ?? 0;
                 $values['description'] = str_replace('{child_name}', $user->details->child_name, $audioFile->description);
                 $values['guidelines'] = str_replace('{child_name}', $user->details->child_name, $audioFile->guidelines);
             }

@@ -26,6 +26,21 @@ class InteractionController extends Controller
         return response($categories, 200);
     }
 
+    public function subCategories(InteractionCategory $interactionCategory)
+    {
+        $subCategories = $interactionCategory->subCategories->map(function ($subCategory) {
+            return [
+                ...$subCategory->toArray(),
+                'image' => $subCategory->image ? url(Storage::url($subCategory->image)) : null
+            ];
+        });
+
+        return response([
+            'name'          => $interactionCategory->name,
+            'subCategories' => $subCategories
+        ], 200);
+    }
+
     public function byCategory(InteractionCategory $interactionCategory)
     {
         $interactions = Interaction::where('category_id', $interactionCategory->id)
@@ -45,11 +60,10 @@ class InteractionController extends Controller
         return response([...$interactionCategory->toArray(), 'interactions' => $interactions], 200);
     }
 
-    public function bySubCategory($subCategoryId)
+    public function bySubCategory(InteractionSubCategory $interactionSubCategory)
     {
-        $interactions = Interaction::where('sub_category_id', $subCategoryId)
+        $interactions = Interaction::where('sub_category_id', $interactionSubCategory->id)
             ->with('audioFiles')
-            ->with('subCategory')
             ->with(['userInteractions' => function($query) {
                 $query->where('user_id', Auth::id());
             }])
@@ -60,7 +74,7 @@ class InteractionController extends Controller
         $prefixFiles = Auth::user()->getPrefixFiles();
 
         $interactions = Interaction::mapInteractions($interactions, Auth::user(), $prefixFiles, false);
-        return response($interactions, 200);
+        return response([...$interactionSubCategory->toArray(), 'interactions' => $interactions], 200);
     }
 
     public function like($interactionId, Request $request)
@@ -95,11 +109,5 @@ class InteractionController extends Controller
         UserInteraction::upsertInstance($values);
 
         return response(['message' => 'Interaction status updated'], 200);
-    }
-
-    public function byGeneralSentences()
-    {
-        $category = InteractionCategory::where('role', 'general_sentences')->with('interactions')->first();
-        return response([...$category->toArray(), 'interactions' => $category->interactions], 200);
     }
 }

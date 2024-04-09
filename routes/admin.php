@@ -2,7 +2,7 @@
 
 use App\Http\Controllers\Admin\ArticleController;
 use App\Http\Controllers\Admin\ContentPackageController;
-use App\Http\Controllers\admin\GeneralSettingsController;
+use App\Http\Controllers\Admin\GeneralSettingsController;
 use App\Http\Controllers\Admin\ImageController;
 use App\Http\Controllers\Admin\InteractionCategoryController;
 use App\Http\Controllers\Admin\InteractionSubCategoryController;
