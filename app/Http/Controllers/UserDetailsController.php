@@ -13,7 +13,6 @@ use App\Services\UploadedFile;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
 
 class UserDetailsController extends Controller
@@ -21,14 +20,8 @@ class UserDetailsController extends Controller
     public function show()
     {
         $details = UserDetail::where('user_id', Auth::id())->first();
-        $hobbies = UserSubCategory::where('user_id', Auth::id())->get()->pluck('interaction_sub_category_id');
-        $sentences = UserSentence::where('user_id', Auth::id())->get()->pluck('sentence_id');
 
-        $values = [
-            ...$details->toArray(),
-            'hobbies'   => $hobbies,
-            'sentences' => $sentences,
-        ];
+        $values = [...$details->toArray()];
 
         foreach (['name', 'nickname'] as $value) {
             $file = Auth::user()->getFile($value, 'webm');
@@ -70,6 +63,7 @@ class UserDetailsController extends Controller
 
         return response(['message' => 'Details updated'], 200);
     }
+
 
     public function updateSubCategories(Request $request)
     {

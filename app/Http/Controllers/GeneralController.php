@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Models\Article;
 use App\Models\City;
 use App\Models\ContentPackage;
-use App\Models\GeneralSetting;
 use App\Models\Image;
 use App\Models\InteractionCategory;
 use App\Models\Page;
@@ -37,29 +36,6 @@ class GeneralController extends Controller
             });
 
         return response($images, 200);
-    }
-
-    public function hobbies()
-    {
-        $category = InteractionCategory::where('role', 'hobbies')->with('subCategories')->first();
-        $subCategories = $category->subCategories->map(function ($subCategory) {
-            return [
-                ...$subCategory->toArray(),
-                'image' => $subCategory->image ? url(Storage::url($subCategory->image)) : null
-            ];
-        });
-
-        return response($subCategories, 200);
-    }
-
-    public function sentences()
-    {
-        $category = InteractionCategory::where('role', 'power_sentences')->with(['interactions' => function ($query) {
-            $query->select('id', 'title', 'category_id')->orderBy('show_order', 'asc');
-        }])
-        ->first();
-
-        return response($category->interactions, 200);
     }
 
     public function options(Request $request): Response
@@ -102,14 +78,5 @@ class GeneralController extends Controller
     {
         $cities = City::orderBy('name')->get();
         return response($cities, 200);
-    }
-
-    public function generalSettings()
-    {
-        $settings = GeneralSetting::all()->mapWithKeys(function ($setting) {
-            return [$setting->name => $setting->value];
-        });
-
-        return response($settings, 200);
     }
 }

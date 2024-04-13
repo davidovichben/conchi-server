@@ -7,6 +7,7 @@ use App\Models\Interaction;
 use App\Models\InteractionCategory;
 use App\Models\InteractionSubCategory;
 use App\Models\UserInteraction;
+use App\Models\UserSubCategory;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -14,7 +15,7 @@ use Illuminate\Support\Facades\Storage;
 
 class InteractionController extends Controller
 {
-    public function categories()
+    public function categories(Request $request)
     {
         $categories = InteractionCategory::all()->map(function ($category) {
             return [
@@ -26,7 +27,31 @@ class InteractionController extends Controller
         return response($categories, 200);
     }
 
-    public function subCategories(InteractionCategory $interactionCategory)
+    public function personalizedCategories()
+    {
+        $categories = InteractionCategory::where('is_personalized', 1)
+            ->selectRaw('id, name, personalization_limit, should_display')
+            ->with(['subCategories' => function($query) {
+                $query->selectRaw('id, interaction_category_id, name, image, usc.user_id as "selected"')
+                    ->leftJoin('user_sub_categories as usc', function($query) {
+                        $query->on('usc.interaction_sub_category_id', 'interaction_sub_categories.id')
+                            ->where('usc.user_id', Auth::id());
+                    });
+            }])
+            ->with(['interactions' => function($query) {
+                $query->selectRaw('interactions.id, category_id, title, ui.user_id as "selected"')
+                    ->join('user_interactions as ui', function($query) {
+                        $query->on('ui.interaction_id', 'interactions.id')
+                            ->where('ui.user_id', Auth::id())
+                            ->where('ui.selected', 1);
+                    });
+            }])
+            ->get();
+
+        return response($categories, 200);
+    }
+
+    public function subCategories(InteractionCategory $interactionCategory, Request $request)
     {
         $subCategories = $interactionCategory->subCategories->map(function ($subCategory) {
             return [
@@ -35,13 +60,24 @@ class InteractionController extends Controller
             ];
         });
 
+        if ($interactionCategory->is_personalized) {
+            $userSubCategories = UserSubCategory::where('user_id', Auth::id())
+                ->whereIn('interaction_sub_category_id', $subCategories->pluck('id')->toArray())
+                ->select('interaction_sub_category_id')
+                ->get();
+
+            $subCategories = $subCategories->filter(function ($subCategory) use ($userSubCategories) {
+                return $userSubCategories->contains('interaction_sub_category_id', $subCategory['id']);
+            })->values();
+        }
+
         return response([
-            'name'          => $interactionCategory->name,
-            'subCategories' => $subCategories
+            'name'              => $interactionCategory->name,
+            'sub_categories'    => $subCategories
         ], 200);
     }
 
-    public function byCategory(InteractionCategory $interactionCategory)
+    public function byCategory(InteractionCategory $interactionCategory, Request $request)
     {
         $interactions = Interaction::where('category_id', $interactionCategory->id)
             ->with('audioFiles')
@@ -51,6 +87,19 @@ class InteractionController extends Controller
             }])
             ->orderBy('show_order', 'asc')
             ->get();
+
+
+        if ($interactionCategory->is_personalized) {
+            $userInteractions = UserInteraction::where('user_id', Auth::id())
+                ->whereIn('interaction_id', $interactions->pluck('id')->toArray())
+                ->where('selected', 1)
+                ->select('interaction_id')
+                ->get();
+
+            $interactions = $interactions->filter(function ($interaction) use ($userInteractions) {
+                return $userInteractions->contains('interaction_id', $interaction['id']);
+            })->values();
+        }
 
 
         $prefixFiles = Auth::user()->getPrefixFiles();

@@ -12,7 +12,7 @@ class InteractionSubCategoryController extends BaseController
     {
         $query = InteractionSubCategory::where('interaction_category_id', $request->post('interactionCategoryId'));
 
-        $columns = ['image', 'name'];
+        $columns = ['image', 'name', 'is_personalized'];
         $paginator = DataTableManager::getInstance($query, $request->all(), $columns)->getQuery();
 
         return $this->dataTableResponse($paginator);

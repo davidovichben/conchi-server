@@ -10,7 +10,7 @@ use Illuminate\Support\Str;
 
 class InteractionCategory extends BaseModel
 {
-    protected $fillable = ['name', 'description', 'should_display'];
+    protected $fillable = ['name', 'description', 'should_display', 'personalization_limit'];
 
     use HasFactory;
 
@@ -28,6 +28,7 @@ class InteractionCategory extends BaseModel
     {
         $category = new self();
         $category->fill($values);
+        $category->is_personalized = $values['is_personalized'] ? 1 : 0;
 
         if ($values['image']) {
            $category->uploadImage($values['image']);
@@ -46,6 +47,7 @@ class InteractionCategory extends BaseModel
         }
 
         $this->fill($values);
+        $this->is_personalized = $values['is_personalized'] ? 1 : 0;
         $this->update();
     }
 

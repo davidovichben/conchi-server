@@ -10,6 +10,10 @@ class InteractionSubCategory extends BaseModel
 {
     protected $fillable = ['interaction_category_id', 'name'];
 
+    protected $casts = [
+        'is_personalized' => 'boolean'
+    ];
+
     public function interactionCategory()
     {
         return $this->belongsTo(InteractionCategory::class);

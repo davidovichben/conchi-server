@@ -50,7 +50,7 @@ class ProgramDayController extends Controller
             if ($category->should_display === 'interactions') {
                 $values['interactions'] = Interaction::mapInteractions($category->interactions, Auth::user(), $prefixFiles);
             } else {
-                $values['subCategories'] = $category->subCategories->map(function ($subCategory) {
+                $values['sub_categories'] = $category->subCategories->map(function ($subCategory) {
                     return [
                         'id'    => $subCategory->id,
                         'name'  => $subCategory->name,

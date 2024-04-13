@@ -20,7 +20,7 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/translations', [GeneralController::class, 'translations']);
+Route::post('/translations', [GeneralController::class, 'translations']);
 Route::get('/images', [GeneralController::class, 'images']);
 Route::post('/user', [UserController::class, 'store']);
 Route::post('/user/login', [UserController::class, 'login']);
@@ -37,9 +37,6 @@ Route::get('/payment/url', [PaymentController::class, 'url']);
 
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/options', [GeneralController::class, 'options']);
-    Route::get('/hobbies', [GeneralController::class, 'hobbies']);
-    Route::get('/sentences', [GeneralController::class, 'sentences']);
-    Route::get('/generalSettings', [GeneralController::class, 'generalSettings']);
 
     Route::put('/user', [UserController::class, 'update']);
 
@@ -54,6 +51,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::get('/news', [GeneralController::class, 'news']);
 
+    Route::get('/interactions/personalizedCategories', [InteractionController::class, 'personalizedCategories']);
     Route::middleware('paid')->group(function () {
         Route::get('/programWeek/{weekId}/days', [ProgramWeekController::class, 'days']);
         Route::get('/programWeek/{weekId}/report', [ProgramWeekController::class, 'report']);

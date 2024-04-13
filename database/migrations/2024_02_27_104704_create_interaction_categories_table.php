@@ -18,6 +18,9 @@ return new class extends Migration
             $table->string('image', 80)->nullable();
             $table->enum('role', ['hobbies', 'power_sentences', 'option_sentences', 'general_sentences'])->nullable();
             $table->enum('should_display', ['interactions', 'sub_categories'])->default('interactions');
+            $table->boolean('is_personalized')->default(false);
+            $table->unsignedTinyInteger('personalization_limit')->nullable();
+
             $table->timestamps();
 
             $table->unique('name');

@@ -12,7 +12,7 @@ class InteractionCategoryController extends BaseController
     {
         $query = InteractionCategory::withCount('interactions');
 
-        $columns = ['name', 'description', 'interactions_count', 'should_display'];
+        $columns = ['name', 'description', 'interactions_count', 'personalization_limit', 'should_display'];
         $paginator = DataTableManager::getInstance($query, $request->all(), $columns)->getQuery();
 
         return $this->dataTableResponse($paginator);

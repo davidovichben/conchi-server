@@ -16,6 +16,7 @@ return new class extends Migration
             $table->unsignedBigInteger('user_id');
             $table->unsignedBigInteger('interaction_id');
             $table->boolean('liked')->default(0);
+            $table->boolean('selected')->default(0);
             $table->enum('status', ['initial', 'started', 'completed'])->default('initial');
             $table->timestamps();
 
