@@ -7,6 +7,7 @@ use App\Models\InteractionCategory;
 use App\Models\InteractionSubCategory;
 use App\Models\Translation;
 use App\Models\UserDetail;
+use App\Models\UserInteraction;
 use App\Models\UserSubCategory;
 use App\Models\UserSentence;
 use App\Services\UploadedFile;
@@ -65,19 +66,19 @@ class UserDetailsController extends Controller
     }
 
 
-    public function updateSubCategories(Request $request)
+    public function updateSubCategories(InteractionCategory $category, Request $request)
     {
-        $settings = GeneralSetting::where('name', 'max_user_hobbies')->firstOrFail();
-
-        if ($settings->value < count($request->collect('subCategories'))) {
-            return response(['message' => 'You can select maximum ' . $settings->value . ' hobbies'], 400);
+        if ($category->personalization_limit < $request->collect('subCategoriesIds')->count()) {
+            return response(['message' => 'You can select maximum ' . $category->personalization_limit . ' sub categories'], 400);
         }
 
-        $subCategories = InteractionSubCategory::whereIn('id', $request->collect('subCategories'))
+        $subCategories = InteractionSubCategory::whereIn('id', $request->collect('subCategoriesIds'))
             ->select('id')
             ->get();
 
-        UserSubCategory::where('user_id', Auth::id())->delete();
+        $subCategoriesIds = $category->subCategories->pluck('id')->toArray();
+
+        UserSubCategory::where('user_id', Auth::id())->whereIn('interaction_sub_category_id', $subCategoriesIds)->delete();
 
         $insertValues = $subCategories->map(function($subCategory) {
             return ['user_id' => Auth::id(), 'interaction_sub_category_id' => $subCategory->id];
@@ -90,30 +91,26 @@ class UserDetailsController extends Controller
         return response(['message' => 'Sub categories updated'], 200);
     }
 
-    public function updateSentences(Request $request)
+    public function updateInteractions(InteractionCategory $category, Request $request)
     {
-        $settings = GeneralSetting::where('name', 'max_user_power_sentences')->firstOrFail();
-
-        if ($settings->value < count($request->collect('sentences'))) {
-            return response(['message' => 'You can select maximum ' . $settings->value . ' power sentences'], 400);
+        if ($category->personalization_limit < $request->collect('interactionIds')->count()) {
+            return response(['message' => 'You can select maximum ' . $category->personalization_limit . ' interactions'], 400);
         }
 
         DB::beginTransaction();
 
-        UserSentence::where('user_id', Auth::id())->delete();
+        $interactionIds = $category->interactions->pluck('id')->toArray();
 
-        $category = InteractionCategory::where('role', 'power_sentences')->with(['interactions' => function ($query) use ($request) {
-            $query->select('id', 'category_id')->whereIn('id', $request->collect('sentences'));
-        }])->first();
+        UserInteraction::where('user_id', Auth::id())->whereIn('interaction_id', $interactionIds)->update(['selected' => 0]);
 
-        $insertValues = $category->interactions->map(function($interaction) {
-            return ['user_id' => Auth::id(), 'sentence_id' => $interaction->id];
-        });
-
-        UserSentence::insert($insertValues->toArray());
+        UserInteraction::upsert(['selected' => 1],
+            where: ['user_id' => Auth::id()],
+            whereIn: ['interaction_id', $interactionIds],
+            uniqueBy: ['user_id', 'interaction_id'],
+            update: ['selected']);
 
         DB::commit();
 
-        return response(['message' => 'Sentences updated'], 200);
+        return response(['message' => 'Interactions updated'], 200);
     }
 }

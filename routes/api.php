@@ -42,8 +42,8 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::get('/user/details', [UserDetailsController::class, 'show']);
     Route::post('/user/details', [UserDetailsController::class, 'update']);
-    Route::put('/user/subCategories', [UserDetailsController::class, 'updateSubCategories']);
-    Route::put('/user/sentences', [UserDetailsController::class, 'updateSentences']);
+    Route::put('/user/{category}/subCategories', [UserDetailsController::class, 'updateSubCategories']);
+    Route::put('/user/{category}/interactions', [UserDetailsController::class, 'updateInteractions']);
 
     Route::get('/programWeek', [ProgramWeekController::class, 'index']);
     Route::get('/payment', [PaymentController::class, 'index']);
