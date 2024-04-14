@@ -40,7 +40,7 @@ class InteractionController extends Controller
             }])
             ->with(['interactions' => function($query) {
                 $query->selectRaw('interactions.id, category_id, title, ui.user_id as "selected"')
-                    ->join('user_interactions as ui', function($query) {
+                    ->leftJoin('user_interactions as ui', function($query) {
                         $query->on('ui.interaction_id', 'interactions.id')
                             ->where('ui.user_id', Auth::id())
                             ->where('ui.selected', 1);

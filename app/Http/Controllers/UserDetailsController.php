@@ -5,11 +5,9 @@ namespace App\Http\Controllers;
 use App\Models\GeneralSetting;
 use App\Models\InteractionCategory;
 use App\Models\InteractionSubCategory;
-use App\Models\Translation;
 use App\Models\UserDetail;
 use App\Models\UserInteraction;
 use App\Models\UserSubCategory;
-use App\Models\UserSentence;
 use App\Services\UploadedFile;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -68,7 +66,7 @@ class UserDetailsController extends Controller
 
     public function updateSubCategories(InteractionCategory $category, Request $request)
     {
-        if ($category->personalization_limit < $request->collect('subCategoriesIds')->count()) {
+        if ($category->personalization_limit && $category->personalization_limit < $request->collect('subCategoriesIds')->count()) {
             return response(['message' => 'You can select maximum ' . $category->personalization_limit . ' sub categories'], 400);
         }
 
@@ -93,7 +91,7 @@ class UserDetailsController extends Controller
 
     public function updateInteractions(InteractionCategory $category, Request $request)
     {
-        if ($category->personalization_limit < $request->collect('interactionIds')->count()) {
+        if ($category->personalization_limit && $category->personalization_limit < $request->collect('interactionIds')->count()) {
             return response(['message' => 'You can select maximum ' . $category->personalization_limit . ' interactions'], 400);
         }
 
