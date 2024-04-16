@@ -81,11 +81,6 @@ class User extends Authenticatable
         return $this->belongsToMany(InteractionSubCategory::class, 'user_sub_categories');
     }
 
-    public function sentences()
-    {
-        return $this->belongsToMany(Interaction::class, 'user_sentences', 'user_id', 'sentence_id');
-    }
-
     public static function saveInstance($values): User
     {
         DB::beginTransaction();
