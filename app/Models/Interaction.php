@@ -190,8 +190,8 @@ class Interaction extends BaseModel
                 $values['name_prefix'] = $prefixFiles->count() > 0 ? $prefixFiles->random() : null;
                 $values['audio'] = url(Storage::url($audioFile->file));
                 $values['duration'] = $audioFile->duration ?? 0;
-                $values['description'] = str_replace('{child_name}', $user->details->child_name, $audioFile->description);
-                $values['guidelines'] = str_replace('{child_name}', $user->details->child_name, $audioFile->guidelines);
+                $values['description'] = str_replace('*שם הילד*', $user->details->child_name, $audioFile->description);
+                $values['guidelines'] = str_replace('*שם הילד*', $user->details->child_name, $audioFile->guidelines);
             }
 
             return $values;

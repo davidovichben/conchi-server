@@ -15,7 +15,7 @@ use Illuminate\Support\Facades\Storage;
 
 class InteractionController extends Controller
 {
-    public function categories(Request $request)
+    public function categories()
     {
         $categories = InteractionCategory::all()->map(function ($category) {
             return [
@@ -77,7 +77,7 @@ class InteractionController extends Controller
         ], 200);
     }
 
-    public function byCategory(InteractionCategory $interactionCategory, Request $request)
+    public function byCategory(InteractionCategory $interactionCategory)
     {
         $interactions = Interaction::where('category_id', $interactionCategory->id)
             ->with('audioFiles')
