@@ -21,7 +21,7 @@ class ProgramDayController extends Controller
     {
 //        DB::enableQueryLog();
 
-        $user = Auth::user()->load('details')->load('subCategories')->load('sentences');
+        $user = Auth::user()->load('details')->load('subCategories')->load('interactions');
 
         $prefixFiles = $user->getPrefixFiles();
 
@@ -30,7 +30,7 @@ class ProgramDayController extends Controller
                 $query->with(['subCategories' => function ($query) use ($user) {
                     $query->whereIn('id', $user->subCategories->pluck('id')->toArray());
                 }])->with(['interactions' => function ($query) use ($user) {
-                    $query->orderBy('show_order', 'asc')->whereIn('id', $user->sentences->pluck('id')->toArray());
+                    $query->orderBy('show_order', 'asc')->whereIn('id', $user->interactions->pluck('id')->toArray());
                 }]);
         }]);
 
