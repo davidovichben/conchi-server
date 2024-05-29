@@ -86,11 +86,7 @@ class Interaction extends BaseModel
             });
         }
 
-        $selectedFile = $this->audioFiles->first(function($audioFile) {
-            return !$audioFile->parents_status && !$audioFile->child_gender;
-        });
-
-        return $selectedFile ?? $this->audioFiles[0];
+        return null;
     }
 
     public static function createInstance($values)
@@ -160,8 +156,11 @@ class Interaction extends BaseModel
 
     public static function mapInteractions($interactions, $user, $prefixFiles, $displayCategories = true)
     {
-        return $interactions->map(function($interaction) use ($user, $prefixFiles, $displayCategories) {
+        $interactions = $interactions->map(function($interaction) use ($user, $prefixFiles, $displayCategories) {
             $audioFile = $interaction->selectAudioFile($user->details);
+            if (!$audioFile) {
+                return null;
+            }
 
             $values = [
                 ...$interaction->getAttributes(),
@@ -186,15 +185,18 @@ class Interaction extends BaseModel
                 $values['liked'] = $interaction->userInteractions->first()->liked;
             }
 
-            if ($audioFile) {
-                $values['name_prefix'] = $prefixFiles->count() > 0 ? $prefixFiles->random() : null;
-                $values['audio'] = url(Storage::url($audioFile->file));
-                $values['duration'] = $audioFile->duration ?? 0;
-                $values['description'] = str_replace('<em>שם הילד</em>', $user->details->child_name, $audioFile->description);
-                $values['guidelines'] = str_replace('<em>שם הילד</em>', $user->details->child_name, $audioFile->guidelines);
-            }
+            $values['name_prefix'] = $prefixFiles->count() > 0 ? $prefixFiles->random() : null;
+            $values['audio'] = url(Storage::url($audioFile->file));
+            $values['duration'] = $audioFile->duration ?? 0;
+            $values['description'] = str_replace('<em>שם הילד</em>', $user->details->child_name, $audioFile->description);
+            $values['guidelines'] = str_replace('<em>שם הילד</em>', $user->details->child_name, $audioFile->guidelines);
+
 
             return $values;
         });
+
+        return $interactions->filter(function ($interaction) {
+            return $interaction;
+        })->values();
     }
 }
