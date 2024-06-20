@@ -96,7 +96,10 @@ class ProgramWeek extends BaseModel
     {
         DB::beginTransaction();
 
-        $this->deleteImage();
+        if ($this->image) {
+            $this->deleteImage();
+        }
+
         $this->delete();
 
         ProgramWeek::where('number', '>', $this->number)
