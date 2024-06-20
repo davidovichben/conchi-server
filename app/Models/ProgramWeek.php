@@ -13,7 +13,7 @@ class ProgramWeek extends BaseModel
 {
     use HasFactory;
 
-    protected $fillable = ['description'];
+    protected $fillable = ['description', 'is_active'];
 
     protected $casts = [
         'is_active' => 'boolean'
