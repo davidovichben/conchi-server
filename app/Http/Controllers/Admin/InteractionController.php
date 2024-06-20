@@ -77,6 +77,10 @@ class InteractionController extends BaseController
             $query->where('category_id', $category->id);
         }
 
+        if ($request->get('title')) {
+            $query->where('title', 'like', '%' . $request->get('title') . '%');
+        }
+
         return response($query->get(), 200);
     }
 
