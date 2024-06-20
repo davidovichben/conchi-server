@@ -92,6 +92,20 @@ class ProgramWeek extends BaseModel
         $this->image = null;
     }
 
+    public function deleteInstance()
+    {
+        DB::beginTransaction();
+
+        $this->deleteImage();
+        $this->delete();
+
+        ProgramWeek::where('number', '>', $this->number)
+            ->orderBy('number', 'asc')
+            ->update(['number' => DB::raw('number - 1')]);
+
+        DB::commit();
+    }
+
     public static function lastWeek()
     {
         return ProgramWeek::orderBy('number', 'desc')->limit(1)->first();

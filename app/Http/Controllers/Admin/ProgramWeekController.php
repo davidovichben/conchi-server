@@ -45,7 +45,7 @@ class ProgramWeekController extends Controller
     public function store(Request $request)
     {
         $week = ProgramWeek::createInstance(collect($request->post()));
-        $week->days;
+        $week->load('days');
 
         return response($week, 201);
     }
@@ -62,16 +62,6 @@ class ProgramWeekController extends Controller
         if ($week->is_active) {
             return response(['message' => 'Week is active'], 400);
         }
-
-        DB::beginTransaction();
-
-        $week->delete();
-
-        ProgramWeek::where('number', '>', $week->number)
-            ->orderBy('number', 'asc')
-            ->update(['number' => DB::raw('number - 1')]);
-
-        DB::commit();
 
         $week->deleteInstance();
 
