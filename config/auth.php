@@ -112,4 +112,5 @@ return [
 
     'password_timeout' => 10800,
 
+    'admin_username'    => 'adminlital@con-chi.com'
 ];
