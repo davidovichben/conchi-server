@@ -84,9 +84,7 @@ class ProgramDayController extends Controller
             ];
         }
 
-        $interactions = Interaction::mapInteractions($programDay->interactions, $user, $prefixFiles);
-
-        $interactions = $interactions->mapWithKeys(function ($interaction) use ($user, $prefixFiles) {
+        $interactions = $programDay->interactions->mapWithKeys(function ($interaction) use ($user, $prefixFiles) {
             $mapped = Interaction::mapInteraction($interaction, $user, $prefixFiles);
             return [$interaction->pivot->period => $mapped];
         });
