@@ -62,9 +62,6 @@ class ProgramDayController extends Controller
             return [$category->pivot->period => $values];
         });
 
-        $interactions = $programDay->interactions->mapWithKeys(function ($interaction) {
-            return [$interaction->pivot->period => $interaction];
-        });
 
         if ($programDay->number === 2 && $programDay->week->number > 1) {
             $userOptions = UserProgramReport::where('user_id', Auth::id())->select('program_report_option_id')
@@ -80,14 +77,19 @@ class ProgramDayController extends Controller
                 ->with('interaction')
                 ->get();
 
-            $interactions = $options->pluck('interaction');
+            $afternoonInteractions = $options->pluck('interaction');
 
             $categories['afternoon'] = [
-                'interactions' => Interaction::mapInteractions($interactions, $user, $prefixFiles)
+                'interactions' => Interaction::mapInteractions($afternoonInteractions, $user, $prefixFiles)
             ];
         }
 
-        $interactions = Interaction::mapInteractions($interactions, $user, $prefixFiles);
+        $interactions = Interaction::mapInteractions($programDay->interactions, $user, $prefixFiles);
+
+        $interactions = $interactions->mapWithKeys(function ($interaction) use ($user, $prefixFiles) {
+            $mapped = Interaction::mapInteraction($interaction, $user, $prefixFiles);
+            return [$interaction->pivot->period => $mapped];
+        });
 
         $nextDay = $programDay->nextDay();
 

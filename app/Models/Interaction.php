@@ -157,46 +157,50 @@ class Interaction extends BaseModel
     public static function mapInteractions($interactions, $user, $prefixFiles, $displayCategories = true)
     {
         $interactions = $interactions->map(function($interaction) use ($user, $prefixFiles, $displayCategories) {
-            $audioFile = $interaction->selectAudioFile($user->details);
-            if (!$audioFile) {
-                return null;
-            }
-
-            $values = [
-                ...$interaction->getAttributes(),
-                'title'             => $audioFile ? $audioFile->title : $interaction->title,
-                'play_prefix_file'  => (bool)$interaction->play_prefix_file,
-                'liked'             => $interaction->userInteractions->count() > 0,
-                'status'            => $interaction->userInteractions->count() > 0 ? $interaction->userInteractions->first()->status : null,
-                'category'          => $displayCategories && $interaction->category ? [
-                    'id'    => $interaction->category->id,
-                    'name'  => $interaction->category->name,
-                    'image' => $interaction->category->image ? url(Storage::url($interaction->category->image)) : null
-                ] : null,
-                'subCategory'       => !$displayCategories && $interaction->subCategory ? [
-                    'id'    => $interaction->subCategory->id,
-                    'name'  => $interaction->subCategory->name,
-                    'image' => $interaction->subCategory->image ? url(Storage::url($interaction->subCategory->image)) : null
-                ] : null,
-            ];
-
-            if ($interaction->userInteractions->count() > 0) {
-                $values['status'] = $interaction->userInteractions->first()->status;
-                $values['liked'] = $interaction->userInteractions->first()->liked;
-            }
-
-            $values['name_prefix'] = $prefixFiles->count() > 0 ? $prefixFiles->random() : null;
-            $values['audio'] = url(Storage::url($audioFile->file));
-            $values['duration'] = $audioFile->duration ?? 0;
-            $values['description'] = str_replace('<em>שם הילד</em>', $user->details->child_name, $audioFile->description);
-            $values['guidelines'] = str_replace('<em>שם הילד</em>', $user->details->child_name, $audioFile->guidelines);
-
-
-            return $values;
+            return self::mapInteraction($interaction, $user, $prefixFiles, $displayCategories);
         });
 
         return $interactions->filter(function ($interaction) {
             return $interaction;
         })->values();
+    }
+
+    public static function mapInteraction($interaction, $user, $prefixFiles, $displayCategories = true)
+    {
+        $audioFile = $interaction->selectAudioFile($user->details);
+        if (!$audioFile) {
+            return null;
+        }
+
+        $values = [
+            ...$interaction->getAttributes(),
+            'title'             => $audioFile ? $audioFile->title : $interaction->title,
+            'play_prefix_file'  => (bool)$interaction->play_prefix_file,
+            'liked'             => $interaction->userInteractions->count() > 0,
+            'status'            => $interaction->userInteractions->count() > 0 ? $interaction->userInteractions->first()->status : null,
+            'category'          => $displayCategories && $interaction->category ? [
+                'id'    => $interaction->category->id,
+                'name'  => $interaction->category->name,
+                'image' => $interaction->category->image ? url(Storage::url($interaction->category->image)) : null
+            ] : null,
+            'subCategory'       => !$displayCategories && $interaction->subCategory ? [
+                'id'    => $interaction->subCategory->id,
+                'name'  => $interaction->subCategory->name,
+                'image' => $interaction->subCategory->image ? url(Storage::url($interaction->subCategory->image)) : null
+            ] : null,
+        ];
+
+        if ($interaction->userInteractions->count() > 0) {
+            $values['status'] = $interaction->userInteractions->first()->status;
+            $values['liked'] = $interaction->userInteractions->first()->liked;
+        }
+
+        $values['name_prefix'] = $prefixFiles->count() > 0 ? $prefixFiles->random() : null;
+        $values['audio'] = url(Storage::url($audioFile->file));
+        $values['duration'] = $audioFile->duration ?? 0;
+        $values['description'] = str_replace('<em>שם הילד</em>', $user->details->child_name, $audioFile->description);
+        $values['guidelines'] = str_replace('<em>שם הילד</em>', $user->details->child_name, $audioFile->guidelines);
+
+        return $values;
     }
 }
