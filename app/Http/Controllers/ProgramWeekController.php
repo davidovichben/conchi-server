@@ -27,7 +27,7 @@ class ProgramWeekController extends Controller
                     'description'   => $week['description'],
                     'number'        => $week['number'],
                     'status'        => count($week['userWeeks']) > 0 ? $week['userWeeks'][0]['status'] : 'locked',
-                    'image'         => url(Storage::url($week->image))
+                    'image'         => $week->image ? url(Storage::url($week->image)) : null
                 ]
             ];
         });
