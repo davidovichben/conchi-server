@@ -63,7 +63,10 @@ class Article extends BaseModel
 
     public function deleteInstance()
     {
-        $this->deleteImage();
+        if ($this->image) {
+            $this->deleteImage();
+        }
+
         $this->delete();
     }
 }
