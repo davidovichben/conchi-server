@@ -56,6 +56,7 @@ Route::middleware(['auth:sanctum', IsAdmin::class])->group(function () {
     Route::put('/weeks/{programWeek}/activate', [ProgramWeekController::class, 'activate']);
 
     Route::post('/days', [ProgramDayController::class, 'store']);
+    Route::put('/days/{programDay}', [ProgramDayController::class, 'update']);
     Route::delete('/days/{programDay}', [ProgramDayController::class, 'destroy']);
     Route::post('/days/{dayId}/activity', [ProgramDayController::class, 'storeActivity']);
     Route::delete('/days/{dayId}/activity', [ProgramDayController::class, 'deleteActivity']);

@@ -9,6 +9,7 @@ class ProgramDay extends BaseModel
 {
     use HasFactory;
 
+
     public function week()
     {
         return $this->belongsTo(ProgramWeek::class);
@@ -38,7 +39,7 @@ class ProgramDay extends BaseModel
         $day->number = $lastDay->number + 1;
         $day->save();
 
-        return $day;
+        return ProgramDay::find($day->id);
     }
 
     public function previousDay()

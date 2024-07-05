@@ -15,6 +15,10 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('week_id');
             $table->unsignedTinyInteger('number');
+            $table->string('morning_label', 255)->default('בוקר טוב');
+            $table->string('afternoon_label', 255)->default('אחה"צ/אחרי הגן');
+            $table->string('evening_label', 255)->default('ערב');
+            $table->string('night_label', 255)->default('לפני השינה');
             $table->timestamps();
 
             $table->unique(['week_id', 'number']);

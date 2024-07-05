@@ -29,6 +29,8 @@ class ProgramDayController extends Controller
             ->load(['categories' => function ($query) use ($user) {
                 $query->with(['subCategories' => function ($query) use ($user) {
                     $query->whereIn('id', $user->subCategories->pluck('id')->toArray());
+//                    $query->join('interaction_categories as uc', 'interaction_sub_categories.category_id', 'uc.id')
+//                        ->whereIn('interaction_sub_categories.id', $user->subCategories->pluck('id')->toArray());
                 }])->with(['interactions' => function ($query) use ($user) {
                     $query->orderBy('show_order', 'asc')->whereIn('id', $user->interactions->pluck('id')->toArray());
                 }]);
@@ -97,7 +99,13 @@ class ProgramDayController extends Controller
             'weekId'        => $programDay->week_id,
             'nextDayId'     => $nextDay ? $nextDay->id : null,
             'interactions'  => $interactions,
-            'categories'    => $categories
+            'categories'    => $categories,
+            'labels'        => [
+                'morning'   => $programDay->morning_label,
+                'afternoon' => $programDay->afternoon_label,
+                'evening'   => $programDay->evening_label,
+                'night'     => $programDay->night_label
+            ]
         ], 200);
     }
 

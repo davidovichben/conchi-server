@@ -16,6 +16,22 @@ class ProgramDayController extends Controller
         return response([...$day->toArray(), 'interactions' => []], 200);
     }
 
+    public function update(ProgramDay $programDay, Request $request)
+    {
+        $labels = ['morning_label', 'afternoon_label', 'evening_label', 'night_label'];
+
+        $property = $request->input('property');
+        if (!in_array($property, $labels)) {
+            return response(['message' => 'Invalid property'], 400);
+        }
+
+        $value = $request->input('value');
+
+        $programDay->update([$property => $value]);
+
+        return response([...$programDay->toArray(), 'interactions' => []], 200);
+    }
+
     public function destroy(ProgramDay $programDay)
     {
         DB::beginTransaction();
