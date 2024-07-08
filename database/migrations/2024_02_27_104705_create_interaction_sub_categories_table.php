@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('interaction_sub_categories', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('interaction_category_id', 100);
+            $table->unsignedBigInteger('interaction_category_id');
             $table->string('name', 255);
             $table->timestamps();
 
