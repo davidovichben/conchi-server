@@ -96,6 +96,7 @@ class ProgramDayController extends Controller
 //        var_dump(count(DB::getQueryLog()));
 
         return response([
+            'number'        => $programDay->number,
             'weekId'        => $programDay->week_id,
             'nextDayId'     => $nextDay ? $nextDay->id : null,
             'interactions'  => $interactions,
