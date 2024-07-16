@@ -124,7 +124,8 @@ class ProgramWeekController extends Controller
 
         UserProgramReport::insert($insertValues);
 
-        $userProgramWeek->update(['review' => $validated['review']]);
+        $userProgramWeek->review = $validated['review'];
+        $userProgramWeek->update();
 
         return response(['message' => 'Report updated'], 200);
     }
