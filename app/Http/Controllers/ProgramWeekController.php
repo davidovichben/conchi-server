@@ -70,7 +70,7 @@ class ProgramWeekController extends Controller
                    'id'             => $row->id,
                    'content'        => $row->content,
                    'options'        => $row->options,
-                   'user_option'    => $row->userOption ? $row->userOption->program_report_option_id : null
+                   'user_option'    => $row->userReport ? $row->userReport->program_report_option_id : null
                ];
             });
 
