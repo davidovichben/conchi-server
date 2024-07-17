@@ -32,9 +32,9 @@ class ProgramDayController extends Controller
 //                    $query->join('interaction_categories as uc', 'interaction_sub_categories.category_id', 'uc.id')
 //                        ->whereIn('interaction_sub_categories.id', $user->subCategories->pluck('id')->toArray());
                 }])->with(['interactions' => function ($query) use ($user) {
-                    $query->orderBy('show_order', 'asc')->whereIn('id', $user->interactions->pluck('id')->toArray());
+                    $query->orderBy('show_order', 'asc');//->whereIn('id', $user->interactions->pluck('id')->toArray());
                 }]);
-        }]);
+            }]);
 
         $programDay->interactions->load('audioFiles')
             ->load('category')
@@ -42,7 +42,7 @@ class ProgramDayController extends Controller
                 $query->where('user_id', Auth::id());
             }]);
 
-        $categories = $programDay->categories->mapWithKeys(function ($category) use ($prefixFiles) {
+        $categories = $programDay->categories->mapWithKeys(function ($category) use ($prefixFiles, $user) {
             $values = [
                 'id'    => $category->id,
                 'name'  => $category->name,
@@ -50,9 +50,17 @@ class ProgramDayController extends Controller
             ];
 
             if ($category->should_display === 'interactions') {
-                $values['interactions'] = Interaction::mapInteractions($category->interactions, Auth::user(), $prefixFiles);
+                $interactions = $category->is_personalized ? $category->interactions->filter(function($interaction) use ($user) {
+                    return $user->interactions->contains('id', $interaction->id);
+                }) : $category->interactions;
+
+                $values['interactions'] = Interaction::mapInteractions($interactions, Auth::user(), $prefixFiles);
             } else {
-                $values['sub_categories'] = $category->subCategories->map(function ($subCategory) {
+                $subCategories = $category->is_personalized ? $category->subCategories->filter(function($subCategory) use ($user) {
+                    return $user->subCategories->contains('id', $subCategory->id);
+                }) : $category->subCategories;
+
+                $values['sub_categories'] = $subCategories->map(function ($subCategory) {
                     return [
                         'id'    => $subCategory->id,
                         'name'  => $subCategory->name,
