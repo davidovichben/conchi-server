@@ -34,17 +34,22 @@ class ProgramWeekController extends Controller
 
         return response($mapped->values(), 200);
     }
-    public function days($weekid)
+
+    public function days($weekId)
     {
-        $days = ProgramDay::where('week_id', $weekid)->with(['userDays' => function ($query) {
-            $query->where('user_id', Auth::id());
-        }])->get();
+        $days = ProgramDay::where('week_id', $weekId)
+            ->leftJoin('user_program_days as upd', function ($query) {
+                $query->on('program_days.id', 'upd.program_day_id')->where('user_id', Auth::id());
+            })
+            ->select('program_days.id', 'upd.completed')
+            ->get();
+
 
         $mapped = $days->mapWithKeys(function($day) {
             return [
                 $day->id => [
-                    'id'        => $day['id'],
-                    'completed' => count($day['userDays']) > 0 ? $day['userDays'][0]['completed'] : false
+                    'id'        => $day->id,
+                    'completed' => (bool)$day->completed
                 ]
             ];
         });
@@ -66,12 +71,12 @@ class ProgramWeekController extends Controller
             })
             ->get()
             ->map(function ($row) {
-               return [
-                   'id'             => $row->id,
-                   'content'        => $row->content,
-                   'options'        => $row->options,
-                   'user_option'    => $row->userReport ? $row->userReport->program_report_option_id : null
-               ];
+                return [
+                    'id'             => $row->id,
+                    'content'        => $row->content,
+                    'options'        => $row->options,
+                    'user_option'    => $row->userReport ? $row->userReport->program_report_option_id : null
+                ];
             });
 
         return response([

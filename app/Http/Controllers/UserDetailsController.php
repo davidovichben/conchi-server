@@ -91,19 +91,27 @@ class UserDetailsController extends Controller
 
     public function updateInteractions(InteractionCategory $category, Request $request)
     {
-        if ($category->personalization_limit && $category->personalization_limit < $request->collect('interactionIds')->count()) {
+        $requestInteractionIds = $request->collect('interactionIds');
+
+        if ($category->personalization_limit && $category->personalization_limit < $requestInteractionIds->count()) {
             return response(['message' => 'You can select maximum ' . $category->personalization_limit . ' interactions'], 400);
         }
 
         DB::beginTransaction();
 
-        $interactionIds = $category->interactions->pluck('id')->toArray();
+        $interactionIds = $category->interactions->pluck('id');
 
-        UserInteraction::where('user_id', Auth::id())->whereIn('interaction_id', $interactionIds)->update(['selected' => 0]);
+        UserInteraction::where('user_id', Auth::id())->whereIn('interaction_id', $interactionIds->toArray())->update(['selected' => 0]);
 
-        UserInteraction::upsert(['selected' => 1],
-            where: ['user_id' => Auth::id()],
-            whereIn: ['interaction_id', $interactionIds],
+        $userInteractions = $requestInteractionIds->map(function($interactionId) {
+            return [
+                'user_id'           => Auth::id(),
+                'interaction_id'    => $interactionId,
+                'selected'          => 1
+            ];
+        });
+
+        UserInteraction::upsert($userInteractions->toArray(),
             uniqueBy: ['user_id', 'interaction_id'],
             update: ['selected']);
 
