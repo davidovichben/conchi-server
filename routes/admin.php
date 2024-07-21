@@ -24,8 +24,8 @@ Route::post('/login', [IndexController::class, 'login']);
 
 Route::middleware(['auth:sanctum', IsAdmin::class])->group(function () {
     Route::post('/users/search', [UserController::class, 'index']);
-    Route::put('/users/{userId}/upload', [UserController::class, 'upload']);
-    Route::delete('/users/{userId}/deleteFile', [UserController::class, 'deleteFile']);
+    Route::put('/users/{user}/upload', [UserController::class, 'upload']);
+    Route::delete('/users/{user}/deleteFile', [UserController::class, 'deleteFile']);
     Route::get('/users/{user}', [UserController::class, 'show']);
     Route::get('/users/{userId}/programWeeks', [UserController::class, 'programWeeks']);
     Route::get('/users/{userId}/programDays', [UserController::class, 'programDays']);

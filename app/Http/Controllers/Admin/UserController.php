@@ -41,19 +41,19 @@ class UserController extends BaseController
         ], 200);
     }
 
-    public function upload($userId, Request $request)
+    public function upload(User $user, Request $request)
     {
         $number = $request->post('number');
         $file = $request->post('file');
 
-        (new UploadedFile($file))->store('users/' . $userId . '/prefix_name_' . $number, 'mp3');
+        (new UploadedFile($file))->store('users/' . $user->uuid . '/prefix_name_' . $number, 'mp3');
     }
 
-    public function deleteFile($userId, Request $request)
+    public function deleteFile(User $user, Request $request)
     {
         $number = $request->get('number');
 
-        Storage::delete('users/' . $userId . '/prefix_name_' . $number . '.mp3');
+        Storage::delete('users/' . $user->uuid . '/prefix_name_' . $number . '.mp3');
     }
 
     public function programWeeks($userId)
