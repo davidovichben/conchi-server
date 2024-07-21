@@ -35,6 +35,15 @@ class ProgramWeekController extends Controller
         return response($mapped->values(), 200);
     }
 
+    public function show(ProgramWeek $programWeek) {
+        return response([
+            'id'          => $programWeek->id,
+            'description' => $programWeek->description,
+            'number'      => $programWeek->number,
+            'image'       => $programWeek->image ? url(Storage::url($programWeek->image)) : null
+        ], 200);
+    }
+
     public function days($weekId)
     {
         $days = ProgramDay::where('week_id', $weekId)
