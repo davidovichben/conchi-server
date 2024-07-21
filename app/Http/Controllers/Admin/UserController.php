@@ -29,6 +29,7 @@ class UserController extends BaseController
         $user->load('paymentPackage');
         $user->load('details');
         $user->load('subCategories');
+        $user->load('interactions');
         $user->load('city');
 
         return response([

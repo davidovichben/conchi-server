@@ -71,11 +71,6 @@ class UserController extends Controller
         return response($response, 200);
     }
 
-    public function show()
-    {
-
-    }
-
     public function update(UserRequest $request)
     {
         $user = User::where('email', Auth::user()->email)->first();
