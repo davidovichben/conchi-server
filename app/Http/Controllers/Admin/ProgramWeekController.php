@@ -59,8 +59,12 @@ class ProgramWeekController extends Controller
 
     public function destroy(ProgramWeek $week)
     {
-        if ($week->is_active) {
-            return response(['message' => 'Week is active'], 400);
+        if ($week->is_active || $week->questions()->exists()) {
+            return response(['message' => 'Week is active or has questions'], 400);
+        }
+
+        if ($week->questions()->exists()) {
+            return response(['message' => 'Week has report questions'], 400);
         }
 
         $week->deleteInstance();
