@@ -138,26 +138,30 @@ class ProgramDayController extends Controller
 
         UserProgramDay::createInstance($values);
 
-        $weekDaysCount = ProgramDay::where('week_id', $programDay->week_id)->count();
-        $completedDaysCount = UserProgramDay::where('completed', 1)->where('user_id', Auth::id())->count();
+        $weekDays = ProgramDay::where('week_id', $programDay->week_id)->select('id')->get();
+        $completedDaysCount = UserProgramDay::where('completed', 1)
+            ->whereIn('program_day_id', $weekDays->pluck('id'))
+            ->where('user_id', Auth::id())
+            ->count();
 
-        if ($weekDaysCount === $completedDaysCount) {
+        if ($weekDays->count() === $completedDaysCount) {
             $week = ProgramWeek::where('id', $programDay->week_id)->first();
 
             UserProgramWeek::where('user_id', Auth::id())
                 ->where('program_week_id', $programDay->week_id)
                 ->update(['status' => 'completed']);
 
+            if ($week->nextWeek()) {
+                $values = [
+                    'user_id'           => Auth::id(),
+                    'program_week_id'   => $week->nextWeek()->id,
+                    'status'            => 'active'
+                ];
 
-            $values = [
-                'user_id'           => Auth::id(),
-                'program_week_id'   => $week->nextWeek()->id,
-                'status'            => 'active'
-            ];
-
-            UserProgramWeek::upsert($values,
-                uniqueBy: ['user_id', 'program_week_id'],
-                update: ['status']);
+                UserProgramWeek::upsert($values,
+                    uniqueBy: ['user_id', 'program_week_id'],
+                    update: ['status']);
+            }
         }
 
         DB::commit();

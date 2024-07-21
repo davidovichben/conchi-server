@@ -57,14 +57,14 @@ class ProgramWeekController extends Controller
         return response($mapped->values(), 200);
     }
 
-    public function report($weekid)
+    public function report($weekId)
     {
-        $userWeek = UserProgramWeek::where('user_id', Auth::id())->where('program_week_id', $weekid)->first();
+        $userWeek = UserProgramWeek::where('user_id', Auth::id())->where('program_week_id', $weekId)->first();
         if (!$userWeek || $userWeek->status !== 'completed') {
             return response(['message' => 'Bad request'], 400);
         }
 
-        $questions = ProgramReportQuestion::where('program_week_id', $weekid)
+        $questions = ProgramReportQuestion::where('program_week_id', $weekId)
             ->with('options')
             ->with('userReport', function($query) {
                 $query->where('user_id', Auth::id());
