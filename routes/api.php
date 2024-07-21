@@ -53,7 +53,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::get('/interactions/personalizedCategories', [InteractionController::class, 'personalizedCategories']);
     Route::middleware('paid')->group(function () {
-        Route::get('/programWeek/{week}', [ProgramWeekController::class, 'show']);
+        Route::get('/programWeek/{programWeek}', [ProgramWeekController::class, 'show']);
         Route::get('/programWeek/{weekId}/days', [ProgramWeekController::class, 'days']);
         Route::get('/programWeek/{weekId}/report', [ProgramWeekController::class, 'report']);
         Route::put('/programWeek/{weekId}/report', [ProgramWeekController::class, 'updateReport']);
