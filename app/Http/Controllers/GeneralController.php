@@ -83,9 +83,10 @@ class GeneralController extends Controller
 
     public function ratings(Request $request)
     {
-        $baseQuery = Rating::where('type', $request->get('type'))->select('score', 'content');
+        $baseQuery = Rating::where('type', $request->get('type'));
 
-        $query = $baseQuery->limit(3);
+        $query = $baseQuery->select('score', 'content')->limit(3);
+
         if ($request->get('from')) {
             $query->skip($request->get('from'));
         }
