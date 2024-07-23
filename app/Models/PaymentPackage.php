@@ -9,11 +9,7 @@ class PaymentPackage extends BaseModel
 {
     use HasFactory;
 
-    protected $fillable = ['title', 'price', 'perks'];
-
-    protected $casts = [
-        'perks' => 'array'
-    ];
+    protected $fillable = ['title', 'price', 'perks', 'guidelines', 'contents'];
 
     public function users()
     {

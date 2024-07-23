@@ -15,7 +15,9 @@ return new class extends Migration
             $table->id();
             $table->string('title');
             $table->unsignedSmallInteger('price');
-            $table->json('perks')->nullable();
+            $table->text('perks')->nullable();
+            $table->text('guidelines')->nullable();
+            $table->text('contents')->nullable();
             $table->timestamps();
         });
     }

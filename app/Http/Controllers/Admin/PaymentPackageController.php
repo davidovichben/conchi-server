@@ -13,7 +13,7 @@ class PaymentPackageController extends BaseController
     {
         $query = PaymentPackage::withCount('users');
 
-        $columns = ['title', 'price', 'perks'];
+        $columns = ['title', 'price'];
         $paginator = DataTableManager::getInstance($query, $request->all(), $columns)->getQuery();
 
         return $this->dataTableResponse($paginator);
