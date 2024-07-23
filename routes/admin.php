@@ -36,7 +36,7 @@ Route::middleware(['auth:sanctum', IsAdmin::class])->group(function () {
     Route::put('/translations/{translation}', [TranslationController::class, 'update']);
 
     Route::post('/images/search', [ImageController::class, 'index']);
-    Route::put('/images/{image}', [ImageController::class, 'update']);
+    Route::resource('images', ImageController::class)->except('index');
 
     Route::post('/interactions/search', [InteractionController::class, 'index']);
     Route::get('/interactions/select', [InteractionController::class, 'select']);

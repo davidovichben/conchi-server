@@ -20,9 +20,27 @@ class ImageController extends BaseController
         return $this->dataTableResponse($paginator);
     }
 
+    public function store(Request $request)
+    {
+        Image::createInstance($request->post('values'), $request->post('file'));
+
+        return response(['message' => 'Image created'], 201);
+    }
+
     public function update(Image $image, Request $request)
     {
         $image->updateInstance($request->post('file'));
+
+        return response(['message' => 'Image updated'], 200);
+    }
+
+    public function destroy(Image $image)
+    {
+        if (!$image->is_editable) {
+            return response(['message' => 'Image is not editable'], 422);
+        }
+
+        $image->deleteInstance();
 
         return response(['message' => 'Image updated'], 200);
     }

@@ -16,6 +16,7 @@ return new class extends Migration
             $table->string('key_name', 255)->unique();
             $table->string('path', 255);
             $table->string('screen', 150);
+            $table->boolean('is_editable')->default(false);
             $table->timestamps();
         });
     }
