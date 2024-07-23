@@ -8,6 +8,7 @@ use App\Models\ContentPackage;
 use App\Models\Image;
 use App\Models\InteractionCategory;
 use App\Models\Page;
+use App\Models\Rating;
 use App\Models\Translation;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -78,5 +79,11 @@ class GeneralController extends Controller
     {
         $cities = City::orderBy('name')->get();
         return response($cities, 200);
+    }
+
+    public function ratings(Request $request)
+    {
+        $ratings = Rating::where('type', $request->get('type'))->select('score', 'content')->get();
+        return response($ratings, 200);
     }
 }

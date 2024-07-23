@@ -31,6 +31,7 @@ Route::post('/user/resetPassword', [UserController::class, 'resetPassword']);
 Route::get('/article/{article}', [GeneralController::class, 'article']);
 Route::get('/page', [GeneralController::class, 'page']);
 Route::get('/cities', [GeneralController::class, 'cities']);
+Route::get('/ratings', [GeneralController::class, 'ratings']);
 
 Route::post('/payment/webhook', [PaymentController::class, 'webhook']);
 Route::get('/payment/url', [PaymentController::class, 'url']);

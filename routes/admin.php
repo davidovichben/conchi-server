@@ -13,6 +13,7 @@ use App\Http\Controllers\Admin\ProgramDayController;
 use App\Http\Controllers\Admin\ProgramReportOptionController;
 use App\Http\Controllers\Admin\ProgramReportQuestionController;
 use App\Http\Controllers\Admin\ProgramWeekController;
+use App\Http\Controllers\Admin\RatingsController;
 use App\Http\Controllers\Admin\ReportController;
 use App\Http\Controllers\Admin\TranslationController;
 use App\Http\Controllers\Admin\UserController;
@@ -75,6 +76,9 @@ Route::middleware(['auth:sanctum', IsAdmin::class])->group(function () {
 
     Route::post('/pages/search', [PageController::class, 'index']);
     Route::put('/pages/{page}', [PageController::class, 'update']);
+
+    Route::post('/ratings/search', [RatingsController::class, 'index']);
+    Route::resource('/ratings', RatingsController::class)->except('index');
 
     Route::get('/reports', [ReportController::class, 'index']);
 });
