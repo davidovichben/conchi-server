@@ -18,7 +18,7 @@ class Image extends BaseModel
 
         $image = new self();
         $image->key_name = $values['key_name'];
-        $image->screen = $values['screen'];
+        $image->screen = $values['screen'] ?? null;
         $image->is_editable = 1;
         $image->path = 'images/' . $image->key_name . '.' . $file->ext;
         if ($image->save()) {

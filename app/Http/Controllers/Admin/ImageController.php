@@ -22,7 +22,14 @@ class ImageController extends BaseController
 
     public function store(Request $request)
     {
-        Image::createInstance($request->post('values'), $request->post('file'));
+        $values = $request->post('values');
+
+        $exists = Image::where('key_name', $values['key_name'])->exists();
+        if ($exists) {
+            return response(['message' => 'Image already exists'], 422);
+        }
+
+        Image::createInstance($values, $request->post('file'));
 
         return response(['message' => 'Image created'], 201);
     }
