@@ -21,7 +21,7 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::post('/translations', [GeneralController::class, 'translations']);
-Route::get('/images', [GeneralController::class, 'images']);
+Route::post('/images', [GeneralController::class, 'images']);
 Route::post('/user', [UserController::class, 'store']);
 Route::post('/user/login', [UserController::class, 'login']);
 Route::post('/user/socialLogin', [UserController::class, 'socialLogin']);
