@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Models\ContentPackage;
 use App\Models\Rating;
 use App\Services\DataTableManager;
 use Illuminate\Http\Request;
@@ -11,9 +10,9 @@ class RatingsController extends BaseController
 {
     public function index(Request $request)
     {
-        $query = ContentPackage::query();
+        $query = Rating::query();
 
-        $columns = ['type', 'score', 'content'];
+        $columns = ['type', 'content'];
         $paginator = DataTableManager::getInstance($query, $request->all(), $columns)->getQuery();
 
         return $this->dataTableResponse($paginator);
