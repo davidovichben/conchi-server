@@ -2,11 +2,10 @@
 
 use App\Http\Controllers\Admin\ArticleController;
 use App\Http\Controllers\Admin\ContentPackageController;
-use App\Http\Controllers\Admin\GeneralController;
-use App\Http\Controllers\Admin\ImageController;
 use App\Http\Controllers\Admin\IndexController;
 use App\Http\Controllers\Admin\InteractionCategoryController;
 use App\Http\Controllers\Admin\InteractionSubCategoryController;
+use App\Http\Controllers\Admin\MediaController;
 use App\Http\Controllers\Admin\PageController;
 use App\Http\Controllers\Admin\PaymentPackageController;
 use App\Http\Controllers\Admin\ProgramDayController;
@@ -35,8 +34,8 @@ Route::middleware(['auth:sanctum', IsAdmin::class])->group(function () {
     Route::post('/translations/search', [TranslationController::class, 'index']);
     Route::put('/translations/{translation}', [TranslationController::class, 'update']);
 
-    Route::post('/images/search', [ImageController::class, 'index']);
-    Route::resource('images', ImageController::class)->except('index');
+    Route::post('/media/search', [MediaController::class, 'index']);
+    Route::resource('media', MediaController::class)->except('index');
 
     Route::post('/interactions/search', [InteractionController::class, 'index']);
     Route::get('/interactions/select', [InteractionController::class, 'select']);

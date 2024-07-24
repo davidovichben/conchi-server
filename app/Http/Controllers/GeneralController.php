@@ -5,8 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Article;
 use App\Models\City;
 use App\Models\ContentPackage;
-use App\Models\Image;
-use App\Models\InteractionCategory;
+use App\Models\Media;
 use App\Models\Page;
 use App\Models\Rating;
 use App\Models\Translation;
@@ -28,15 +27,15 @@ class GeneralController extends Controller
         return response($translations, 200);
     }
 
-    public function images(): Response
+    public function media(): Response
     {
-        $images = Image::select('key_name', 'path')
+        $media = Media::select('key_name', 'path')
             ->get()
             ->mapWithKeys(function($row) {
                 return [$row->key_name => url(Storage::url($row->path))];
             });
 
-        return response($images, 200);
+        return response($media, 200);
     }
 
     public function options(Request $request): Response
