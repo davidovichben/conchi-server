@@ -32,9 +32,9 @@ class MediaController extends BaseController
         return response(['message' => 'Media created'], 201);
     }
 
-    public function update(Media $media, Request $request)
+    public function update($mediaId, Request $request)
     {
-        var_dump($media->id);
+        var_dump($mediaId);return;
 
         $media->updateInstance($request->post('file'));
 
