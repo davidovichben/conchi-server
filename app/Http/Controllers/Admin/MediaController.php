@@ -35,15 +35,16 @@ class MediaController extends BaseController
     public function update($mediaId, Request $request)
     {
         $media = Media::findOrFail($mediaId);
-        var_dump($media->id);
 
         $media->updateInstance($request->post('file'));
 
         return response(['message' => 'Media updated'], 200);
     }
 
-    public function destroy(Media $media)
+    public function destroy($mediaId)
     {
+        $media = Media::findOrFail($mediaId);
+
         if (!$media->is_editable) {
             return response(['message' => 'Media is not editable'], 422);
         }
