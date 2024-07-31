@@ -31,8 +31,6 @@ class Media extends BaseModel
             Storage::delete($this->path);
         }
 
-        var_dump($this->key_name);
-
         $file = new UploadedFile($inputFile);
         $file->store('media/' . $this->key_name);
 
