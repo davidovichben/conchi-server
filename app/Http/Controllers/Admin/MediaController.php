@@ -34,7 +34,8 @@ class MediaController extends BaseController
 
     public function update($mediaId, Request $request)
     {
-        var_dump($mediaId);return;
+        $media = Media::findOrFail($mediaId);
+        var_dump($media->id);
 
         $media->updateInstance($request->post('file'));
 
