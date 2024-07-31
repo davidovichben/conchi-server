@@ -32,9 +32,12 @@ class Media extends BaseModel
         }
 
         $file = new UploadedFile($inputFile);
-        $file->store('media/' . $this->key_name);
 
-        $this->path = 'media/' . $this->key_name . '.' . $file->ext;
+        $path = 'media/' . $this->key_name . '.' . $file->ext;
+
+        $file->store($path);
+
+        $this->path = $path;
         $this->update();
     }
 
