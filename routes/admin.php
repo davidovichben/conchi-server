@@ -35,7 +35,7 @@ Route::middleware(['auth:sanctum', IsAdmin::class])->group(function () {
     Route::put('/translations/{translation}', [TranslationController::class, 'update']);
 
     Route::post('/media/search', [MediaController::class, 'index']);
-    Route::resource('media', MediaController::class)->except('index');
+    Route::resource('/media', MediaController::class)->except('index');
 
     Route::post('/interactions/search', [InteractionController::class, 'index']);
     Route::get('/interactions/select', [InteractionController::class, 'select']);
