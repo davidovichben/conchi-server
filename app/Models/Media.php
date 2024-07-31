@@ -27,7 +27,9 @@ class Media extends BaseModel
 
     public function updateInstance($inputFile)
     {
-        Storage::delete($this->path);
+        if ($this->path && Storage::exists($this->path)) {
+            Storage::delete($this->path);
+        }
 
         $file = new UploadedFile($inputFile);
         $file->store('media/' . $this->key_name);
@@ -37,7 +39,10 @@ class Media extends BaseModel
     }
 
     public function deleteInstance() {
-        Storage::delete($this->path);
+        if ($this->path && Storage::exists($this->path)) {
+            Storage::delete($this->path);
+        }
+
         $this->delete();
     }
 }
