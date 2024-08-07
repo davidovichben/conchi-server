@@ -22,7 +22,10 @@ class TranslationController extends BaseController
 
     public function update(Translation $translation, Request $request)
     {
-        $translation->update(['value' => $request->get('value')]);
+        $translation->update([
+            'value'         => $request->get('value'),
+            'html_value'    => $request->get('htmlValue')
+        ]);
 
         return response(['message' => 'Translation updated'], 200);
     }

@@ -15,7 +15,8 @@ return new class extends Migration
             $table->id();
             $table->enum('language', ['he', 'en'])->default('he');
             $table->string('name', 120);
-            $table->text('value');
+            $table->text('value')->nullable();
+            $table->text('html_value')->nullable();
             $table->timestamps();
             //$table->unique(['language', 'name']);
         });
