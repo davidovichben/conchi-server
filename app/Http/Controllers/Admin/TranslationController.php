@@ -14,7 +14,7 @@ class TranslationController extends BaseController
     {
         $query = Translation::query();
 
-        $columns = ['id', 'name', 'value'];
+        $columns = ['id', 'name', 'value', 'html_value'];
         $paginator = DataTableManager::getInstance($query, $request->all(), $columns)->getQuery();
 
         return $this->dataTableResponse($paginator);
