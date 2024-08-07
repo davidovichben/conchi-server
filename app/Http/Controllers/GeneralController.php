@@ -18,10 +18,10 @@ class GeneralController extends Controller
     public function translations(): Response
     {
         $translations = Translation::where('language', 'he')
-            ->select('name', 'value')
+            ->select('name', 'value', 'html_value')
             ->get()
             ->mapWithKeys(function($row) {
-                return [$row->name => $row->value];
+                return [$row->name => $row->value ?? $row->html_value];
             });
 
         return response($translations, 200);
