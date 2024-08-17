@@ -205,7 +205,7 @@ class Interaction extends BaseModel
     }
 
     private static function replaceChildName($childName, $text) {
-        $pattern = '/<em>(.*?)<\/em>|\*(.*?)\*/u';
+        $pattern = '/<em>(.*?)<\/em>|\*(.*?)\*|\{child_name\}/u';
         return preg_replace($pattern, $childName, $text);
     }
 }
