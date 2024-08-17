@@ -205,7 +205,7 @@ class Interaction extends BaseModel
     }
 
     private static function replaceChildName($childName, $text) {
-        $patterns = ['/<em>שם הילד</em>/', '*שם הילד*'];
+        $patterns = ['/<em>שם הילד</em>/', '/*\שם הילד*\/'];
         $replacements = [$childName, $childName];
 
         return preg_replace($patterns, $replacements, $text);
