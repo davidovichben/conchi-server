@@ -204,7 +204,7 @@ class Interaction extends BaseModel
         return $values;
     }
 
-    private static function replaceChildName($text, $childName) {
+    private static function replaceChildName($childName, $text) {
         $patterns = ['/<em>שם הילד</em>/', '*שם הילד*'];
         $replacements = [$childName, $childName];
 
