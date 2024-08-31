@@ -113,7 +113,7 @@ class ProgramDayController extends Controller
             'nextDayId'     => $nextDay ? $nextDay->id : null,
             'interactions'  => $interactions,
             'categories'    => $categories,
-            'completed'     => $userProgramDay->completed,
+            'completed'     => $userProgramDay ? $userProgramDay->completed : false,
             'labels'        => [
                 'morning'   => $programDay->morning_label,
                 'afternoon' => $programDay->afternoon_label,
