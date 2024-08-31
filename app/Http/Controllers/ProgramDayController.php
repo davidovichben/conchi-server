@@ -101,6 +101,10 @@ class ProgramDayController extends Controller
 
         $nextDay = $programDay->nextDay();
 
+        $userProgramDay = UserProgramDay::where('program_day_id', $programDay->id)
+            ->where('user_id', Auth::id())
+            ->first();
+
 //        var_dump(count(DB::getQueryLog()));
 
         return response([
@@ -109,6 +113,7 @@ class ProgramDayController extends Controller
             'nextDayId'     => $nextDay ? $nextDay->id : null,
             'interactions'  => $interactions,
             'categories'    => $categories,
+            'completed'     => $userProgramDay->completed,
             'labels'        => [
                 'morning'   => $programDay->morning_label,
                 'afternoon' => $programDay->afternoon_label,

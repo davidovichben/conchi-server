@@ -9,7 +9,6 @@ class ProgramDay extends BaseModel
 {
     use HasFactory;
 
-
     public function week()
     {
         return $this->belongsTo(ProgramWeek::class);
