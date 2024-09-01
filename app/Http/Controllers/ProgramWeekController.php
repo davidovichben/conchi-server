@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\ProgramDay;
 use App\Models\ProgramReportQuestion;
 use App\Models\ProgramWeek;
+use App\Models\UserInteraction;
 use App\Models\UserProgramReport;
 use App\Models\UserProgramWeek;
 use Illuminate\Http\Request;
@@ -116,7 +117,8 @@ class ProgramWeekController extends Controller
 
         $options = collect($validated['options']);
 
-        $insertValues = [];
+        $reportInsertValues = [];
+        $interactionInsertValues = []; // For interactions related to options
 
         foreach ($questions as $question) {
             $userOptionId = $options->get($question->id);
@@ -127,16 +129,23 @@ class ProgramWeekController extends Controller
                 });
 
                 if ($option) {
-                    $insertValues[] = [
+                    $reportInsertValues[] = [
                         'user_id'                       => Auth::id(),
                         'program_report_question_id'    => $question->id,
                         'program_report_option_id'      => $option->id
+                    ];
+
+                    $interactionInsertValues[] = [
+                        'user_id'           => Auth::id(),
+                        'interaction_id'    => $option->interaction_id,
+                        'selected'          => 1
                     ];
                 }
             }
         }
 
-        UserProgramReport::insert($insertValues);
+        UserProgramReport::insert($reportInsertValues);
+        UserInteraction::insert($interactionInsertValues);
 
         $userProgramWeek->review = $validated['review'];
         $userProgramWeek->update();
