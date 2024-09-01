@@ -146,7 +146,7 @@ class ProgramWeekController extends Controller
 
         UserProgramReport::insert($reportInsertValues);
 
-        $interactionIds = $interactionInsertValues->pluck('interaction_id')->toArray();
+        $interactionIds = collect($interactionInsertValues)->pluck('interaction_id')->toArray();
 
         UserInteraction::where('user_id', Auth::id())->whereIn('interaction_id', $interactionIds)->delete();
         UserInteraction::insert($interactionInsertValues);
