@@ -83,34 +83,18 @@ class InteractionController extends Controller
             $interactionCategory = InteractionCategory::where('role', 'general_sentences')->first();
         }
 
-        $interactions = Interaction::where('category_id', $interactionCategory->id)
-            ->with('audioFiles')
-            ->with('category')
-            ->with(['userInteractions' => function($query) {
-                $query->where('user_id', Auth::id());
-            }])
-            ->orderBy('show_order', 'asc')
-            ->get();
-
-
-        if ($interactionCategory->is_personalized) {
-            $userInteractions = UserInteraction::where('user_id', Auth::id())
-                ->whereIn('interaction_id', $interactions->pluck('id')->toArray())
-                ->where('selected', 1)
-                ->select('interaction_id')
-                ->get();
-
-            $interactions = $interactions->filter(function ($interaction) use ($userInteractions) {
-                return $userInteractions->contains('interaction_id', $interaction['id']);
-            })->values();
-        }
-
-        $prefixFiles = Auth::user()->getPrefixFiles();
-
-        $interactions = Interaction::mapInteractions($interactions, Auth::user(), $prefixFiles);
-
-        return response([...$interactionCategory->toArray(), 'interactions' => $interactions], 200);
+        return $this->getByCategory($interactionCategory);
     }
+
+    public function byCategoryRole(Request $request)
+    {
+        $role = $request->get('role');
+        $interactionCategory = InteractionCategory::where('role', $role)->firstOrFail();
+
+
+        return $this->getByCategory($interactionCategory);
+    }
+
 
     public function bySubCategory(InteractionSubCategory $interactionSubCategory)
     {
@@ -161,5 +145,36 @@ class InteractionController extends Controller
         UserInteraction::upsertInstance($values);
 
         return response(['message' => 'Interaction status updated'], 200);
+    }
+
+    private function getByCategory($interactionCategory)
+    {
+        $interactions = Interaction::where('category_id', $interactionCategory->id)
+            ->with('audioFiles')
+            ->with('category')
+            ->with(['userInteractions' => function($query) {
+                $query->where('user_id', Auth::id());
+            }])
+            ->orderBy('show_order', 'asc')
+            ->get();
+
+
+        if ($interactionCategory->is_personalized) {
+            $userInteractions = UserInteraction::where('user_id', Auth::id())
+                ->whereIn('interaction_id', $interactions->pluck('id')->toArray())
+                ->where('selected', 1)
+                ->select('interaction_id')
+                ->get();
+
+            $interactions = $interactions->filter(function ($interaction) use ($userInteractions) {
+                return $userInteractions->contains('interaction_id', $interaction['id']);
+            })->values();
+        }
+
+        $prefixFiles = Auth::user()->getPrefixFiles();
+
+        $interactions = Interaction::mapInteractions($interactions, Auth::user(), $prefixFiles);
+
+        return response([...$interactionCategory->toArray(), 'interactions' => $interactions], 200);
     }
 }

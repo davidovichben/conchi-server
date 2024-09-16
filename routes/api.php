@@ -66,6 +66,6 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/interactions/{interactionSubCategory}/bySubCategory', [InteractionController::class, 'bySubCategory']);
         Route::put('/interactions/{interactionId}/like', [InteractionController::class, 'like']);
         Route::put('/interactions/{interactionId}/status', [InteractionController::class, 'setStatus']);
-        Route::get('/interactions/byGeneralSentences', [InteractionController::class, 'byGeneralSentences']);
+        Route::get('/interactions/byCategoryRole', [InteractionController::class, 'byCategoryRole']);
     });
 });
