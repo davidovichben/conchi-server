@@ -77,12 +77,8 @@ class InteractionController extends Controller
         ], 200);
     }
 
-    public function byCategory(InteractionCategory $interactionCategory, Request $request)
+    public function byCategory(InteractionCategory $interactionCategory)
     {
-        if ($request->get('role') === 'general') {
-            $interactionCategory = InteractionCategory::where('role', 'general_sentences')->first();
-        }
-
         return $this->getByCategory($interactionCategory);
     }
 
@@ -90,7 +86,6 @@ class InteractionController extends Controller
     {
         $role = $request->get('role');
         $interactionCategory = InteractionCategory::where('role', $role)->firstOrFail();
-
 
         return $this->getByCategory($interactionCategory);
     }

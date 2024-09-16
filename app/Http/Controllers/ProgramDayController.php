@@ -110,6 +110,7 @@ class ProgramDayController extends Controller
         return response([
             'number'        => $programDay->number,
             'weekId'        => $programDay->week_id,
+            'isLastWeek'    => $programDay->week->nextWeek() === null,
             'nextDayId'     => $nextDay ? $nextDay->id : null,
             'interactions'  => $interactions,
             'categories'    => $categories,
