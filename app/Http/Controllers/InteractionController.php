@@ -51,7 +51,7 @@ class InteractionController extends Controller
         return response($categories, 200);
     }
 
-    public function subCategories(InteractionCategory $interactionCategory, Request $request)
+    public function subCategories(InteractionCategory $interactionCategory)
     {
         $subCategories = $interactionCategory->subCategories->map(function ($subCategory) {
             return [
@@ -77,8 +77,12 @@ class InteractionController extends Controller
         ], 200);
     }
 
-    public function byCategory(InteractionCategory $interactionCategory)
+    public function byCategory(InteractionCategory $interactionCategory, Request $request)
     {
+        if ($request->get('role') === 'general') {
+            $interactionCategory = InteractionCategory::where('role', 'general_sentences')->first();
+        }
+
         $interactions = Interaction::where('category_id', $interactionCategory->id)
             ->with('audioFiles')
             ->with('category')
@@ -100,7 +104,6 @@ class InteractionController extends Controller
                 return $userInteractions->contains('interaction_id', $interaction['id']);
             })->values();
         }
-
 
         $prefixFiles = Auth::user()->getPrefixFiles();
 
