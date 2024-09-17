@@ -154,7 +154,7 @@ class InteractionController extends Controller
             ->get();
 
 
-        if ($interactionCategory->is_personalized) {
+        if ($interactionCategory->role === 'option_sentences' || $interactionCategory->is_personalized) {
             $userInteractions = UserInteraction::where('user_id', Auth::id())
                 ->whereIn('interaction_id', $interactions->pluck('id')->toArray())
                 ->where('selected', 1)
