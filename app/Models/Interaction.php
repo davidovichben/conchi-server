@@ -172,12 +172,14 @@ class Interaction extends BaseModel
             return null;
         }
 
+        $userInteraction = $interaction->userInteractions()->where('user_id', $user->id)->first();
+
         $values = [
             ...$interaction->getAttributes(),
             'title'             => $audioFile ? $audioFile->title : $interaction->title,
             'play_prefix_file'  => (bool)$interaction->play_prefix_file,
             'liked'             => $interaction->userInteractions->count() > 0,
-            'status'            => $interaction->userInteractions->count() > 0 ? $interaction->userInteractions->first()->status : null,
+            'status'            => $userInteraction ? $userInteraction->status : null,
             'category'          => $displayCategories && $interaction->category ? [
                 'id'    => $interaction->category->id,
                 'name'  => $interaction->category->name,
