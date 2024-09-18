@@ -178,7 +178,7 @@ class Interaction extends BaseModel
             ...$interaction->getAttributes(),
             'title'             => $audioFile ? $audioFile->title : $interaction->title,
             'play_prefix_file'  => (bool)$interaction->play_prefix_file,
-            'liked'             => $interaction->userInteractions->count() > 0,
+            'liked'             => $userInteraction->liked ?? false,
             'status'            => $userInteraction ? $userInteraction->status : null,
             'category'          => $displayCategories && $interaction->category ? [
                 'id'    => $interaction->category->id,
@@ -192,9 +192,9 @@ class Interaction extends BaseModel
             ] : null,
         ];
 
-        if ($interaction->userInteractions->count() > 0) {
-            $values['status'] = $interaction->userInteractions->first()->status;
-            $values['liked'] = $interaction->userInteractions->first()->liked;
+        if ($userInteraction) {
+            $values['status'] = $userInteraction->status;
+            $values['liked'] = $userInteraction->liked;
         }
 
         $values['name_prefix'] = $prefixFiles->count() > 0 ? $prefixFiles->random() : null;
