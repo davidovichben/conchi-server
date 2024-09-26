@@ -15,6 +15,8 @@ return new class extends Migration
             $table->id();
             $table->enum('type', ['home', 'payment']);
             $table->text('content');
+            $table->string('author', 50)->nullable();
+            $table->string('path', 50)->nullable();
             $table->tinyInteger('score', )->default(5);
             $table->timestamps();
         });

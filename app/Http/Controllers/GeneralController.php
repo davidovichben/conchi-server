@@ -84,7 +84,7 @@ class GeneralController extends Controller
     {
         $baseQuery = Rating::where('type', $request->get('type'));
 
-        $query = $baseQuery->select('score', 'content')->limit(3);
+        $query = $baseQuery->select('score', 'content', 'path', 'author')->limit(3);
 
         if ($request->get('from')) {
             $query->skip($request->get('from'));

@@ -12,7 +12,7 @@ class RatingsController extends BaseController
     {
         $query = Rating::query();
 
-        $columns = ['type', 'content'];
+        $columns = ['path', 'type', 'content', 'name'];
         $paginator = DataTableManager::getInstance($query, $request->all(), $columns)->getQuery();
 
         return $this->dataTableResponse($paginator);
@@ -20,14 +20,14 @@ class RatingsController extends BaseController
 
     public function store(Request $request)
     {
-        $rating = Rating::createInstance($request->post());
+        $rating = Rating::createInstance($request->post(), $request->post('image'));
 
         return response($rating, 201);
     }
 
     public function update(Request $request, Rating $rating)
     {
-        $rating->updateInstance($request->post());
+        $rating->updateInstance($request->post(), $request->post('image'));
 
         return response($rating, 200);
     }
