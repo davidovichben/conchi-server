@@ -12,34 +12,39 @@ class Rating extends BaseModel
 
     protected $fillable = ['type', 'score', 'content', 'author'];
 
-    public static function createInstance($values, $inputFile)
+    public static function createInstance($values, $inputFile = null)
     {
-        $file = new UploadedFile($inputFile);
-
         $rating = new self();
         $rating->fill($values);
 
         if ($rating->save()) {
-            $rating->path = $rating->getBasePath() . '.' . $file->ext;
-            $rating->update();
+            if ($inputFile) {
+                $file = new UploadedFile($inputFile);
+                $file->store($rating->getBasePath());
 
-            $file->store($rating->getBasePath());
+                $rating->path = $rating->getBasePath() . '.' . $file->ext;
+            }
+
+            $rating->update();
         }
 
         return $rating;
     }
 
-    public function updateInstance($values, $inputFile)
+    public function updateInstance($values, $inputFile = null)
     {
         if ($this->path && Storage::exists($this->path)) {
             Storage::delete($this->path);
         }
 
-        $file = new UploadedFile($inputFile);
-        $file->store($this->getBasePath());
+        if ($inputFile) {
+            $file = new UploadedFile($inputFile);
+            $file->store($this->getBasePath());
+        }
+
 
         $this->fill($values);
-        $this->path = $this->getBasePath() . '.' . $file->ext;
+        $this->path = $inputFile ? $this->getBasePath() . '.' . $file->ext : null;
         $this->update();
     }
 
