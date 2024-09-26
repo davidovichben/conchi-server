@@ -90,7 +90,15 @@ class GeneralController extends Controller
             $query->skip($request->get('from'));
         }
 
-        $ratings = $query->get();
+        $ratings = $query->get()->map(function($row) {
+            return [
+                'score' => $row->score,
+                'content' => $row->content,
+                'author' => $row->author,
+                'image' => url(Storage::url($row->path))
+            ];
+        });
+
         return response(['items' => $ratings, 'total' => $baseQuery->count()], 200);
     }
 }
