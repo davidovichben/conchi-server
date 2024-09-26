@@ -92,10 +92,10 @@ class GeneralController extends Controller
 
         $ratings = $query->get()->map(function($row) {
             return [
-                'score' => $row->score,
-                'content' => $row->content,
-                'author' => $row->author,
-                'image' => url(Storage::url($row->path))
+                'score'     => $row->score,
+                'content'   => $row->content,
+                'author'    => $row->author,
+                'image'     => $row->path ? url(Storage::url($row->path)) : null
             ];
         });
 
