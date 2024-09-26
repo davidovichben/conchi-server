@@ -20,11 +20,10 @@ class Rating extends BaseModel
         $rating->fill($values);
 
         if ($rating->save()) {
-
             $rating->path = $rating->getBasePath() . '.' . $file->ext;
             $rating->update();
 
-            $file->store($rating->path);
+            $file->store($rating->getBasePath());
         }
 
         return $rating;
