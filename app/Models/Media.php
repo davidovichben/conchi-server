@@ -19,9 +19,9 @@ class Media extends BaseModel
         $media->screen = $values['screen'];
         $media->type = $values['type'] ?? 'image';
         $media->is_editable = 1;
-        $media->path = 'media/' . $media->key_name . '.' . $file->ext;
+        $media->path = $media->getBasePath() . '.' . $file->ext;
         if ($media->save()) {
-            $file->store('media/' . $media->key_name);
+            $file->store($media->getBasePath());
         }
     }
 
@@ -32,9 +32,9 @@ class Media extends BaseModel
         }
 
         $file = new UploadedFile($inputFile);
-        $file->store('media/' . $this->key_name);
+        $file->store($this->getBasePath());
 
-        $this->path = 'media/' . $this->key_name . '.' . $file->ext;
+        $this->path = $this->getBasePath() . '.' . $file->ext;
         $this->update();
     }
 
@@ -44,5 +44,9 @@ class Media extends BaseModel
         }
 
         $this->delete();
+    }
+
+    private function getBasePath() {
+        return 'media/' . $this->key_name;
     }
 }

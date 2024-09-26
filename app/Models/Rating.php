@@ -20,7 +20,8 @@ class Rating extends BaseModel
         $rating->fill($values);
 
         if ($rating->save()) {
-            $rating->path = 'ratings/' . $rating->id . '.' . $file->ext;
+
+            $rating->path = $rating->getBasePath() . '.' . $file->ext;
             $rating->update();
 
             $file->store($rating->path);
@@ -36,10 +37,10 @@ class Rating extends BaseModel
         }
 
         $file = new UploadedFile($inputFile);
-        $file->store('ratings/' . $this->id);
+        $file->store($this->getBasePath());
 
         $this->fill($values);
-        $this->path = 'ratings/' . $this->id . '.' . $file->ext;
+        $this->path = $this->getBasePath() . '.' . $file->ext;
         $this->update();
     }
 
@@ -49,5 +50,9 @@ class Rating extends BaseModel
         }
 
         $this->delete();
+    }
+
+    private function getBasePath() {
+        return 'ratings/' . $this->id;
     }
 }
