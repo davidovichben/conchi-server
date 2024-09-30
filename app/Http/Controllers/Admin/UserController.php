@@ -67,7 +67,7 @@ class UserController extends BaseController
             ->selectRaw('program_report_questions.*, pro.content as userOption');
         }])
         ->leftJoin('user_program_weeks as upw', function($query) use ($userId) {
-            return $query->on('upw.program_week_id', 'program_weeks.id')->where('upw.user_id', $userId);
+            return $query->on('upw.program_week_id', 'program_weeks.id')->where('upw.user_id', $userId)->selectRaw('status, review');
         })
         ->get();
 
