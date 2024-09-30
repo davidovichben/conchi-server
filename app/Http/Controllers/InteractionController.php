@@ -34,7 +34,7 @@ class InteractionController extends Controller
         $categories = InteractionCategory::where('is_personalized', 1)
             ->selectRaw('id, name, personalization_limit, should_display')
             ->with(['subCategories' => function($query) use ($storageUrl) {
-                $query->selectRaw('id, interaction_category_id, name, CONCAT(' . $storageUrl . ' , "", image), usc.user_id as "selected"')
+                $query->selectRaw('id, interaction_category_id, name, CONCAT(' . $storageUrl . ' , "", image) as image, usc.user_id as "selected"')
                     ->leftJoin('user_sub_categories as usc', function($query) {
                         $query->on('usc.interaction_sub_category_id', 'interaction_sub_categories.id')
                             ->where('usc.user_id', Auth::id());
