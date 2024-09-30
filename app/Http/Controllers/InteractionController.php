@@ -18,6 +18,7 @@ class InteractionController extends Controller
     public function categories()
     {
         $categories = InteractionCategory::all()->map(function ($category) {
+            var_dump( url(Storage::url($category->image)));
             return [
                 ...$category->toArray(),
                 'image' => $category->image ? url(Storage::url($category->image)) : null
@@ -47,8 +48,6 @@ class InteractionController extends Controller
                     });
             }])
             ->get();
-
-        var_dump(url(''));
 
         return response($categories, 200);
     }
