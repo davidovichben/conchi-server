@@ -48,7 +48,9 @@ class InteractionController extends Controller
             }])
             ->get();
 
-        var_dump(Storage::url(' '));
+        $s3BaseUrl = Storage::disk('s3')->url('');
+
+        var_dump($s3BaseUrl);
 
         return response($categories, 200);
     }
