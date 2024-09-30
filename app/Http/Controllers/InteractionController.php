@@ -18,7 +18,7 @@ class InteractionController extends Controller
     public function categories()
     {
         $categories = InteractionCategory::all()->map(function ($category) {
-            var_dump( url(Storage::url($category->image)));
+            var_dump( url(Storage::url('')));
             return [
                 ...$category->toArray(),
                 'image' => $category->image ? url(Storage::url($category->image)) : null
