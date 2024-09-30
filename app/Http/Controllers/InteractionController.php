@@ -48,7 +48,7 @@ class InteractionController extends Controller
             }])
             ->get();
 
-        $categories->subCategories = $categories->subCategories->map(function ($subCategory) {
+        $categories->sub_categories = $categories->sub_categories->map(function ($subCategory) {
             return [
                 ...$subCategory->toArray(),
                 'image' => $subCategory->image ? url(Storage::url($subCategory->image)) : null
