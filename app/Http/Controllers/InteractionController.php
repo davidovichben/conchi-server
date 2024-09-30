@@ -49,7 +49,7 @@ class InteractionController extends Controller
             ->get();
 
 
-        var_dump(env('AWS_URL'));
+        var_dump(Storage::url('sub_categories'));
 
         return response($categories, 200);
     }
