@@ -48,9 +48,7 @@ class InteractionController extends Controller
             }])
             ->get();
 
-        $baseStorageUrl = config('app.url') . '/storage';
-        var_dump($baseStorageUrl);
-        var_dump(Storage::url(''));
+        var_dump(public_path('storage'));
 
 //        $subCategories = $categories->pluck('sub_categories')->map(function ($subCategory) {
 //            return [
