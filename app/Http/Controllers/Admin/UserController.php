@@ -77,11 +77,7 @@ class UserController extends BaseController
 
     public function programDays($userId, Request $request)
     {
-        $rows = ProgramDay::with(['interactions' => function ($query) use ($userId)  {
-            $query->leftJoin('user_interactions as ui', 'ui.interaction_id', 'interactions.id')
-                ->selectRaw('interactions.id, interactions.title, ui.liked, ui.status')
-                ->where('ui.user_id', $userId);
-        }])
+        $rows = ProgramDay::with('interactions')
         ->where('week_id', $request->get('weekId'))
         ->get();
 
