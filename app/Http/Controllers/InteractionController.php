@@ -48,7 +48,7 @@ class InteractionController extends Controller
             }])
             ->get();
 
-        var_dump(Storage::url(''));
+        var_dump(Storage::url('sub_categories'));
 
 //        $subCategories = $categories->pluck('sub_categories')->map(function ($subCategory) {
 //            return [
