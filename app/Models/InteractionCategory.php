@@ -10,7 +10,7 @@ use Illuminate\Support\Str;
 
 class InteractionCategory extends BaseModel
 {
-    protected $fillable = ['name', 'description', 'should_display', 'personalization_limit'];
+    protected $fillable = ['name', 'description', 'should_display', 'personalization_limit', 'title_1', 'title_2', 'title_3', 'title_4'];
 
     use HasFactory;
 

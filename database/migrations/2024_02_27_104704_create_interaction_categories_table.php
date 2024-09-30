@@ -20,6 +20,10 @@ return new class extends Migration
             $table->enum('should_display', ['interactions', 'sub_categories'])->default('interactions');
             $table->boolean('is_personalized')->default(false);
             $table->unsignedTinyInteger('personalization_limit')->nullable();
+            $table->text('title_1')->nullable();
+            $table->text('title_2')->nullable();
+            $table->text('title_3')->nullable();
+            $table->text('title_4')->nullable();
 
             $table->timestamps();
 
