@@ -48,6 +48,8 @@ class InteractionController extends Controller
             }])
             ->get();
 
+        var_dump($categories->pluck('sub_categories'));
+
         $subCategories = $categories->pluck('sub_categories')->map(function ($subCategory) {
             return [
                 ...$subCategory->toArray(),
