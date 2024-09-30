@@ -48,8 +48,7 @@ class InteractionController extends Controller
             }])
             ->get();
 
-
-        var_dump(Storage::url('sub_categories'));
+        var_dump(url(''));
 
         return response($categories, 200);
     }
