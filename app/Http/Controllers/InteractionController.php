@@ -50,15 +50,15 @@ class InteractionController extends Controller
 
         var_dump($categories->pluck('sub_categories'));
 
-        $subCategories = $categories->pluck('sub_categories')->map(function ($subCategory) {
-            return [
-                ...$subCategory->toArray(),
-                'image' => $subCategory->image ? url(Storage::url($subCategory->image)) : null
-            ];
-        });
-
-
-        $categories->sub_categories = $subCategories;
+//        $subCategories = $categories->pluck('sub_categories')->map(function ($subCategory) {
+//            return [
+//                ...$subCategory->toArray(),
+//                'image' => $subCategory->image ? url(Storage::url($subCategory->image)) : null
+//            ];
+//        });
+//
+//
+//        $categories->sub_categories = $subCategories;
         return response($categories, 200);
     }
 
