@@ -81,7 +81,7 @@ class UserController extends BaseController
             $query->leftJoin('user_interactions as ui', function ($query) use ($userId) {
                 return $query->on('ui.interaction_id', 'interactions.id')->where('ui.user_id', $userId);
 
-            })->selectRaw('interactions.id, interactions.title, ui.liked, ui.status')
+            })->selectRaw('interactions.id, interactions.title, ui.liked, ui.status');
         }])
         ->where('week_id', $request->get('weekId'))
         ->get();
