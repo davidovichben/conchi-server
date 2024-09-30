@@ -49,7 +49,7 @@ class InteractionController extends Controller
             ->get();
 
 
-        var_dump(config('filesystems.disks.s3.url'));
+        var_dump(env('AWS_URL'));
 
         return response($categories, 200);
     }
