@@ -84,11 +84,11 @@ class GeneralController extends Controller
     {
         $baseQuery = Rating::where('type', $request->get('type'));
 
-        $query = $baseQuery->select('score', 'content', 'path', 'author')->limit(3);
+        $query = $baseQuery->select('score', 'content', 'path', 'author');
 
-        if ($request->get('from')) {
-            $query->skip($request->get('from'));
-        }
+//        if ($request->get('from')) {
+//            $query->skip($request->get('from'));
+//        }
 
         $ratings = $query->get()->map(function($row) {
             return [
@@ -99,6 +99,6 @@ class GeneralController extends Controller
             ];
         });
 
-        return response(['items' => $ratings, 'total' => $baseQuery->count()], 200);
+        return response($ratings, 200);
     }
 }
