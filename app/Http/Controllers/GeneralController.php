@@ -86,10 +86,6 @@ class GeneralController extends Controller
 
         $query = $baseQuery->select('score', 'content', 'path', 'author');
 
-//        if ($request->get('from')) {
-//            $query->skip($request->get('from'));
-//        }
-
         $ratings = $query->get()->map(function($row) {
             return [
                 'score'     => $row->score,
