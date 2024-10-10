@@ -42,7 +42,7 @@ class ProgramDayController extends Controller
                 $query->where('user_id', Auth::id());
             }]);
 
-        var_dump($user->interactions->pluck('id')->toArray();
+        var_dump($user->interactions->pluck('id')->toArray());
 
         $categories = $programDay->categories->mapWithKeys(function ($category) use ($prefixFiles, $user) {
             $values = [
