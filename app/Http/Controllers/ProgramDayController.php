@@ -51,7 +51,7 @@ class ProgramDayController extends Controller
 
             if ($category->should_display === 'interactions') {
                 $interactions = $category->is_personalized ? $category->interactions->filter(function($interaction) use ($user) {
-                    echo 'aaa';
+                    echo $interaction->id;
                     return $user->interactions->contains('id', $interaction->id);
                 }) : $category->interactions;
 
