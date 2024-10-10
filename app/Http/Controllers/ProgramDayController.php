@@ -23,7 +23,7 @@ class ProgramDayController extends Controller
 
         $user = Auth::user()->load('details')->load('subCategories')->load(['interactions' => function($query) {
             $query->where('selected', 1);
-        }];
+        }]);
 
         $prefixFiles = $user->getPrefixFiles();
 
