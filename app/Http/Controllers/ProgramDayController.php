@@ -32,7 +32,7 @@ class ProgramDayController extends Controller
 //                    $query->join('interaction_categories as uc', 'interaction_sub_categories.category_id', 'uc.id')
 //                        ->whereIn('interaction_sub_categories.id', $user->subCategories->pluck('id')->toArray());
                 }])->with(['interactions' => function ($query) use ($user) {
-                    $query->orderBy('show_order', 'asc');//->whereIn('id', $user->interactions->pluck('id')->toArray());
+                    $query->orderBy('show_order', 'asc')->whereIn('id', $user->interactions->pluck('id')->toArray());
                 }]);
             }]);
 
