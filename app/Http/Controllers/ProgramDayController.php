@@ -42,6 +42,8 @@ class ProgramDayController extends Controller
                 $query->where('user_id', Auth::id());
             }]);
 
+        var_dump($user->interactions->pluck('id')->toArray();
+
         $categories = $programDay->categories->mapWithKeys(function ($category) use ($prefixFiles, $user) {
             $values = [
                 'id'    => $category->id,
@@ -51,7 +53,6 @@ class ProgramDayController extends Controller
 
             if ($category->should_display === 'interactions') {
                 $interactions = $category->is_personalized ? $category->interactions->filter(function($interaction) use ($user) {
-                    echo $interaction->id;
                     return $user->interactions->contains('id', $interaction->id);
                 }) : $category->interactions;
 
