@@ -32,7 +32,7 @@ class ProgramDayController extends Controller
 //                    $query->join('interaction_categories as uc', 'interaction_sub_categories.category_id', 'uc.id')
 //                        ->whereIn('interaction_sub_categories.id', $user->subCategories->pluck('id')->toArray());
                 }])->with(['interactions' => function ($query) use ($user) {
-                    $query->orderBy('show_order', 'asc')->whereIn('id', $user->interactions->pluck('id')->toArray());
+                    $query->orderBy('show_order', 'asc');//->whereIn('id', $user->interactions->pluck('id')->toArray());
                 }]);
             }]);
 
@@ -51,6 +51,7 @@ class ProgramDayController extends Controller
 
             if ($category->should_display === 'interactions') {
                 $interactions = $category->is_personalized ? $category->interactions->filter(function($interaction) use ($user) {
+                    echo 'aaa';
                     return $user->interactions->contains('id', $interaction->id);
                 }) : $category->interactions;
 
