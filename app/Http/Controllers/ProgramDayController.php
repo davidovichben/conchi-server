@@ -21,7 +21,9 @@ class ProgramDayController extends Controller
     {
 //        DB::enableQueryLog();
 
-        $user = Auth::user()->load('details')->load('subCategories')->load('interactions');
+        $user = Auth::user()->load('details')->load('subCategories')->load(['interactions' => function($query) {
+            $query->where('selected', 1);
+        }];
 
         $prefixFiles = $user->getPrefixFiles();
 
