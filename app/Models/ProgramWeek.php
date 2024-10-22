@@ -68,7 +68,10 @@ class ProgramWeek extends BaseModel
     public function updateInstance(Collection $values)
     {
         if ($values->get('image')) {
-            $this->deleteImage();
+            if ($this->image) {
+                $this->deleteImage();
+            }
+
             $this->uploadImage($values->get('image'));
         } else if ($values->get('deleteImage')) {
             $this->deleteImage();
