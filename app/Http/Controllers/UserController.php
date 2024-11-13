@@ -50,8 +50,14 @@ class UserController extends Controller
             'email'         => 'required|max:150|regex:/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/',
         ]);
 
+        // $emailOrMobileExists = User::where('email', $request->email)
+        //     ->orWhere('mobile', $request->mobile)->exists();
         $emailOrMobileExists = User::where('email', $request->email)
-            ->orWhere('mobile', $request->mobile)->exists();
+        ->orWhere(function($query) use ($request) {
+            $query->where('mobile', $request->mobile)
+                  ->whereNotNull('mobile');  // Ensure mobile is not null
+        })
+        ->exists();
 
         if ($emailOrMobileExists) {
             return response(['message' => 'Email or mobile already exists'], 409);
@@ -74,6 +80,16 @@ class UserController extends Controller
     public function update(UserRequest $request)
     {
         $user = User::where('email', Auth::user()->email)->first();
+
+        //validate unique mobile
+        $mobileExists = User::where('mobile', $request->mobile)
+    ->where('id', '!=', $user->id)  // Exclude the current user
+    ->exists();
+        
+        if ($mobileExists) {
+            return response(['message' => 'Mobile already exists'], 409);
+        }
+
 
         $password = $request->get('password') ?? $user->password;
         $email = $user->email;
