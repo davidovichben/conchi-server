@@ -46,6 +46,8 @@ class UserController extends Controller
     public function store(UserRequest $request)
     {
         $request->validate([
+            'first_name'    => 'required|max:30',
+            'last_name'     => 'required|max:30',
             'password'      => 'required|max:30',
             'email'         => 'required|max:150|regex:/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/',
         ]);
@@ -135,7 +137,8 @@ class UserController extends Controller
         $response = [
             ...$user->jsonSerialize(),
             'token'     => $token,
-            'is_paid'   => !!$user->payment_package_id
+            'is_paid'   => !!$user->payment_package_id,
+            'is_done_registration'  => $user->subCategories && $user->subCategories->count() > 0
         ];
 
         return response($response, 200);
