@@ -29,7 +29,12 @@ class User extends Authenticatable
         'password',
         'social_id',
         'provider',
-        'is_active'
+        'is_active',
+        'street', 
+        'number', 
+        'apartment', 
+        'floor', 
+        'zip_code'
     ];
 
     /**
