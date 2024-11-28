@@ -30,7 +30,7 @@ class UserController extends BaseController
         $user->load('details');
         $user->load('subCategories');
         $user->load('interactions');
-        $user->load('city');
+        //$user->load('city');
 
         return response([
             ...$user->toArray(),
