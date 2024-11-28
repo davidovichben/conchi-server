@@ -17,6 +17,7 @@ return new class extends Migration
             $table->integer('apartment')->nullable()->after('number'); // Apartment number
             $table->integer('floor')->nullable()->after('apartment'); // Floor number
             $table->string('zip_code', 10)->nullable()->after('floor'); // Postal code (up to 10 characters)
+            $table->string('address_comment', 255)->nullable()->after('zip_code'); // Postal code (up to 10 characters)
         });
     }
 
@@ -26,7 +27,7 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->dropColumn(['street', 'number', 'apartment', 'floor', 'zip_code']);
+            $table->dropColumn(['street', 'number', 'apartment', 'floor', 'zip_code','address_comment']);
         });
     }
 };

@@ -18,7 +18,7 @@ class UserController extends BaseController
         $query = User::leftJoin('payment_packages as pp', 'users.payment_package_id', 'pp.id')
             ->selectRaw('users.*, pp.title as payment_package');
 
-            $columns = ['first_name', 'last_name', 'email', 'mobile', 'payment_package', 'created_at', 'street', 'number', 'apartment', 'floor', 'zip_code'];
+            $columns = ['first_name', 'last_name', 'email', 'mobile', 'payment_package', 'created_at', 'city','street', 'number', 'apartment', 'floor', 'zip_code','address_comment'];
             $paginator = DataTableManager::getInstance($query, $request->all(), $columns)->getQuery();
 
         return $this->dataTableResponse($paginator);

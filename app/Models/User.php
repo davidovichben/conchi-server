@@ -23,7 +23,7 @@ class User extends Authenticatable
     protected $fillable = [
         'first_name',
         'last_name',
-        'city_id',
+        'city',
         'mobile',
         'email',
         'password',
@@ -34,7 +34,8 @@ class User extends Authenticatable
         'number', 
         'apartment', 
         'floor', 
-        'zip_code'
+        'zip_code',
+        'address_comment'
     ];
 
     /**

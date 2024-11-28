@@ -17,10 +17,10 @@ class ReportController extends Controller
             ->first()
             ->toArray();
 
-        $cities = User::selectRaw('cities.name, COUNT("city_id") as total')
-            ->join('cities', 'users.city_id', 'cities.id')
-            ->groupBy('cities.id')
-            ->get();
+        // $cities = User::selectRaw('cities.name, COUNT("city_id") as total')
+        //     ->join('cities', 'users.city_id', 'cities.id')
+        //     ->groupBy('cities.id')
+        //     ->get();
 
         $categories = InteractionCategory::leftJoin('interactions as i', 'interaction_categories.id', 'i.category_id')
             ->leftJoin('user_interactions as ui', 'i.id', 'ui.interaction_id')
@@ -30,7 +30,7 @@ class ReportController extends Controller
 
         return response([
             'genders'       => $genders,
-            'cities'        => $cities,
+           // 'cities'        => $cities,
             'categories'    => $categories
         ], 200);
     }
