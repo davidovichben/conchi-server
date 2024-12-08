@@ -37,6 +37,7 @@ class UserController extends Controller
             ...$user->jsonSerialize(),
             'token'                 => $token,
             'is_paid'               => !!$user->payment_package_id,
+            'is_show_fill_details' => $user->city==null||$user->mobile==null,
             'is_done_registration'  => $user->subCategories && $user->subCategories->count() > 0
         ];
 
@@ -73,6 +74,7 @@ class UserController extends Controller
             ...$user->jsonSerialize(),
             'token'                 => $token,
             'is_paid'               => !!$user->payment_package_id,
+            'is_show_fill_details' => true,
             'is_done_registration'  => false,
         ];
 
@@ -121,6 +123,7 @@ class UserController extends Controller
             'email'         => 'required|max:150|regex:/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/',
             'social_id'     => 'nullable|string',
             'provider'      => 'nullable|in:GOOGLE,FACEBOOK',
+            'mobile'        => 'nullable|max:20'
         ]);
 
         $user = User::where('social_id', $request->input('social_id'))
@@ -129,6 +132,10 @@ class UserController extends Controller
             ->first();
 
         if (!$user) {
+            if($request->input('mobile')==null || $request->input('mobile')=='')
+            {
+                return response(['message' => 'Mobile is required'], 400);
+            }
             $user = User::saveInstance($request->all());
         }
 
@@ -138,6 +145,7 @@ class UserController extends Controller
             ...$user->jsonSerialize(),
             'token'     => $token,
             'is_paid'   => !!$user->payment_package_id,
+            'is_show_fill_details' => $user->city==null||$user->mobile==null,
             'is_done_registration'  => $user->subCategories && $user->subCategories->count() > 0
         ];
 
