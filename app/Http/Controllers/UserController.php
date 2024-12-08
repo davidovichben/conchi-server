@@ -33,11 +33,12 @@ class UserController extends Controller
 
         $token = $user->createToken('login')->plainTextToken;
 
+        $isFilledDetails=$user->city!=null&&$user->city!='';
         $response = [
             ...$user->jsonSerialize(),
             'token'                 => $token,
             'is_paid'               => !!$user->payment_package_id,
-            'is_show_fill_details' => $user->city==null||$user->mobile==null,
+            'is_filled_details' => $isFilledDetails,
             'is_done_registration'  => $user->subCategories && $user->subCategories->count() > 0
         ];
 
@@ -50,6 +51,7 @@ class UserController extends Controller
             'first_name'    => 'required|max:30',
             'last_name'     => 'required|max:30',
             'password'      => 'required|max:30',
+            'mobile'        => 'required|max:30',
             'email'         => 'required|max:150|regex:/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/',
         ]);
 
@@ -74,7 +76,7 @@ class UserController extends Controller
             ...$user->jsonSerialize(),
             'token'                 => $token,
             'is_paid'               => !!$user->payment_package_id,
-            'is_show_fill_details' => true,
+            'is_filled_details' => false,
             'is_done_registration'  => false,
         ];
 
@@ -106,9 +108,12 @@ class UserController extends Controller
 
         $token = $user->createToken('login')->plainTextToken;
 
+        $isFilledDetails=$user->city!=null&&$user->city!='';
+
         $response = [
             ...$user->jsonSerialize(),
-            'token'     => $token,
+            'token'     => $token,            
+            'is_filled_details' => $isFilledDetails,
             'is_paid'   => !!$user->payment_package_id
         ];
 
@@ -141,11 +146,12 @@ class UserController extends Controller
 
         $token = $user->createToken('login')->plainTextToken;
 
+        $isFilledDetails=$user->city!=null&&$user->city!='';
         $response = [
             ...$user->jsonSerialize(),
             'token'     => $token,
             'is_paid'   => !!$user->payment_package_id,
-            'is_show_fill_details' => $user->city==null||$user->mobile==null,
+            'is_filled_details' => $isFilledDetails,
             'is_done_registration'  => $user->subCategories && $user->subCategories->count() > 0
         ];
 
