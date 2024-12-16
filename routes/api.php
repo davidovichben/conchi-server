@@ -3,6 +3,7 @@
 use App\Http\Controllers\GeneralController;
 use App\Http\Controllers\InteractionController;
 use App\Http\Controllers\PaymentController;
+use App\Http\Controllers\CouponController;
 use App\Http\Controllers\ProgramDayController;
 use App\Http\Controllers\ProgramWeekController;
 use App\Http\Controllers\UserController;
@@ -51,6 +52,9 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/payment/{paymentPackage}/url', [PaymentController::class, 'url']);
 
     Route::get('/news', [GeneralController::class, 'news']);
+
+    Route::post('/coupon/validate', [CouponController::class, 'isCouponValid']);
+    Route::post('/coupon/use', [CouponController::class, 'useCoupon']);
 
     Route::get('/interactions/personalizedCategories', [InteractionController::class, 'personalizedCategories']);
     Route::middleware('paid')->group(function () {

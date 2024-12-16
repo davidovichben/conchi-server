@@ -6,6 +6,7 @@ use App\Http\Controllers\Admin\IndexController;
 use App\Http\Controllers\Admin\InteractionCategoryController;
 use App\Http\Controllers\Admin\InteractionSubCategoryController;
 use App\Http\Controllers\Admin\MediaController;
+use App\Http\Controllers\Admin\CouponController;
 use App\Http\Controllers\Admin\PageController;
 use App\Http\Controllers\Admin\PaymentPackageController;
 use App\Http\Controllers\Admin\ProgramDayController;
@@ -79,6 +80,9 @@ Route::middleware(['auth:sanctum', IsAdmin::class])->group(function () {
     Route::post('/ratings/search', [RatingsController::class, 'index']);
     Route::resource('/ratings', RatingsController::class)->except('index');
 
-    Route::get('/reports', [ReportController::class, 'index']);
+    Route::get('/reports', [ReportController::class, 'index']);    Route::get('/coupons', [AdminCouponController::class, 'index']);
+    
+    Route::post('/coupons/search', [CouponController::class, 'index']);
+    Route::resource('/coupons', CouponController::class)->except('index');
 });
 
