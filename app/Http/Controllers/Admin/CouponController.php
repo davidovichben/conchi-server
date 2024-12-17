@@ -17,7 +17,7 @@ class CouponController extends BaseController
         // Query coupons with any necessary relationships or counts
         $query = Coupon::query();
 
-        $columns = ['code', 'discount', 'start_date','end_date', 'is_active'];
+        $columns = ['id','code', 'discount', 'start_date','end_date', 'is_active'];
         $paginator = DataTableManager::getInstance($query, $request->all(), $columns)->getQuery();
 
         return $this->dataTableResponse($paginator);

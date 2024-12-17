@@ -12,28 +12,38 @@ use App\Models\Translation;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Storage;
-
+use Cache;
 class GeneralController extends Controller
 {
     public function translations(): Response
     {
-        $translations = Translation::where('language', 'he')
-            ->select('name', 'value', 'html_value')
-            ->get()
-            ->mapWithKeys(function($row) {
-                return [$row->name => $row->value ?? $row->html_value];
-            });
+        // Cache key
+        $cacheKey = 'translations_he';
+
+        // Retrieve or refresh cache
+        $translations = Cache::remember($cacheKey, now()->addHours(1), function () {
+            return Translation::where('language', 'he')
+                ->select('name', 'value', 'html_value')
+                ->get()
+                ->mapWithKeys(function ($row) {
+                    return [$row->name => $row->value ?? $row->html_value];
+                });
+        });
 
         return response($translations, 200);
     }
 
     public function media(): Response
-    {
-        $media = Media::select('key_name', 'path')
-            ->get()
-            ->mapWithKeys(function($row) {
-                return [$row->key_name => url(Storage::url($row->path))];
-            });
+    {       
+        $cacheKey = 'media_data';
+        
+        $media = Cache::remember($cacheKey, now()->addHours(1), function () {
+            return Media::select('key_name', 'path')
+                ->get()
+                ->mapWithKeys(function ($row) {
+                    return [$row->key_name => url(Storage::url($row->path))];
+                });
+        });
 
         return response($media, 200);
     }

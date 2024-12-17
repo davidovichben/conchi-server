@@ -15,13 +15,36 @@ class UserController extends BaseController
 {
     public function index(Request $request)
     {
-        $query = User::leftJoin('payment_packages as pp', 'users.payment_package_id', 'pp.id')
-            ->selectRaw('users.*, pp.title as payment_package');
+        // $query = User::leftJoin('payment_packages as pp', 'users.payment_package_id', 'pp.id')
+        //     ->selectRaw('users.*, pp.title as payment_package');
 
-            $columns = ['first_name', 'last_name', 'email', 'mobile', 'payment_package', 'created_at', 'city','street', 'number', 'apartment', 'floor', 'zip_code','address_comment'];
-            $paginator = DataTableManager::getInstance($query, $request->all(), $columns)->getQuery();
+        //     $columns = ['first_name', 'last_name', 'email', 'mobile', 'payment_package', 'created_at', 'city','street', 'number', 'apartment', 'floor', 'zip_code','address_comment'];
+        //     $paginator = DataTableManager::getInstance($query, $request->all(), $columns)->getQuery();
 
-        return $this->dataTableResponse($paginator);
+        // return $this->dataTableResponse($paginator);
+
+        $query = User::leftJoin('sales as s', 'users.id', '=', 's.user_id') // Join sales table with users
+        ->leftJoin('payment_packages as pp', 's.payment_package_id', '=', 'pp.id') // Join payment_packages through sales
+        ->leftJoin('coupons as c', 's.coupon_id', '=', 'c.id') // Join coupons table to get coupon information
+        ->selectRaw('
+            users.*, 
+            pp.title as payment_package, 
+            c.code as coupon_code
+        ')
+        ->groupBy('users.id'); // Group by user ID to avoid duplicate rows
+
+    // Define the columns you want to include in the DataTable response
+    $columns = [
+        'first_name', 'last_name', 'email', 'mobile', // Add coupon_name
+        'users.created_at', 'city', 'street', 'number', 'apartment', 'floor', 
+        'zip_code', 'address_comment'
+    ];
+
+    // Using DataTableManager to handle pagination and filtering
+    $paginator = DataTableManager::getInstance($query, $request->all(), $columns)->getQuery();
+
+    return $this->dataTableResponse($paginator);
+
     }
 
     public function show(User $user)

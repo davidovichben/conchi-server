@@ -15,6 +15,7 @@ use App\Http\Controllers\Admin\ProgramReportQuestionController;
 use App\Http\Controllers\Admin\ProgramWeekController;
 use App\Http\Controllers\Admin\RatingsController;
 use App\Http\Controllers\Admin\ReportController;
+use App\Http\Controllers\Admin\SaleController;
 use App\Http\Controllers\Admin\TranslationController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\InteractionController;
@@ -80,9 +81,13 @@ Route::middleware(['auth:sanctum', IsAdmin::class])->group(function () {
     Route::post('/ratings/search', [RatingsController::class, 'index']);
     Route::resource('/ratings', RatingsController::class)->except('index');
 
-    Route::get('/reports', [ReportController::class, 'index']);    Route::get('/coupons', [AdminCouponController::class, 'index']);
-    
+    Route::get('/reports', [ReportController::class, 'index']);   
+        
     Route::post('/coupons/search', [CouponController::class, 'index']);
     Route::resource('/coupons', CouponController::class)->except('index');
+
+
+    Route::post('/sales/search', [SaleController::class, 'index']);
+    Route::resource('/sales', SaleController::class)->except('index');
 });
 

@@ -82,6 +82,11 @@ class User extends Authenticatable
         return $this->belongsToMany(Interaction::class,'user_interactions');
     }
 
+    public function sales()
+    {
+        return $this->hasMany(Sale::class, 'user_id');
+    }
+
     public function subCategories()
     {
         return $this->belongsToMany(InteractionSubCategory::class, 'user_sub_categories');

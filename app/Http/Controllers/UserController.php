@@ -37,7 +37,7 @@ class UserController extends Controller
         $response = [
             ...$user->jsonSerialize(),
             'token'                 => $token,
-            'is_paid'               => !!$user->payment_package_id,
+            'is_paid'               => $user->sales()->exists(),
             'is_filled_details' => $isFilledDetails,
             'is_done_registration'  => $user->subCategories && $user->subCategories->count() > 0
         ];
@@ -75,7 +75,8 @@ class UserController extends Controller
         $response = [
             ...$user->jsonSerialize(),
             'token'                 => $token,
-            'is_paid'               => !!$user->payment_package_id,
+            // 'is_paid'               => !!$user->payment_package_id,
+            'is_paid'               => $user->sales()->exists(),
             'is_filled_details' => false,
             'is_done_registration'  => false,
         ];
@@ -114,7 +115,7 @@ class UserController extends Controller
             ...$user->jsonSerialize(),
             'token'     => $token,            
             'is_filled_details' => $isFilledDetails,
-            'is_paid'   => !!$user->payment_package_id
+            'is_paid'               => $user->sales()->exists(),
         ];
 
         return response($response, 200);
@@ -150,7 +151,7 @@ class UserController extends Controller
         $response = [
             ...$user->jsonSerialize(),
             'token'     => $token,
-            'is_paid'   => !!$user->payment_package_id,
+            'is_paid'               => $user->sales()->exists(),
             'is_filled_details' => $isFilledDetails,
             'is_done_registration'  => $user->subCategories && $user->subCategories->count() > 0
         ];

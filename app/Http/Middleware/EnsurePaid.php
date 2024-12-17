@@ -16,7 +16,9 @@ class EnsurePaid
      */
     public function handle(Request $request, Closure $next): Response
     {
-        if (!Auth::user()->payment_package_id) {
+        // if (!Auth::user()->payment_package_id) {
+        if (!Auth::user()->sales()->exists()) {
+
             return response(['message' => 'Unauthorized'], 403);
         }
 
