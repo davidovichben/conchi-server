@@ -52,6 +52,7 @@ class SaleController extends BaseController
             'payment_package_id' => 'required|exists:payment_packages,id',
             'coupon_id' => 'nullable|exists:coupons,id',
             'date' => 'required|date',
+            'amount' => 'required|numeric|min:0', 
         ]);
 
         // Create the sale
@@ -71,6 +72,7 @@ class SaleController extends BaseController
             'payment_package_id' => 'required|exists:payment_packages,id',
             'coupon_id' => 'nullable|exists:coupons,id',
             'date' => 'required|date',
+            'amount' => 'required|numeric|min:0', 
         ]);
 
         // Update the sale
