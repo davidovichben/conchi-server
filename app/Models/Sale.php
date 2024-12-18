@@ -8,7 +8,7 @@ class Sale extends BaseModel
 {
     use HasFactory;
 
-    protected $fillable = ['user_id', 'payment_package_id', 'coupon_id', 'date'];
+    protected $fillable = ['user_id', 'payment_package_id', 'coupon_id', 'date','amount'];
 
     // Define the relationship with the User model
     public function user()

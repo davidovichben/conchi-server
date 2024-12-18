@@ -17,6 +17,7 @@ return new class extends Migration
             $table->unsignedBigInteger('payment_package_id');
             $table->unsignedBigInteger('coupon_id')->nullable();
             $table->date('date'); // the date of the sale
+            $table->decimal('amount', 10, 2)->default(0.00)->after('date'); 
             $table->timestamps(); // automatically adds created_at and updated_at columns
         
             $table->foreign(columns: 'user_id')->references('id')->on('users')->cascadeOnDelete();

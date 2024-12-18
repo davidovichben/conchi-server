@@ -72,7 +72,8 @@ class PaymentController extends Controller
                 'ReturnValue' => json_encode([
                             'paymentPackageId' => $paymentPackage->id,
                             'userId' => Auth::id(),
-                            'couponId' => $couponId
+                            'couponId' => $couponId,
+                            'amount'=> $finalPrice
                         ]),
                 'Amount' => $finalPrice,
                 'SuccessRedirectUrl' => config('app.client_url') . '/payment/success',
@@ -110,6 +111,7 @@ class PaymentController extends Controller
         $sale = new Sale();
         $sale->user_id = $returnValue->userId;
         $sale->payment_package_id = $returnValue->paymentPackageId;
+        $sale->amount = $returnValue->amount;
         $sale->coupon_id = $returnValue->couponId ?? null;  // Default to null if no couponId
         $sale->date = Carbon::now()->toDateString();  // Use the current date
         $sale->save();
