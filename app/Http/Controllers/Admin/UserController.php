@@ -49,7 +49,7 @@ class UserController extends BaseController
 
     public function show(User $user)
     {
-        $user->load('paymentPackage');
+        $user->load('firstSale.paymentPackage'); 
         $user->load('details');
         $user->load('subCategories');
         $user->load('interactions');

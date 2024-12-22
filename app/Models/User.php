@@ -30,10 +30,10 @@ class User extends Authenticatable
         'social_id',
         'provider',
         'is_active',
-        'street', 
-        'number', 
-        'apartment', 
-        'floor', 
+        'street',
+        'number',
+        'apartment',
+        'floor',
         'zip_code',
         'address_comment'
     ];
@@ -79,12 +79,24 @@ class User extends Authenticatable
 
     public function interactions()
     {
-        return $this->belongsToMany(Interaction::class,'user_interactions');
+        return $this->belongsToMany(Interaction::class, 'user_interactions');
     }
+
+
 
     public function sales()
     {
-        return $this->hasMany(Sale::class, 'user_id');
+        return $this->hasMany(Sale::class);
+    }
+
+    public function firstSale()
+    {
+        return $this->hasOne(Sale::class)->orderBy('date');
+    }
+
+    public function paymentPackages()
+    {
+        return $this->hasManyThrough(PaymentPackage::class, Sale::class, 'user_id', 'id', 'id', 'payment_package_id');
     }
 
     public function subCategories()
@@ -130,7 +142,7 @@ class User extends Authenticatable
         $files = collect();
 
         for ($i = 1; $i <= 3; $i++) {
-            $file = $this->getFile('prefix_name_' . $i , 'mp3');
+            $file = $this->getFile('prefix_name_' . $i, 'mp3');
             if ($file) {
                 $files->push($file);
             }
